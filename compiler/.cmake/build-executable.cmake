@@ -12,10 +12,10 @@ target_link_directories(JuggernyautCompiler PRIVATE "$<TARGET_FILE_DIR:Juggernya
 attach_manifest_data(JuggernyautCompiler)
 
 # Re-do symbolic linking (POST BUILD)
-manage_symbolic_links(JuggernyautCompiler "juggernyaut")
+manage_symbolic_links(JuggernyautCompiler "jug")
 
 # Add compiler flags
-add_internal_target_cxx_flags(JuggernyautCompiler FALSE)
+add_internal_target_cxx_flags(ccc FALSE)
 
 # Generate ANTLR4 grammar C++ files
 #
