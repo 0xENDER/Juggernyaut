@@ -24,7 +24,7 @@ endif()
 if(WIN32)
     # Get the latest kits path
     execute_process(
-        COMMAND powershell -NoProfile -ExecutionPolicy Bypass -Command "Write-Host (Get-ChildItem 'C:\\Program Files (x86)\\Windows Kits\\10\\bin\\' | Sort-Object {$_.VersionInfo.FileVersion} -Descending | Select-Object -First 1).FullName"
+        COMMAND powershell -NoProfile -ExecutionPolicy Bypass -Command "Write-Host (Get-ChildItem 'C:\\Program Files (x86)\\Windows Kits\\10\\bin\\' | Sort-Object {$_.VersionInfo.FileVersion} -Descending | Where-Object { $_.Name -match '^\\d' } | Select-Object -First 1).FullName"
         OUTPUT_VARIABLE WINDOWS_KITS_BIN_PATH
         OUTPUT_STRIP_TRAILING_WHITESPACE
         ERROR_QUIET
