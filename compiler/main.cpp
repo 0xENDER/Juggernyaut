@@ -13,6 +13,9 @@
 // CLI/LSP
 #include "comms/comms.hpp"
 
+// Parser
+#include "parser/parser.hpp"
+
 // Base
 #include "base.config.hpp"
 #include "base.info.hpp"
@@ -76,7 +79,7 @@ int main (int argc, const char *argv[]) {
             return Comms::ProcessReport::programStatus;
         }
         // Debug
-        /** @brief INCOMPLETE: Add debug code! */
+        Parser::Debug::syntaxCheck(file_contents);
     }
 
     // Check for requested termination

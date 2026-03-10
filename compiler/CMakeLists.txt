@@ -30,7 +30,8 @@ set(CMAKE_MODULE_PATH
 )
 
 # ANTLR4 files generation configuration
-#
+set(JUG_ANTLR4_LEXER_PATH ${JUG_SOURCE_DIR}/parser/.antlr4/JuggernyautLexer.g4)
+set(JUG_ANTLR4_PARSER_PATH ${JUG_SOURCE_DIR}/parser/.antlr4/JuggernyautParser.g4)
 
 # CMake functions & macros
 include(${JUG_CMAKE_DIR}/utility.cmake)
@@ -43,6 +44,9 @@ include(${JUG_CMAKE_DIR}/build-output.cmake)
 
 # Manage dependencies
 include(${JUG_CMAKE_DIR}/dependencies.cmake)
+
+# Generate ANTLR4
+include(${JUG_CMAKE_DIR}/ANTLR4-gen.cmake)
 
 # Build the compiler executable!
 include(${JUG_CMAKE_DIR}/build-executable.cmake)

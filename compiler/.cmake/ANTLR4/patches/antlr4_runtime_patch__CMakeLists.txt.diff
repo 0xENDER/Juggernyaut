@@ -1,0 +1,19 @@
+--- a/runtime/Cpp/runtime/CMakeLists.txt
++++ b/runtime/Cpp/runtime/CMakeLists.txt
+# Use latest googletest version & fix macOS library linking problems
+@@ -73,1 +73,1 @@
+-    URL https://github.com/google/googletest/archive/e2239ee6043f73722e7aa812a459f54a28552929.zip
++    URL https://github.com/google/googletest/archive/refs/tags/v1.16.0.zip
+@@ -157,3 +157,12 @@
+ endif()
++
++# Fix macOS linking (before copies are made!)
++if(CMAKE_SYSTEM_NAME MATCHES "Darwin" AND TARGET antlr4_shared)
++  add_custom_command(
++    TARGET antlr4_shared
++    POST_BUILD
++    COMMAND install_name_tool -id "@rpath/libantlr4-runtime.dylib" $<TARGET_FILE:antlr4_shared>
++    COMMAND install_name_tool -id "@rpath/libantlr4-runtime.${ANTLR_VERSION}.dylib" $<TARGET_LINKER_FILE:antlr4_shared>)
++endif()
+ 
+ if (ANTLR_BUILD_CPP_TESTS)

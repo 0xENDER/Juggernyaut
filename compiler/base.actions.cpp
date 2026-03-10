@@ -185,7 +185,22 @@ namespace Base {
 
                     ACTION_PROGRESS;
                 }
-            )
+            ),
+            DEFINE_ACTION(
+                "dbg-syntax", "debug-parser-antlr-syntax-test",
+                "Print the parser's tokens list and initial parser output.",
+                {},
+                {
+                    // Enable the test
+                    InitialConfigs::Debug::Parser::activateAntlrSyntaxTest = true;
+
+                    // Report status
+                    REPORT(Comms::START_REPORT, Comms::ACTION_REPORT, "Enabled the ANTLR4 parser print syntax test!",
+                        Comms::END_REPORT);
+
+                    ACTION_PROGRESS;
+                }
+            ),
         };
 
         // The help menu!
@@ -194,7 +209,7 @@ namespace Base {
             for (int i = 0; i < actions.size(); i++) {
                 REPORT("    ", actions[i].info[0], "/", actions[i].info[1], " \t ", actions[i].info[2]);
                 for (int j = 0; j < actions[i].input.size(); j++) {
-                    REPORT("\n    \t\t\t\t", actions[i].input[j]);
+                    REPORT("\n    \t", actions[i].input[j]);
                 }
                 REPORT("\n");
             }

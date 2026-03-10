@@ -107,23 +107,23 @@ else()
 endif()
 
 # ANTLR4 jar
-##set(JUG_DEPENDENCIES_ANTLR4_JAR_PATH ${JUG_DEPENDENCIES_DIR}/antlr4/antlr.jar)
-##if(NOT EXISTS ${JUG_DEPENDENCIES_ANTLR4_JAR_PATH})
-##    message(STATUS "[DEPENDENCIES] Downloading ANTLR4 jar (v4.13.2)...")
-##    file(DOWNLOAD
-##        "https://www.antlr.org/download/antlr-4.13.2-complete.jar"
-##        ${JUG_DEPENDENCIES_ANTLR4_JAR_PATH}
-##        EXPECTED_HASH "SHA256=eae2dfa119a64327444672aff63e9ec35a20180dc5b8090b7a6ab85125df4d76"
-##        TLS_VERIFY TRUE
-##        TIMEOUT 30
-##        STATUS download_status_1
-##    )
-##    if(NOT download_status_1 EQUAL 0)
-##        message(FATAL_ERROR "[DEPENDENCIES] Failed to download ANTLR4 jar: ${download_errors}")
-##    endif()
-##else()
-##    message(STATUS "[DEPENDENCIES] ANTLR4 jar is present!")
-##endif()
+set(JUG_DEPENDENCIES_ANTLR4_JAR_PATH ${JUG_DEPENDENCIES_DIR}/antlr4/antlr.jar)
+if(NOT EXISTS ${JUG_DEPENDENCIES_ANTLR4_JAR_PATH})
+    message(STATUS "[DEPENDENCIES] Downloading ANTLR4 jar (v4.13.2)...")
+    file(DOWNLOAD
+        "https://www.antlr.org/download/antlr-4.13.2-complete.jar"
+        ${JUG_DEPENDENCIES_ANTLR4_JAR_PATH}
+        EXPECTED_HASH "SHA256=eae2dfa119a64327444672aff63e9ec35a20180dc5b8090b7a6ab85125df4d76"
+        TLS_VERIFY TRUE
+        TIMEOUT 30
+        STATUS download_status_1
+    )
+    if(NOT download_status_1 EQUAL 0)
+        message(FATAL_ERROR "[DEPENDENCIES] Failed to download ANTLR4 jar: ${download_errors}")
+    endif()
+else()
+    message(STATUS "[DEPENDENCIES] ANTLR4 jar is present!")
+endif()
 
 # Check for GIT Patch
 find_program(GIT_PATCH_EXECUTABLE NAMES patch) # Search for "patch" (case-insensitive)
