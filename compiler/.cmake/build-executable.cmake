@@ -15,7 +15,7 @@ attach_manifest_data(JuggernyautCompiler)
 manage_symbolic_links(JuggernyautCompiler "jug")
 
 # Add compiler flags
-add_internal_target_cxx_flags(ccc FALSE)
+add_internal_target_cxx_flags(JuggernyautCompiler FALSE)
 
 # Generate ANTLR4 grammar C++ files
 #
