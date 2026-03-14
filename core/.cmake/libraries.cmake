@@ -72,10 +72,11 @@ add_custom_command(TARGET JuggernyautParserLibrary
 add_dependencies(JuggernyautParserLibrary JuggernyautCommsLibrary) # TMP
 target_link_libraries(JuggernyautParserLibrary PUBLIC JuggernyautCommsLibrary) # TMP
 
-# Set the project libraries
-set(PROJECT_LIBRARIES
+# Expose the core libraries
+set(CORE_LIBRARIES
     JuggernyautBaseLibrary
     JuggernyautCommonLibrary
     JuggernyautCommsLibrary
     JuggernyautParserLibrary
+    PARENT_SCOPE
 )
