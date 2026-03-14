@@ -4,14 +4,14 @@ An experimental general-purpose programming language in the making!
 
 ## Overview
 
-- `/compiler`
+- `/compiler`:
 Includes the CLI wrapper.
 
-- `/core`
+- `/core`:
 Includes the core components of the compilation process! (e.g. lexter, parser, etc.)
 
-- `/extensions`
+- `/extensions`:
 Includes extensions for well-known code editors.
 
-- `/server`
+- `/server`:
 Includes the server language. (Follows the LSP)
