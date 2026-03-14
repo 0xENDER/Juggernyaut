@@ -107,7 +107,7 @@ else()
 endif()
 
 # ANTLR4 jar
-set(JUG_DEPENDENCIES_ANTLR4_JAR_PATH ${JUG_DEPENDENCIES_DIR}/antlr4/antlr.jar)
+set(JUG_DEPENDENCIES_ANTLR4_JAR_PATH ${PROJECT_DEPENDENCIES_DIR}/antlr4/antlr.jar)
 if(NOT EXISTS ${JUG_DEPENDENCIES_ANTLR4_JAR_PATH})
     message(STATUS "[DEPENDENCIES] Downloading ANTLR4 jar (v4.13.2)...")
     file(DOWNLOAD
@@ -153,7 +153,7 @@ if(fmt)
 else()
     # Download {fmt}
     message(STATUS "[DEPENDENCIES] Fetching {fmt}...")
-    set(JUG_DEP_FMT_LIB_PATH ${JUG_DEPENDENCIES_DIR}/fmt)
+    set(JUG_DEP_FMT_LIB_PATH ${PROJECT_DEPENDENCIES_DIR}/fmt)
     if(EXISTS ${JUG_DEP_FMT_LIB_PATH}/CMakeLists.txt)
         FetchContent_Declare(fmt
             GIT_TAG ${FMT_LIB_VERSION}
