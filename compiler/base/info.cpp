@@ -3,7 +3,7 @@
  * Manage the compiler's basic info
 **/
 
-#include "base.info.hpp"
+#include "info.hpp"
 
 namespace Base {
     namespace Info {

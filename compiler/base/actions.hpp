@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "common/headers.hpp"
-#include "base.dynamic.hpp" // JUG_BASE_API
+// Common
+#include "../../core/common/files.hpp"
 
 // Basic C++ headers
 #include <unordered_map>
@@ -40,9 +40,9 @@ namespace Base {
         //  function (true - normal -> continue, false - error -> terminate) // Must always return a boolean value
         // ]
         typedef std::vector<Action> ActionsList; // Change the array size as needed!
-        extern JUG_BASE_API const ActionsList actions;
+        extern const ActionsList actions;
 
         // Get an action function using one flag
-        extern JUG_BASE_API bool getActionFunctionByFlag(const std::string& flag, ActionFunction &store) ;
+        extern bool getActionFunctionByFlag(const std::string& flag, ActionFunction &store) ;
     }
 }

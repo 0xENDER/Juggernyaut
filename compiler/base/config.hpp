@@ -5,10 +5,9 @@
 
 #pragma once
 
-#include "common/headers.hpp"
-#include "base.dynamic.hpp" // JUG_BASE_API
+#include "../../core/common/headers.hpp"
 
-#include "base.actions.hpp"
+#include "actions.hpp"
 
 // Basic C++ headers
 //#include <string>
@@ -16,41 +15,38 @@
 // WORK IN PROGRESS
 
 namespace Base {
-    // Version info
-    extern JUG_BASE_API const std::string version;
-
     // All state-related members should be contained under one namepsace
     namespace InitialConfigs {
         // Starting Path
-        extern JUG_BASE_API std::string compilerBinPath;
+        extern std::string compilerBinPath;
 
         // Main source file
-        extern JUG_BASE_API std::string mainPath;
+        extern std::string mainPath;
 
         // Debug-related
         namespace Debug {
             // --debug-parser-antlr-syntax-test <path>
             namespace Parser {
-                extern JUG_BASE_API bool activateAntlrSyntaxTest;
+                extern bool activateAntlrSyntaxTest;
             }
         }
 
         // Technical values
         namespace Technical {
             // For actions that require termination after the arguments are fully processed!
-            extern JUG_BASE_API bool terminateAfterArgs;
+            extern bool terminateAfterArgs;
             // For actions that require termination after actions!
-            extern JUG_BASE_API bool terminateAfterActions;
+            extern bool terminateAfterActions;
             // Fail process when unknown flags are detected!
-            extern JUG_BASE_API bool strictFlagDetection;
+            extern bool strictFlagDetection;
 
             // Look for flags that require the default initialisation to stop!
             // [true - skip, false - don't skip]
-            extern JUG_BASE_API bool shouldSkipDefaultInitialization(int argc, const char *argv[]) ;
+            extern bool shouldSkipDefaultInitialization(int argc, const char *argv[]) ;
         }
 
         // Process and update values through program arguments!
         // [true - sucess, false - failure]
-        extern JUG_BASE_API bool updateUsingArgs(int argc, const char *argv[]) ;
+        extern bool updateUsingArgs(int argc, const char *argv[]) ;
     }
 }

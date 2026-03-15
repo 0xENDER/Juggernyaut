@@ -2,21 +2,6 @@
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(BUILD_SHARED_LIBS ON)
 
-# Create a library from / (the root directory of /compiler)
-add_library(JuggernyautBaseLibrary SHARED)
-target_sources_search(JuggernyautBaseLibrary ${JUG_CORE_SOURCE_DIR}/base.*.cpp FALSE)
-# Expose library exports
-target_compile_definitions(JuggernyautBaseLibrary PRIVATE JUG_BASE_LIBRARY_EXPORTS)
-# Attach manifest data
-attach_manifest_data(JuggernyautBaseLibrary ${JUG_CORE_MANIFEST_FILE})
-# Add compiler flags
-add_internal_target_cxx_flags(JuggernyautBaseLibrary FALSE)
-# Link other libraries to the library
-add_dependencies(JuggernyautBaseLibrary JuggernyautCommonLibrary)
-target_link_libraries(JuggernyautBaseLibrary PUBLIC JuggernyautCommonLibrary)
-add_dependencies(JuggernyautBaseLibrary JuggernyautCommsLibrary)
-target_link_libraries(JuggernyautBaseLibrary PUBLIC JuggernyautCommsLibrary)
-
 # Create a library from /comms
 add_library(JuggernyautCommsLibrary SHARED)
 target_sources_search(JuggernyautCommsLibrary ${JUG_CORE_SOURCE_DIR}/comms/*.cpp TRUE)
@@ -74,7 +59,6 @@ target_link_libraries(JuggernyautParserLibrary PUBLIC JuggernyautCommsLibrary) #
 
 # Expose the core libraries
 set(CORE_LIBRARIES
-    JuggernyautBaseLibrary
     JuggernyautCommonLibrary
     JuggernyautCommsLibrary
     JuggernyautParserLibrary

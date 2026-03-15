@@ -3,14 +3,13 @@
  * Manage compiler arguments and starting state
 **/
 
-#include "base.config.hpp"
-#include "common/strings.hpp"
+#include "config.hpp"
+#include "../../core/common/strings.hpp"
 
-// CLI/LSP
-#include "comms/comms.hpp"
+#include "../console/console.hpp"
 
 // Common
-#include "common/files.hpp"
+#include "../../core/common/files.hpp"
 
 namespace Base {
     // All state-related members should be contained under one namepsace
@@ -67,10 +66,10 @@ namespace Base {
         bool updateUsingArgs(int argc, const char *argv[]) {
             // Get the compiler's path
             if (!Common::Files::getExecutableDir(compilerBinPath)) { // Same as /path/to/bin
-                REPORT(Comms::START_REPORT, Comms::FATAL_REPORT,
+                REPORT(Console::START_REPORT, Console::FATAL_REPORT,
                     "Couldn't get the compiler's path!",
                     BAD_CODE_OR_MEMORY_LEAKS,
-                    Comms::END_REPORT);
+                    Console::END_REPORT);
             }
             compilerBinPath = Common::Files::getParentPath(compilerBinPath);// Same as  /path/to/bin/..
 
@@ -98,10 +97,10 @@ namespace Base {
                 Actions::ActionFunction action;
                 if (arg[0] != '-') {
                     // Unexpected input!
-                    REPORT(Comms::START_REPORT,
-                        (InitialConfigs::Technical::strictFlagDetection) ? Comms::FATAL_REPORT : Comms::WARNING_REPORT,
+                    REPORT(Console::START_REPORT,
+                        (InitialConfigs::Technical::strictFlagDetection) ? Console::FATAL_REPORT : Console::WARNING_REPORT,
                         "Unexpected command line input: '", arg, "'",
-                        Comms::END_REPORT);
+                        Console::END_REPORT);
                     if (InitialConfigs::Technical::strictFlagDetection) {
                         return false;
                     }
@@ -114,10 +113,10 @@ namespace Base {
                     }
                 } else {
                     // Unknown argument!
-                    REPORT(Comms::START_REPORT,
-                        (InitialConfigs::Technical::strictFlagDetection) ? Comms::FATAL_REPORT : Comms::WARNING_REPORT,
+                    REPORT(Console::START_REPORT,
+                        (InitialConfigs::Technical::strictFlagDetection) ? Console::FATAL_REPORT : Console::WARNING_REPORT,
                         "Unknown command line flag: ", arg,
-                        Comms::END_REPORT);
+                        Console::END_REPORT);
                     if (InitialConfigs::Technical::strictFlagDetection) {
                         return false;
                     }
