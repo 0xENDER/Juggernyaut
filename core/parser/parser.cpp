@@ -10,14 +10,14 @@
 
 // Parser
 #include "parser.hpp"
+#include "listeners/errors.hpp"
 
 namespace Parser {
     namespace Debug {
         
         // Check for syntax errors
         // [true -> success, false -> failure]
-        bool syntaxCheck (std::string file_contents, TokenReport onTokenCall, TreeReport onTreeCall,
-            Listeners::ErrorListener lexerErrorListener, Listeners::ErrorListener parserErrorListener) {
+        bool syntaxCheck (std::string file_contents, TokenReport onTokenCall, TreeReport onTreeCall) {
             // Use the file's input
             antlr4::ANTLRInputStream input(file_contents);
 
@@ -29,6 +29,8 @@ namespace Parser {
             GeneratedParser::JuggernyautParser parser(&tokens);
 
             // Check for syntax errors
+            Listeners::ErrorListener lexerErrorListener("Lexer");
+            Listeners::ErrorListener parserErrorListener("Parser");
             lexer.removeErrorListeners();// remove default parser error listeners.
             lexer.addErrorListener(&lexerErrorListener);
             parser.removeErrorListeners();// remove default parser error listeners.
