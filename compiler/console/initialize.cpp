@@ -5,11 +5,13 @@
 
 #include "initialize.hpp"
 
+#include "../base/info.hpp"
+
 // Comms headers
 #include "basic.hpp"
 
-namespace Comms {
-    namespace CLI {
+namespace Console {
+    namespace Internal {
         // Track status
         static bool isInitialized = false;
 

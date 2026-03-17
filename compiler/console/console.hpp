@@ -5,38 +5,29 @@
 
 #pragma once
 
-#include "../common/headers.hpp"
-#include "dynamic.hpp" // JUG_COMMS_API
+#include "../../core/common/headers.hpp"
 
 // Basic C++ headers
 #include <variant>
 
 // Include comms headers
-#include "CLI/basic.hpp"
-#include "CLI/report.hpp"
-#include "CLI/initialize.hpp"
-#include "CLI/finalize.hpp"
+#include "basic.hpp"
+#include "report.hpp"
+#include "initialize.hpp"
+#include "finalize.hpp"
 
 // Pack the report function into a macro
 #define REPORT(...)                                                 \
-    Comms::report(Comms::ReportInputs{__VA_ARGS__})                 \
+    Console::report(Console::ReportInputs{__VA_ARGS__})             \
 
-namespace Comms {
-    // Communication mode
-    // (may need to introduce more complex modes!)
-    enum Mode {
-        CLI_MODE = 0xFFF00001,
-        LSP_MODE = 0xFFF00002
-    };
-    extern JUG_COMMS_API Mode mode;
-
+namespace Console {
     // General compiler status
     namespace ProcessReport {
         // It may become necessary to introduce static tracking variables to keep up with more complex error reports
         // to support LSP!
-        extern JUG_COMMS_API int programStatus;
+        extern int programStatus;
         // Keep track of the reporting status
-        extern JUG_COMMS_API bool didSendReport;
+        extern bool didSendReport;
     }
 
     // Report actions
@@ -64,38 +55,38 @@ namespace Comms {
     // Report-specific status
     namespace IndividualReport {
         // Current reporting status!
-        extern JUG_COMMS_API bool isNew; // Check if this is a new report!
-        extern JUG_COMMS_API ReportType type;
-        extern JUG_COMMS_API std::string stage;
-        extern JUG_COMMS_API std::stringstream messageStream;
+        extern bool isNew; // Check if this is a new report!
+        extern ReportType type;
+        extern std::string stage;
+        extern std::stringstream messageStream;
 
         // Code-related report data
-        extern JUG_COMMS_API std::string path;
-        extern JUG_COMMS_API size_t startLine;
-        extern JUG_COMMS_API size_t startColumn;
-        extern JUG_COMMS_API size_t endLine;
-        extern JUG_COMMS_API size_t endColumn;
+        extern std::string path;
+        extern size_t startLine;
+        extern size_t startColumn;
+        extern size_t endLine;
+        extern size_t endColumn;
     }
 
     // Keep track of general report statistics
     namespace Statistics {
-        extern JUG_COMMS_API int normalReports;
-        extern JUG_COMMS_API int warningReports;
-        extern JUG_COMMS_API int criticalReports;
-        extern JUG_COMMS_API int fatalReports;
-        extern JUG_COMMS_API int actionReports;
-        extern JUG_COMMS_API int debugReports;
+        extern int normalReports;
+        extern int warningReports;
+        extern int criticalReports;
+        extern int fatalReports;
+        extern int actionReports;
+        extern int debugReports;
     }
 
     // Reporting
-    extern JUG_COMMS_API void report(const ReportInputs& args) ;
+    extern void report(const ReportInputs& args) ;
 
     // Initalise protocol
-    extern JUG_COMMS_API void initalize() ;
+    extern void initalize() ;
 
     // For actions that require minimal finalisation!
-    extern JUG_COMMS_API bool minimalProtocolFinalization;
+    extern bool minimalProtocolFinalization;
 
     // Finalise protocol
-    extern JUG_COMMS_API void finalize() ;
+    extern void finalize() ;
 }

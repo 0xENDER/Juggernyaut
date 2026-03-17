@@ -100,7 +100,8 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${JUG_BINARY_DIR}/Release/${JUG_BINAR
 
 # Attach manifest.ini info to targets!
 # (Only supports executables and dynamic libraries!)
-function(attach_manifest_data TARGET MANIFEST)
+function(attach_manifest_data TARGET MANIFEST LINK_INFO)
+
     message(STATUS "[BUILD] Attaching manifest data to target: ${TARGET}")
     # Set versioning info
     get_ini_value(${MANIFEST} "TARGET:${TARGET}" "VERSION" INI_VERSION)
@@ -143,39 +144,41 @@ function(attach_manifest_data TARGET MANIFEST)
     get_target_property(target_type ${TARGET} TYPE)
 
     # Link native platform
-    if(WIN32)
-        # Modify binary name
-        if(target_type STREQUAL "SHARED_LIBRARY")
-            set(IN_BIN_NAME "${TARGET}.dll")
-        else()
-            set(IN_BIN_NAME "${TARGET}.exe")
-        endif()
-        # Compile Windows resource script file
-        set(WIN32_VERSIONING_RC_FILE ${JUG_BUILD_DIR}/versioning/${TARGET}.Rc)
-        set(WIN32_VERSIONING_RES_FILE ${JUG_BUILD_DIR}/versioning/${TARGET}.res)
-        configure_file(${JUG_CMAKE_DIR}/version/VersionInfo.Rc.in ${WIN32_VERSIONING_RC_FILE})
-        execute_process(
-            COMMAND ${RC_EXECUTABLE} /fo ${WIN32_VERSIONING_RES_FILE} ${WIN32_VERSIONING_RC_FILE}
-            RESULT_VARIABLE command_result
-        )
-        if(NOT command_result EQUAL 0)
-            message(FATAL_ERROR "[BUILD] Couldn't compile Windows resource file: ${WIN32_VERSIONING_RES_FILE}")
-        endif()
-        # Link Windows resource file to target
-        target_link_libraries(${TARGET} PRIVATE ${WIN32_VERSIONING_RES_FILE})
-    elseif(CMAKE_SYSTEM_NAME MATCHES "Darwin")
-        # Modify binary name
-        if(target_type STREQUAL "SHARED_LIBRARY")
-            set(IN_BIN_NAME "lib${TARGET}.${IN_BIN_VERSION_NAME}.dylib")
-        else()
-            set(IN_BIN_NAME "${TARGET}.${IN_BIN_VERSION_NAME}")
-        endif()
-    elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
-        # Modify binary name
-        if(target_type STREQUAL "SHARED_LIBRARY")
-            set(IN_BIN_NAME "lib${TARGET}.so.${IN_BIN_VERSION_NAME}")
-        else()
-            set(IN_BIN_NAME "${TARGET}.${IN_BIN_VERSION_NAME}")
+    if(LINK_INFO)
+        if(WIN32)
+            # Modify binary name
+            if(target_type STREQUAL "SHARED_LIBRARY")
+                set(IN_BIN_NAME "${TARGET}.dll")
+            else()
+                set(IN_BIN_NAME "${TARGET}.exe")
+            endif()
+            # Compile Windows resource script file
+            set(WIN32_VERSIONING_RC_FILE ${JUG_BUILD_DIR}/versioning/${TARGET}.Rc)
+            set(WIN32_VERSIONING_RES_FILE ${JUG_BUILD_DIR}/versioning/${TARGET}.res)
+            configure_file(${JUG_CMAKE_DIR}/version/VersionInfo.Rc.in ${WIN32_VERSIONING_RC_FILE})
+            execute_process(
+                COMMAND ${RC_EXECUTABLE} /fo ${WIN32_VERSIONING_RES_FILE} ${WIN32_VERSIONING_RC_FILE}
+                RESULT_VARIABLE command_result
+            )
+            if(NOT command_result EQUAL 0)
+                message(FATAL_ERROR "[BUILD] Couldn't compile Windows resource file: ${WIN32_VERSIONING_RES_FILE}")
+            endif()
+            # Link Windows resource file to target
+            target_link_libraries(${TARGET} PRIVATE ${WIN32_VERSIONING_RES_FILE})
+        elseif(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+            # Modify binary name
+            if(target_type STREQUAL "SHARED_LIBRARY")
+                set(IN_BIN_NAME "lib${TARGET}.${IN_BIN_VERSION_NAME}.dylib")
+            else()
+                set(IN_BIN_NAME "${TARGET}.${IN_BIN_VERSION_NAME}")
+            endif()
+        elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
+            # Modify binary name
+            if(target_type STREQUAL "SHARED_LIBRARY")
+                set(IN_BIN_NAME "lib${TARGET}.so.${IN_BIN_VERSION_NAME}")
+            else()
+                set(IN_BIN_NAME "${TARGET}.${IN_BIN_VERSION_NAME}")
+            endif()
         endif()
     endif()
 

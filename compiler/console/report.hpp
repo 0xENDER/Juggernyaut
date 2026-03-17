@@ -5,15 +5,14 @@
 
 #pragma once
 
-#include "../../common/headers.hpp"
-#include "../dynamic.hpp" // JUG_COMMS_API
+#include "../../core/common/headers.hpp"
 
-namespace Comms {
-    namespace CLI {
+namespace Console {
+    namespace Internal {
         // Handle reports CLI outputs
         namespace Reports {
             // Print report details
-            extern JUG_COMMS_API void print() ;
+            extern void print() ;
         }
     }
 }

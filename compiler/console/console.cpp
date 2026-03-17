@@ -3,19 +3,15 @@
  * Enable uniform reports for both consoles and IDEs
 **/
 
-#include "comms.hpp"
+#include "console.hpp"
 
-namespace Comms {
-    // Communication mode
-    // (may need to introduce more complex modes!)
-    Mode mode = CLI_MODE; // defaults to CLI mode!
-
+namespace Console {
     // Handle error throw statement
     static void throwError(std::string msg) {
-        std::cerr << CLI::color("[Internal Error] ", Comms::CLI::Color::red)
-            << CLI::color(msg, Comms::CLI::Color::red)
-            << CLI::color(BAD_CODE_OR_MEMORY_LEAKS,
-                Comms::CLI::Color::red)
+        std::cerr << Internal::color("[Internal Error] ", Console::Internal::Color::red)
+            << Internal::color(msg, Console::Internal::Color::red)
+            << Internal::color(BAD_CODE_OR_MEMORY_LEAKS,
+                Console::Internal::Color::red)
             << std::endl;
         throw std::runtime_error(msg);
     }
@@ -69,15 +65,8 @@ namespace Comms {
             if(!ProcessReport::didSendReport){
                 ProcessReport::didSendReport = true;
             }
-            // Send report data to CLI/LSP
-            if (mode == CLI_MODE) {
-                // Print report details
-                CLI::Reports::print();
-            } else if (mode == LSP_MODE) {
-                throwError("Currently, 'LSP' Comms::mode is not supported!");
-            } else {
-                throwError("Unsupported Comms::mode value!"); 
-            }
+            // Print report details
+            Internal::Reports::print();
             // Reset report data
             reset();
         }
@@ -203,15 +192,8 @@ namespace Comms {
 
     // Initalise protocol
     void initalize() {
-        if(mode == CLI_MODE){
-            // Initialise CLI mode
-            CLI::initialize(); //TMP
-        } else if(mode == LSP_MODE){
-            // Initialise LSP mode
-            // ...
-        } else {
-            throwError("Unknown Comms::mode value!"); 
-        }
+        // Initialise Internal mode
+        Internal::initialize(); //TMP
     }
 
     // Keep track of finalisation
@@ -227,15 +209,8 @@ namespace Comms {
         }
         isFinalized = true;
 
-        if(mode == CLI_MODE){
-            // Finalize CLI mode
-            CLI::finalize(); //TMP
-        } else if(mode == LSP_MODE){
-            // Finalize LSP mode
-            // ...
-        } else {
-            throwError("Unknown Comms::mode value!"); 
-        }
+        // Finalize Internal mode
+        Internal::finalize(); //TMP
 
         // Check for unfinished reports
         if(ProcessReport::didSendReport && !IndividualReport::isNew){

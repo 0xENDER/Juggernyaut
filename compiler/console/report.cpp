@@ -6,7 +6,7 @@
 #include "report.hpp"
 
 // Comms headers
-#include "../comms.hpp"
+#include "console.hpp"
 #include "basic.hpp"
 
 // Shortent the syntax for printing to the console
@@ -17,8 +17,8 @@
         std::cerr << DATA << std::flush;                    \
     }                                                       \
 
-namespace Comms {
-    namespace CLI {
+namespace Console {
+    namespace Internal {
         // Handle reports CLI outputs
         namespace Reports {
             // Sanitise strings for console output
@@ -56,7 +56,7 @@ namespace Comms {
 
                     // Print to the chosen output channel
                     if (shouldColor) {
-                        INTERNAL_C_OUT(Comms::CLI::color(data, color), channel);
+                        INTERNAL_C_OUT(Console::Internal::color(data, color), channel);
                     } else {
                         INTERNAL_C_OUT(data, channel);
                     }

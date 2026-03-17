@@ -5,8 +5,6 @@
 
 #include "debug.hpp"
 
-#include "../comms/comms.hpp"
-
 namespace Common {
     namespace CrtDebug {
         // Set the flags for the memory check mode!
@@ -45,7 +43,7 @@ namespace Common {
         bool processCrtMemoryReports() {
             #ifdef WINDOWS_CRTDEBUG_ACTIVE
                 std::string leakReport = captureCrtDumpMemoryLeaks();
-                std::cout << Comms::CLI::color("Leak Report:\n", Comms::CLI::Color::red) << leakReport << std::endl;
+                std::cout << "Leak Report:\n" << leakReport << std::endl;
                 return false;
             #else
                 return false; // Always return a success state! (Non-windows machines)

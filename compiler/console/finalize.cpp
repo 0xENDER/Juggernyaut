@@ -6,11 +6,11 @@
 #include "finalize.hpp"
 
 // Comms headers
-#include "../comms.hpp"
+#include "console.hpp"
 #include "basic.hpp"
 
-namespace Comms {
-    namespace CLI {
+namespace Console {
+    namespace Internal {
         // Handle CLI finalisation
         void finalize() {
             if (minimalProtocolFinalization) { //TMP
@@ -20,7 +20,7 @@ namespace Comms {
 
             // Keep track of the program's status
             std::string status;
-            if (Comms::ProcessReport::programStatus == 0) {
+            if (Console::ProcessReport::programStatus == 0) {
                 status = "Success";
             } else {
                 status = "Failure";
