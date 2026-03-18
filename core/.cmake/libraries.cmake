@@ -33,6 +33,13 @@ add_custom_command(TARGET JuggernyautParserLibrary
                     COMMAND ${CMAKE_COMMAND}
                            -E copy ${ANTLR4_RUNTIME_LIBRARIES} .
                     WORKING_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+# Fix antlr4-runtime library naming on Linux!
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    get_filename_component(ANTLR_FILENAME "${ANTLR4_RUNTIME_LIBRARIES}" NAME)
+    delete_file(JuggernyautParserLibrary "${ANTLR_FILENAME}.${ANTLR4_TAG}")
+    rename_file(JuggernyautParserLibrary ${ANTLR_FILENAME} "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${ANTLR_FILENAME}.${ANTLR4_TAG}")
+    create_symbolic_link(JuggernyautParserLibrary "${ANTLR_FILENAME}.${ANTLR4_TAG}" ${ANTLR_FILENAME})
+endif()
 
 # Expose the core libraries
 set(CORE_LIBRARIES

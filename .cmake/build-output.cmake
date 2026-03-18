@@ -209,3 +209,45 @@ function(manage_symbolic_links POST_TARGET JUG_COMMAND_NAME)
         WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     )
 endfunction()
+function(create_symbolic_link TARGET SOURCE LINK)
+    if(WIN32)
+        set(SYMBOLIC_LINKS_COMMAND_LINK start /wait powershell -Command "Start-Process powershell -Verb RunAs -ArgumentList \\\"-Command cd '${CMAKE_RUNTIME_OUTPUT_DIRECTORY}' \; New-Item -Path ${LINK}.exe -ItemType SymbolicLink -Value ${SOURCE}.exe \\\" ")
+    else()
+        set(SYMBOLIC_LINKS_COMMAND_LINK ln -s ${SOURCE} ${LINK})
+    endif()
+    add_custom_command(
+        TARGET ${TARGET}
+        POST_BUILD
+        #COMMAND ${SYMBOLIC_LINKS_COMMAND_DELETE}
+        COMMAND ${SYMBOLIC_LINKS_COMMAND_LINK}
+        WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    )
+endfunction()
+
+# Post-build files
+function(delete_file TARGET FILE)
+    if(WIN32)
+        set(DELETE_COMMAND del /f /q /s ${FILE})
+    else()
+        set(DELETE_COMMAND rm -f ${FILE})
+    endif()
+    add_custom_command(
+        TARGET ${TARGET}
+        POST_BUILD
+        COMMAND ${DELETE_COMMAND}
+        WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    )
+endfunction()
+function(rename_file TARGET OLD_PATH NEW_PATH)
+    if(WIN32)
+        set(RENAME_COMMAND ren ${OLD_PATH} ${NEW_PATH})
+    else()
+        set(RENAME_COMMAND mv ${OLD_PATH} ${NEW_PATH})
+    endif()
+    add_custom_command(
+        TARGET ${TARGET}
+        POST_BUILD
+        COMMAND ${RENAME_COMMAND}
+        WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    )
+endfunction()
