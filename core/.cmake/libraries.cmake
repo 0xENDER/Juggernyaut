@@ -38,7 +38,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     get_filename_component(ANTLR_FILENAME "${ANTLR4_RUNTIME_LIBRARIES}" NAME)
     delete_file(JuggernyautParserLibrary "${ANTLR_FILENAME}.${ANTLR4_TAG}")
     rename_file(JuggernyautParserLibrary ${ANTLR_FILENAME} "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${ANTLR_FILENAME}.${ANTLR4_TAG}")
-    create_symbolic_link(JuggernyautParserLibrary "${ANTLR_FILENAME}.${ANTLR4_TAG}" ${ANTLR_FILENAME})
+    create_symbolic_link(JuggernyautParserLibrary "${ANTLR_FILENAME}.${ANTLR4_TAG}" ${ANTLR_FILENAME} FALSE)
 endif()
 
 # Expose the core libraries
