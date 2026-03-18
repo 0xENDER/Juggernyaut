@@ -37,9 +37,9 @@ jobs:
     - name: Install dependencies (32-bits)
       if: inputs.build_platform_name == 'x86_32'
       run: |
-        sudo dpkg --add-architecture i386
+        sudo dpkg --add-architecture i686
         sudo apt-get update
-        sudo apt-get install gcc-multilib g++-multilib libc6-dev-i386
+        sudo apt-get install -y gcc-i686-linux-gnu g++-i686-linux-gnu
 
     - name: Install dependencies (ARM 32-bit)
       if: inputs.build_platform_name == 'arm32'
@@ -53,8 +53,14 @@ jobs:
       run: mkdir ${{github.workspace}}/.build
 
     - name: Configure CMake
-      if: inputs.build_platform_name != 'arm32'
+      if: inputs.build_platform_name != 'x86_32' && inputs.build_platform_name != 'arm32'
       run: cmake .. -DCMAKE_BUILD_TYPE=${{inputs.build_mode}} -DCMAKE_UNIX_GENERATOR_PLATFORM=${{inputs.build_platform}}
+      working-directory: .build
+
+    - name: Configure CMake (32-bit)
+      if: inputs.build_platform_name == 'x86_32'
+      run: cmake .. -DCMAKE_BUILD_TYPE=${{inputs.build_mode}} -DCMAKE_UNIX_GENERATOR_PLATFORM=${{inputs.build_platform}} \
+        -DCMAKE_C_COMPILER=i686-linux-gnu-gcc -DCMAKE_CXX_COMPILER=i686-linux-gnu-g++ -DCMAKE_SYSTEM_PROCESSOR=i686
       working-directory: .build
 
     - name: Configure CMake (ARM 32-bit)
