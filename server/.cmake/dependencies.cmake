@@ -22,11 +22,11 @@ else()
             GIT_TAG ${LSP_FRAMEWORK_LIB_VERSION}
             SOURCE_DIR ${JUG_DEP_LSP_FRAMEWORK_LIB_PATH})
     endif()
-    add_subdirectory(${JUG_DEP_LSP_FRAMEWORK_LIB_PATH} ${JUG_BUILD_DIR}/lsp-framework SYSTEM)
+    FetchContent_MakeAvailable(lsp)
 endif()
 # Turn off the "unused-result" warning for the lsp target specifically
 if(TARGET lsp)
-    target_compile_options(lsp PRIVATE -Wno-unused-result)
+    target_compile_options(lsp PRIVATE -Wno-unused-result -Wno-error=shadow)
 endif()
 # Post-build cleanup
 add_custom_target(LSPCleanup ALL
