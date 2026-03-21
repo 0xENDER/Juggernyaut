@@ -26,7 +26,7 @@ else()
 endif()
 # Turn off the "unused-result" warning for the lsp target specifically
 if(TARGET lsp)
-    target_compile_options(lsp PRIVATE -Wno-unused-result -Wno-error=shadow)
+    target_compile_options(lsp PRIVATE -Wno-unused-result -Wno-shadow)
 endif()
 # Post-build cleanup
 add_custom_target(LSPCleanup ALL
