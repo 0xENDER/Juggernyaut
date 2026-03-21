@@ -13,6 +13,12 @@ foreach(LIB ${CORE_LIBRARIES})
     target_link_libraries(JuggernyautServer PUBLIC ${LIB})
 endforeach()
 
+# Link external libraries
+# lsp-framework
+add_dependencies(JuggernyautServer lsp)
+target_link_libraries(JuggernyautServer PUBLIC lsp)
+
+
 # Handle dynamic libraries
 target_link_directories(JuggernyautServer PRIVATE "$<TARGET_FILE_DIR:JuggernyautServer>")
 
