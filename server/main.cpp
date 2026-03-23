@@ -18,6 +18,9 @@
 // lsp-framework
 #include "lspFramework.hpp"
 
+// Base
+#include "base/info.hpp"
+
 // Parser
 #include "../core/parser/parser.hpp"
 #include "../core/parser/listeners/errors.hpp"
@@ -156,7 +159,7 @@ void registerCallbacks (lsp::MessageHandler &messageHandler, bool &is_running) {
                 },
                 .serverInfo = lsp::InitializeResultServerInfo {
                     .name = "Juggernyaut Language Server",
-                    .version = MAIN_TARGET_BINARY_VERSION
+                    .version = Base::Info::version
                 },
             };
         }
