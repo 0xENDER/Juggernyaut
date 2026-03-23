@@ -80,6 +80,11 @@
                 "command": "juggernyaut.docs",
                 "title": "Check the latest Juggernyaut documentation!",
                 "category": "Juggernyaut"
+            },
+            {
+                "command": "juggernyaut.server.stop",
+                "title": "Terminate the (running) Juggernyaut language server!",
+                "category": "Juggernyaut"
             }
         ],
         "files": [

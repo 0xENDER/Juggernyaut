@@ -1,4 +1,4 @@
-import { Uri } from 'vscode';
+import { window, workspace, Uri, ExtensionContext, OutputChannel  } from 'vscode';
 import {
     LanguageClient,
     LanguageClientOptions,
@@ -8,9 +8,9 @@ import {
 import * as sdk from "./sdk"
 import { getCommand } from './platform';
 
-export let client: LanguageClient;
+export let client: LanguageClient | undefined = undefined;
 
-export async function start() {
+async function start() {
     // Define the path to the executable!
     const sdkPath: string = await sdk.getPath();
     if(sdkPath == "") {
@@ -47,3 +47,67 @@ export async function start() {
     );
     client.start();
 }
+
+// Restrict language server runtime
+let isChangingServerState = false;
+async function manageServerLifecycle() {
+    if (isChangingServerState) {
+        return;
+    }
+    const hasActiveFiles = workspace.textDocuments.some(
+        (doc) => doc.languageId === 'juggernyaut' 
+    );
+
+    // Start/stop the server
+    if (hasActiveFiles && client == undefined) { // Start
+        isChangingServerState = true;
+        await start();
+        isChangingServerState = false;
+    } else if (!hasActiveFiles && client != undefined) { // Stop
+        isChangingServerState = true;
+        await client.stop();
+        client = undefined; // Clear the reference so it can be restarted
+        isChangingServerState = false;
+    }
+}
+
+// Prevent excessive updates
+let debounceTimeout: NodeJS.Timeout | undefined;
+function debouncedLifecycleCheck() {
+    if (debounceTimeout) {
+        clearTimeout(debounceTimeout);
+    }
+    
+    // Start a new timer
+    debounceTimeout = setTimeout(() => {
+        manageServerLifecycle();
+    }, 150);
+}
+
+export function activate(context: ExtensionContext) {
+    manageServerLifecycle();
+    context.subscriptions.push(
+        workspace.onDidChangeConfiguration(debouncedLifecycleCheck),
+        workspace.onDidOpenTextDocument(debouncedLifecycleCheck),
+        workspace.onDidCloseTextDocument(debouncedLifecycleCheck),
+        workspace.onDidRenameFiles(debouncedLifecycleCheck),
+        workspace.onDidCreateFiles(debouncedLifecycleCheck),
+        workspace.onDidDeleteFiles(debouncedLifecycleCheck),
+        workspace.onDidChangeWorkspaceFolders(debouncedLifecycleCheck)
+    );
+}
+
+export async function deactivate() {
+    if (client == undefined) {
+        return undefined;
+    }
+    if (isChangingServerState == true) {
+        await new Promise(resolve => setTimeout(resolve, 150));
+        return await deactivate();
+    }
+    isChangingServerState = true;
+    await client.stop();
+    client = undefined; // Clear the reference so it can be restarted
+    isChangingServerState = false;
+}
+
