@@ -22,6 +22,9 @@ const server = {
         await deactivate();
         window.showInformationMessage("The Juggernyaut language server has been deactivated.")
     }),
+    output: commands.registerCommand('juggernyaut.server.debug', async () => {
+        outputChannel.show(true);
+    })
 };
 
 export function register(context: ExtensionContext) {

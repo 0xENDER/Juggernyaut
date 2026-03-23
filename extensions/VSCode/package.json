@@ -85,6 +85,11 @@
                 "command": "juggernyaut.server.stop",
                 "title": "Terminate the (running) Juggernyaut language server!",
                 "category": "Juggernyaut"
+            },
+            {
+                "command": "juggernyaut.server.debug",
+                "title": "Show the Juggernyaut language server debug output channel!",
+                "category": "Juggernyaut"
             }
         ],
         "files": [
