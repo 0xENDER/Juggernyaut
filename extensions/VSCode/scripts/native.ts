@@ -15,7 +15,7 @@ export async function findGlobalSDKPath(): Promise<string|undefined> {
 
     if (resolvedPath) {
         info(Section.NATIVE, `Found global command at: ${resolvedPath}`);
-        const sdkPath: string = Uri.joinPath(Uri.file(resolvedPath), '..').fsPath;
+        const sdkPath: string = Uri.joinPath(Uri.file(resolvedPath), '../..').fsPath;
         info(Section.NATIVE, `Detected global SDK path: ${sdkPath}`);
         return sdkPath;
     }
