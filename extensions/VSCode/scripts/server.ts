@@ -17,6 +17,7 @@ import { info, Section } from './channel';
 
 export let client: LanguageClient | undefined = undefined;
 let haultCycle: boolean = false;
+let spawnCount: number = 0;
 
 async function start() {
     // Define the path to the executable!
@@ -49,7 +50,7 @@ async function start() {
     // Create the language client and start the client.
     client = new LanguageClient(
         'juggernyaut',
-        'Juggernyaut Language Server',
+        `Juggernyaut Language Server (${++spawnCount})`,
         serverOptions,
         clientOptions
     );

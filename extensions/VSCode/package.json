@@ -131,7 +131,7 @@
         "general programming language"
     ],
     "scripts": {
-        "build": "tsc",
+        "build": "esbuild ./scripts/extension.ts --bundle --outfile=./scripts/extension.js --external:vscode --format=cjs --platform=node && esbuild ./scripts/extension.light.ts --bundle --outfile=./scripts/extension.light.js --external:vscode --format=cjs --platform=node",
         "vsce-package": "vsce package --no-dependencies --baseContentUrl https://github.com/Ender-ing/juggernyaut/tree/main/supplements/VSCode-Extension",
         "win-copy-license": "xcopy /y ..\\..\\LICENSE .",
         "lix-copy-license": "cp ../../LICENSE .",
@@ -147,6 +147,7 @@
         "@types/vscode": "^1.94.0",
         "@types/which": "^3.0.4",
         "@vscode/vsce": "^3.2.1",
+        "esbuild": "^0.27.4",
         "typescript": "^5.6.3"
     },
     "dependencies": {
