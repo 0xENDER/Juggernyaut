@@ -27,7 +27,7 @@ jobs:
         run: |
           RAW_TAG="${{github.ref_name}}"
           VERSION="${RAW_TAG#v}" 
-          echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
+          echo "RELEASE_VERSION=$VERSION" >> $GITHUB_OUTPUT
           echo "Extracted Version: $VERSION"
 
   # VSCode
