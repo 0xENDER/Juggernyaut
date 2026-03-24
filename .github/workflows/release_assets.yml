@@ -15,6 +15,15 @@ on:
 
 jobs:
 
+  - name: Extract version
+    id: get_version
+    shell: bash
+    run: |
+      RAW_TAG="${{github.ref_name}}"
+      VERSION="${RAW_TAG#v}" 
+      echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
+      echo "Extracted Version: $VERSION"
+
   # VSCode
   build-vscode-extension:
     name: Build VSCode package
@@ -29,6 +38,7 @@ jobs:
     with:
       build_mode: Release
       bundle_binaries: true
+      release_version: ${{env.RELEASE_VERSION}}
 
   create-github-release:
     name: Create GitHub Release
