@@ -18,6 +18,8 @@ jobs:
   manage-release-version:
     name: Manage release version
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get_version.outputs.RELEASE_VERSION }}
     steps:
       - name: Extract version
         id: get_version
@@ -44,7 +46,7 @@ jobs:
     with:
       build_mode: Release
       bundle_binaries: true
-      release_version: ${{env.RELEASE_VERSION}}
+      release_version: ${{needs.manage-release-version.outputs.version}}
 
   create-github-release:
     name: Create GitHub Release
