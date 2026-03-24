@@ -15,7 +15,7 @@ on:
 
 jobs:
 
-  create-github-release:
+  manage-release-version:
     name: Manage release version
     runs-on: ubuntu-latest
     steps:
@@ -40,7 +40,7 @@ jobs:
     name: Generate 'Release' binaries
     uses: ./.github/workflows/_binaries_dynamic_build.yml
     needs:
-      - create-github-release
+      - manage-release-version
     with:
       build_mode: Release
       bundle_binaries: true
@@ -54,7 +54,6 @@ jobs:
     needs:
       - build-vscode-extension
       - build-binaries-release
-      - create-github-release
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
