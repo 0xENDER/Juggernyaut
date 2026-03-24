@@ -22,8 +22,7 @@ namespace Store {
         public:
             Document* getDocument(const std::string &uri) ;
             const Document* getDocument(const std::string &uri) const ;
-            void deleteDocument(const std::string &uri) ;
-            void deleteDocument(Document &doc) ;
+            void deleteDocument(const std::string uri) ;
             // Triggers addDocument when needed!
             void initDocument(const std::string &uri) ;
     };

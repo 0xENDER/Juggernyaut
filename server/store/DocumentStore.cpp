@@ -54,11 +54,8 @@ namespace Store {
             return nullptr;
         }
     }
-    void DocumentStore::deleteDocument(const std::string &uri) {
+    void DocumentStore::deleteDocument(const std::string uri) {
         this->documents.erase(uri);
-    }
-    void DocumentStore::deleteDocument(Document &doc) {
-        this->documents.erase(doc.uri);
     }
     void DocumentStore::initDocument(const std::string &uri) {
         auto doc = this->documents.find(uri);

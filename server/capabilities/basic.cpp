@@ -105,7 +105,7 @@ namespace Capabilities {
 
                 // Delete if not in use!
                 if (!doc.getIsImported()) {
-                    store.deleteDocument(doc);
+                    store.deleteDocument(doc.uri);
                 }
             }
         );
