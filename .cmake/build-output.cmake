@@ -108,6 +108,9 @@ function(attach_manifest_data TARGET MANIFEST LINK_INFO)
     # Set versioning info
     get_ini_value(${MANIFEST} "TARGET:${TARGET}" "VERSION" INI_VERSION)
     #get_ini_value(${MANIFEST} "TARGET:${TARGET}" "SOVERSION" INI_SOVERSION)
+    if(INI_VERSION STREQUAL "NO_ARG_VAL")
+        set(INI_VERSION "0.0.0-cmake.000")
+    endif()
 
     # Update target info
     set_target_properties(${TARGET} PROPERTIES # THIS DOESN'T WORK!
