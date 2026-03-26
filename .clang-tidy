@@ -15,4 +15,6 @@ WarningsAsErrors: >
   performance-inefficient-vector-operation,
   performance-for-range-copy
 
+HeaderFilterRegex: '^(?!.*(/.build|/.deps)).*'
+
 FormatStyle: none

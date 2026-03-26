@@ -97,6 +97,9 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE ${JUG_BINARY_DIR}/Release/${JUG_BINAR
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${JUG_BINARY_DIR}/Debug/${JUG_BINARY_PLATFORM}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${JUG_BINARY_DIR}/Release/${JUG_BINARY_PLATFORM}/lib)
 
+# Generate compile command database
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # Attach manifest.ini info to targets!
 # (Only supports executables and dynamic libraries!)
 function(attach_manifest_data TARGET MANIFEST LINK_INFO)
