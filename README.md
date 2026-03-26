@@ -24,3 +24,8 @@ Includes the server language. (Follows the LSP)
 ```bash
 valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./NAME
 ```
+
+## Releases
+
+The comment of the last commit made before a release must follow the pattern the `* -FULL`.
+This is done as to ensure all architectures are built and tested successfully!
