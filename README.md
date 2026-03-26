@@ -18,3 +18,9 @@ Includes extensions for well-known code editors.
 
 - `/server`:
 Includes the server language. (Follows the LSP)
+
+## Memory debugging
+
+```bash
+valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./NAME
+```
