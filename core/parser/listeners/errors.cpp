@@ -7,6 +7,8 @@
 
 #include "../antlr4.hpp"
 
+#include "../../common/utility.hpp"
+
 //#include "../../comms/comms.hpp"
 
 namespace Parser {
@@ -18,30 +20,27 @@ namespace Parser {
         void ErrorListener::syntaxError(antlr4::Recognizer *recognizer, antlr4::Token *offendingSymbol, size_t line,
             size_t charPositionInLine, const std::string &msg, std::exception_ptr e) {
 
-            /*// Get the starting position
-            Comms::IndividualReport::startLine = line;
-            Comms::IndividualReport::startColumn = charPositionInLine;
-
-            // Determine the end position
-            std::string tokenText;
-            if (offendingSymbol) {
-                // TMP
-                tokenText = offendingSymbol->getText();
-                Comms::IndividualReport::endColumn = Comms::IndividualReport::startColumn + tokenText.length();
+            /*if (e) {
+                if (is_type<const antlr4::LexerNoViableAltException *>(&e)) {
+                    // Lexer: Unrecognized character
+                } else if (is_type<const antlr4::InputMismatchException *>(&e)) {
+                    // Parser: Input mismatch
+                } else if (is_type<const antlr4::NoViableAltException *>(&e)) {
+                    // Parser: No viable alternative
+                } else if (is_type<const antlr4::FailedPredicateException *>(&e)) {
+                    // Semantics: Failed predicate
+                } else if (is_type<const antlr4::RecognitionException *>(&e)) {
+                    // Parser: Generic/Custom fallback
+                }
             } else {
-                // TMP
-                tokenText = "<N/A>";
-                Comms::IndividualReport::endColumn = Comms::IndividualReport::startColumn + 1;
-            }
-            Comms::IndividualReport::endLine = line; // TMP
-
-            // Update stage data
-            Comms::IndividualReport::stage = this->stage;
-
-            // Report the error
-            REPORT(Comms::START_REPORT, Comms::CRITICAL_REPORT,
-                msg, "(Token Text: '", tokenText, "')",
-                Comms::END_REPORT);*/
+                if (msg.find("missing") != std::string::npos) {
+                    // Parser: Missing token
+                } else if (msg.find("extraneous") != std::string::npos) {
+                    // Parser: Extraneous token
+                } else {
+                    // Parser: General auto-recovery
+                }
+            }*/
             errorsDetected = true;
         }
 
