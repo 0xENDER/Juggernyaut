@@ -41,7 +41,7 @@ namespace Parser {
             }
 
             // Get the start tree!
-            antlr4::tree::ParseTree *tree = parser.program();
+            antlr4::tree::ParseTree *tree = parser.prog();
 
             // Pass the parse tree!
             onTreeCall((const std::string) tree->toStringTree(&parser));
