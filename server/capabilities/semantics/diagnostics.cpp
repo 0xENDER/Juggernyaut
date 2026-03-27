@@ -8,6 +8,7 @@
 
 // Diagnostics
 #include "../../../core/diagnostics/Diagnostic.hpp"
+#include "../../../core/diagnostics/antlr.hpp"
 
 // lsp-framework
 #include "../../lspFramework.hpp"
