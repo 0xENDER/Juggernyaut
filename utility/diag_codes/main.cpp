@@ -14,16 +14,73 @@
 #include "antlr4-runtime.h"
 #include "DiagnosticsCodeLexer.h"
 #include "DiagnosticsCodeParser.h"
+#include "DiagnosticsCodeParserVisitor.h"
 
 using namespace antlr4;
 using namespace GeneratedParser;
 namespace fs = std::filesystem;
 
-int main(int argc, const char* argv[]) {
-    // 1. Setup the input. Using a hardcoded string to test your error code syntax quickly.
-    // You can swap this with ANTLRFileStream to read from a file instead.
-    std::string testInput = "0[1, \"test\"]:\n-Oh noooo!\n";
-    ANTLRInputStream input(testInput);
+#define ERR \
+std::cerr << "ERROR: "
+
+std::ostringstream output;
+
+// Note: You can specify a return type, e.g., <std::any> or <int>
+class Visitor : public DiagnosticsCodeParserVisitor {
+    public:
+        antlrcpp::Any visitList(DiagnosticsCodeParser::ListContext *context) override {
+            // std::string smth = context->SMTH()->getText();
+
+            // You decide when (or if) to visit the children
+            auto result = visitChildren(context);
+            return result;
+        }
+        antlrcpp::Any visitCode(DiagnosticsCodeParser::CodeContext *context) override {
+            // You decide when (or if) to visit the children
+            auto result = visitChildren(context);
+            return result;
+        }
+        antlrcpp::Any visitFunction(DiagnosticsCodeParser::FunctionContext *context) override {
+            // You decide when (or if) to visit the children
+            auto result = visitChildren(context);
+            return result;
+        }
+        antlrcpp::Any visitStatic(DiagnosticsCodeParser::StaticContext *context) override {
+            // You decide when (or if) to visit the children
+            auto result = visitChildren(context);
+            return result;
+        }
+        antlrcpp::Any visitLine(DiagnosticsCodeParser::LineContext *context) override {
+            // You decide when (or if) to visit the children
+            auto result = visitChildren(context);
+            return result;
+        }
+        antlrcpp::Any visitContent(DiagnosticsCodeParser::ContentContext *context) override {
+            // You decide when (or if) to visit the children
+            auto result = visitChildren(context);
+            return result;
+        }
+        antlrcpp::Any visitEscape(DiagnosticsCodeParser::EscapeContext *context) override {
+            // You decide when (or if) to visit the children
+            auto result = visitChildren(context);
+            return result;
+        }
+        antlrcpp::Any visitVariable_call(DiagnosticsCodeParser::Variable_callContext *context) override {
+            // You decide when (or if) to visit the children
+            auto result = visitChildren(context);
+            return result;
+        }
+        antlrcpp::Any visitVariable_type(DiagnosticsCodeParser::Variable_typeContext *context) override {
+            // You decide when (or if) to visit the children
+            auto result = visitChildren(context);
+            return result;
+        }
+        antlrcpp::Any visitVariable_def(DiagnosticsCodeParser::Variable_defContext *context) override {
+            // You decide when (or if) to visit the children
+            auto result = visitChildren(context);
+            return result;
+        }
+};
 
 int processData(const std::string &path, const std::string &content) {
     // Read content
@@ -49,6 +106,10 @@ int processData(const std::string &path, const std::string &content) {
     std::cout << "======== PARSE TREE ========\n";
     std::cout << tree->toStringTree(&parser) << std::endl;
     std::cout << "============================\n";
+
+    // Analyse code!
+    Visitor visitor;
+    visitor.visit(tree);
 
     return 0;
 }
