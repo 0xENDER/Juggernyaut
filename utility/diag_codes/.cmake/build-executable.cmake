@@ -7,5 +7,6 @@ add_executable(
 )
 
 # ANTLR4
-add_dependencies(JugDiagnosticsCode antlr4_shared)
-target_link_libraries(JugDiagnosticsCode PUBLIC antlr4_shared)
+add_dependencies(JugDiagnosticsCode antlr4_static)
+target_link_libraries(JugDiagnosticsCode PUBLIC antlr4_static)
+target_compile_definitions(JugDiagnosticsCode PRIVATE ANTLR4CPP_STATIC)
