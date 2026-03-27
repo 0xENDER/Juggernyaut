@@ -27,6 +27,7 @@ find_package(ANTLR REQUIRED)
 antlr_target(DiagnosticsCodeLexer ${JUG_UTILITY_DIAGCODES_ANTLR4_LEXER_PATH} LEXER
             PACKAGE GeneratedLexer)
 antlr_target(DiagnosticsCodeParser ${JUG_UTILITY_DIAGCODES_ANTLR4_PARSER_PATH} PARSER
+            VISITOR
             PACKAGE GeneratedParser
             DEPENDS_ANTLR DiagnosticsCodeLexer
             COMPILE_FLAGS -lib ${ANTLR_DiagnosticsCodeLexer_OUTPUT_DIR})

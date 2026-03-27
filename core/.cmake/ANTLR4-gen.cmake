@@ -27,6 +27,7 @@ find_package(ANTLR REQUIRED)
 antlr_target(JuggernyautGrammarLexer ${JUG_ANTLR4_LEXER_PATH} LEXER
             PACKAGE GeneratedLexer)
 antlr_target(JuggernyautGrammarParser ${JUG_ANTLR4_PARSER_PATH} PARSER
+            VISITOR
             PACKAGE GeneratedParser
             DEPENDS_ANTLR JuggernyautGrammarLexer
             COMPILE_FLAGS -lib ${ANTLR_JuggernyautGrammarLexer_OUTPUT_DIR})
