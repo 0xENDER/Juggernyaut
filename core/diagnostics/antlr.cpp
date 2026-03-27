@@ -16,23 +16,23 @@ namespace Diagnostics {
                 std::rethrow_exception(e);
             } catch (const antlr4::LexerNoViableAltException &ex) {
                 // Lexer: Unrecognized character
-                ex;
+                (void)ex;
                 return 3;
             } catch (const antlr4::InputMismatchException &ex) {
                 // Parser: Input mismatch
-                ex;
+                (void)ex;
                 return 4;
             } catch (const antlr4::NoViableAltException &ex) {
                 // Parser: No viable alternative
-                ex;
+                (void)ex;
                 return 5;
             } catch (const antlr4::FailedPredicateException &ex) {
                 // Semantics: Failed predicate
-                ex;
+                (void)ex;
                 return 6; // MIGHT NEED TO REMOVE THIS LATER ON!
             } catch (const antlr4::RecognitionException &ex) {
                 // Parser: Generic/Custom fallback
-                ex;
+                (void)ex;
                 return 1;
             }
         } else {
