@@ -47,6 +47,9 @@ SYM_BRACKET_RIGHT
 SYM_COLON
     : ':'
     ;
+SYM_COMMA
+    : ','
+    ;
 
 ID
     : DIGIT_+
@@ -80,7 +83,7 @@ LINE_CLOSE
         -> popMode
     ;
 LINE_CONTENT
-    : ~('\r' | '\n' | '$' | '\\')
+    : ~('\r' | '\n' | '$' | '\\')+
     ;
 LINE_SLASH_ESCAPE
     : '\\' '\\'

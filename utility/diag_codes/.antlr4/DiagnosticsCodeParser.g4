@@ -25,7 +25,7 @@ code
     ;
 
 function
-    : SYM_BRACKET_LEFT (variable_def*) SYM_BRACKET_RIGHT SYM_COLON line+
+    : SYM_BRACKET_LEFT (variable_def? (SYM_COMMA variable_def)*) SYM_BRACKET_RIGHT SYM_COLON line+
     ;
 
 static
