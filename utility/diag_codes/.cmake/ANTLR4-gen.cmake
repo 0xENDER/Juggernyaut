@@ -13,13 +13,15 @@ set(ANTLR4_WITH_STATIC_CRT OFF)
 # Make sure to update the patch files if the version changes!
 
 # add external build for antlrcpp
-include(ExternalAntlr4Cpp)
+if(NOT TARGET antlr4_runtime)
+    include(ExternalAntlr4Cpp)
+endif()
+# Push to Global Cache
+set(ANTLR4_INCLUDE_DIRS ${ANTLR4_INCLUDE_DIRS} CACHE INTERNAL "ANTLR4 Include Dirs")
+set(ANTLR4_RUNTIME_LIBRARIES ${ANTLR4_RUNTIME_LIBRARIES} CACHE INTERNAL "ANTLR4 Libraries")
 # add antlr4cpp artifacts to project environment
 include_directories(${ANTLR4_INCLUDE_DIRS})
 
-# set variable pointing to the antlr tool that supports C++
-# this is not required if the jar file can be found under PATH environment
-set(ANTLR_EXECUTABLE ${JUG_DEPENDENCIES_ANTLR4_JAR_PATH})
 # add macros to generate ANTLR Cpp code from grammar
 find_package(ANTLR REQUIRED)
 

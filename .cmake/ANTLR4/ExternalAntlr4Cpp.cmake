@@ -177,7 +177,7 @@ ExternalProject_Add_Step(
     WORKING_DIRECTORY ${ANTLR4_BUILD_DIR})
 ExternalProject_Add_StepTargets(antlr4_runtime build_static)
 
-add_library(antlr4_static STATIC IMPORTED)
+add_library(antlr4_static STATIC IMPORTED GLOBAL) # FIX: LINKING ISSUES
 add_dependencies(antlr4_static antlr4_runtime-build_static)
 set_target_properties(antlr4_static PROPERTIES
                       IMPORTED_LOCATION ${ANTLR4_STATIC_LIBRARIES})
@@ -198,7 +198,7 @@ ExternalProject_Add_Step(
     WORKING_DIRECTORY ${ANTLR4_BUILD_DIR})
 ExternalProject_Add_StepTargets(antlr4_runtime build_shared)
 
-add_library(antlr4_shared SHARED IMPORTED)
+add_library(antlr4_shared SHARED IMPORTED GLOBAL) # FIX: LINKING ISSUES
 add_dependencies(antlr4_shared antlr4_runtime-build_shared)
 set_target_properties(antlr4_shared PROPERTIES
                       IMPORTED_LOCATION ${ANTLR4_RUNTIME_LIBRARIES})

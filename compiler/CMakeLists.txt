@@ -16,7 +16,7 @@ set(JUG_DEPENDENCIES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../.deps)
 set(JUG_BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../.dist)
 
 if(NOT DEFINED JUG_GLOBAL_BUILD)
-    add_subdirectory(../core ${JUG_BUILD_DIR}/compiler_core)
+    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../core ${JUG_BUILD_DIR}/compiler_core)
 endif()
 
 # Directories

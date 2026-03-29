@@ -8,6 +8,8 @@
 // Common
 #include "../common/utility.hpp"
 
+#include "DiagCodes.hpp"
+
 namespace Diagnostics {
     int getAntlrErrorCode(const std::string &msg, std::exception_ptr e, bool &isMsgNum) {
 
@@ -101,9 +103,9 @@ namespace Diagnostics {
             std::string customMsg;
             // TMP
             if (error.code == 9) {
-                customMsg = "unclosed string literal";
+                customMsg = CODE_9;
             } else if (error.code == 10) {
-                customMsg = "invalid escape sequence(s) used (within a string)";
+                customMsg = CODE_10;
             } else {
                 customMsg = "Well, heck if I know... :/";
             }
