@@ -19,38 +19,38 @@ namespace Diagnostics {
             } catch (const antlr4::LexerNoViableAltException &ex) {
                 // Lexer: Unrecognized character
                 (void)ex;
-                return 3;
+                return 100001;
             } catch (const antlr4::InputMismatchException &ex) {
                 // Parser: Input mismatch
                 (void)ex;
-                return 4;
+                return 200003;
             } catch (const antlr4::NoViableAltException &ex) {
                 // Parser: No viable alternative
                 (void)ex;
-                return 5;
+                return 200004;
             } catch (const antlr4::FailedPredicateException &ex) {
                 // Semantics: Failed predicate
                 (void)ex;
-                return 6; // MIGHT NEED TO REMOVE THIS LATER ON!
+                return 200008; // MIGHT NEED TO REMOVE THIS LATER ON!
             } catch (const antlr4::RecognitionException &ex) {
                 // Parser: Generic/Custom fallback
                 (void)ex;
-                return 1;
+                return 200001;
             }
         } else {
             if (msg.find("missing") != std::string::npos) {
                 // Parser: Missing token
-                return 7;
+                return 200005;
             } else if (msg.find("extraneous") != std::string::npos) {
                 // Parser: Extraneous token
-                return 8;
+                return 200006;
             } else {
                 if (Common::Utility::isNumber(msg)) {
                     isMsgNum = true;
                     return std::stoi(msg);
                 } else {
                     // Parser: General auto-recovery
-                    return 2;
+                    return 200007;
                 }
             }
         }
@@ -103,10 +103,10 @@ namespace Diagnostics {
         if (shouldFetchMessage) {
             std::string customMsg;
             // TMP
-            if (error.code == 9) {
-                customMsg = CODE_9;
-            } else if (error.code == 10) {
-                customMsg = CODE_10;
+            if (error.code == 100002) {
+                customMsg = CODE_100002;
+            } else if (error.code == 100003) {
+                customMsg = CODE_100003;
             } else {
                 customMsg = "Well, heck if I know... :/";
             }
@@ -143,8 +143,8 @@ namespace Diagnostics {
         warning.range.end.character = (uint32_t) endPos;
         
         warning.severity = Severity::Warning;
-        warning.code = 11;
-        warning.message = CODE_11;
+        warning.code = 200002;
+        warning.message = CODE_200002;
 
         return warning;
     }

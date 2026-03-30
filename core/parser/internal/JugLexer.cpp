@@ -26,10 +26,10 @@ namespace Parser {
 
             switch (tokenType) {
             case JuggernyautLexer::INVALID_1_LIT_STRING:
-                internal_dispatchSyntaxError(this, curToken, "9"); // LEXER ERROR CODE!
+                internal_dispatchSyntaxError(this, curToken, "100002"); // LEXER ERROR CODE!
                 break;
             case JuggernyautLexer::INVALID_2_LIT_STRING:
-                internal_dispatchSyntaxError(this, curToken, "10"); // LEXER ERROR CODE!
+                internal_dispatchSyntaxError(this, curToken, "100003"); // LEXER ERROR CODE!
                 break;
             default:
                 break;

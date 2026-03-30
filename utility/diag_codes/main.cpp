@@ -10,6 +10,8 @@
 #include <fstream>
 #include <sstream>
 #include <cstdint>
+#include <algorithm>
+#include <cctype>
 
 // ANTLR runtime
 #include "antlr4-runtime.h"
@@ -32,6 +34,13 @@ std::cerr << "\033[31m" << "ERROR: "
 
 const bool debug = false;
 
+bool isDigit(const std::string& str) {
+    if (str.empty()) return false;
+
+    return std::all_of(str.begin(), str.end(), [](unsigned char c) {
+        return std::isdigit(c);
+    });
+}
 
 std::string escapeChar(const std::string &text, char target) {
     std::string escapedText;
@@ -54,9 +63,10 @@ class Visitor : public DiagnosticsCodeParserVisitor {
     private:
         DiagnosticsCodeParser* parser;
         const std::string &srcPath;
+        const int zoneId;
     public:
-        Visitor(DiagnosticsCodeParser* parser, const std::string &srcPath)
-            : parser(parser), srcPath(srcPath) {}
+        Visitor(DiagnosticsCodeParser* parser, const std::string &srcPath, int zoneId)
+            : parser(parser), srcPath(srcPath), zoneId(zoneId) {}
         antlrcpp::Any visitList(DiagnosticsCodeParser::ListContext *context) override {
             std::ostringstream out;
             out << "// [START] SRC: " << srcPath << "\n";
@@ -88,6 +98,14 @@ class Visitor : public DiagnosticsCodeParserVisitor {
                 return std::string("(MISSING_CODE_ID)");
             }
             code = static_cast<uint32_t>(std::stoul(id->getText()));
+            if (code > 99999) {
+                this->parser->notifyErrorListeners(
+                    context->getStart(), 
+                    "code id must be smaller than 99999",
+                    nullptr // We don't need to pass a specific exception object here
+                );
+            }
+            code = this->zoneId*100000 + code;
             codeContent.str("");
             codeContent.clear();
             appendSpace = false;
@@ -394,7 +412,7 @@ class ErrorListener : public BaseErrorListener {
             antlr4::atn::ATNConfigSet *configs) override { }
 };
 
-std::string processData(const std::string &path, const std::string &content) {
+std::string processData(const std::string &path, const std::string &content, int zoneId) {
     // Read content
     ANTLRInputStream input(content);
 
@@ -430,7 +448,7 @@ std::string processData(const std::string &path, const std::string &content) {
     }
 
     // Analyse code and insert it into 'output'!
-    Visitor visitor = Visitor(&parser, path);
+    Visitor visitor = Visitor(&parser, path, zoneId);
     return std::move(any_cast<std::string>(visitor.visit(tree)));
 }
 
@@ -466,6 +484,14 @@ int readFileContents(const std::string& filePath, std::string &output) {
     return 0;
 }
 
+int checkFilename(const std::string &name) {
+    if (!isDigit(name)) {
+        ERR << "All .diag file names must only contain digits! ('" << name << "')\n" << ERR_END;
+        return 7;
+    }
+    return 0;
+}
+
 int lookupFiles(const std::string& dir, std::ostringstream &output) {
     std::cout << "Looking up files wihin" << dir <<"\n";
 
@@ -486,8 +512,14 @@ int lookupFiles(const std::string& dir, std::ostringstream &output) {
 
             fs::path path = entry.path();
 
-            if (path.filename().string() == ".diag") {
+            if (path.extension().string() == ".diag") {
                 std::string rawPath = path.string();
+
+                std::string zone = path.stem().string();
+                int nameState = checkFilename(zone);
+                if (nameState != 0) {
+                    return nameState;
+                }
 
                 std::cout << "Processing file: " << rawPath << "\n";
 
@@ -499,7 +531,7 @@ int lookupFiles(const std::string& dir, std::ostringstream &output) {
                 }
 
                 // Process data!
-                output << std::move(processData(rawPath, content));
+                output << std::move(processData(rawPath, content, std::stoi(zone)));
             }
         }
     }
