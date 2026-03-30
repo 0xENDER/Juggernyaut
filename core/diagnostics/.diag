@@ -18,3 +18,5 @@
 -unclosed string literal
 10:
 -invalid escape sequence(s) used (within a string)
+11:
+-syntax ambiguity detected (first interpretation given priority)

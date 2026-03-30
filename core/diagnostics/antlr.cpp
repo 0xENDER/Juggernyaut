@@ -55,7 +55,8 @@ namespace Diagnostics {
             }
         }
     }
-    Diagnostic antlrToDiagnostic(antlr4::Recognizer *recognizer,
+
+    Diagnostic antlrSyntaxErrorToDiagnostic(antlr4::Recognizer *recognizer,
         antlr4::Token *offendingSymbol, size_t line, size_t charPositionInLine,
         const std::string &msg, std::exception_ptr e) {
 
@@ -114,6 +115,37 @@ namespace Diagnostics {
             error.message = msg;
         }
 
-        return error;
+        return std::move(error);
+    }
+
+    Diagnostic antlrAmbiguityToDiagnostic(antlr4::Parser *recognizer, const antlr4::dfa::DFA &dfa, size_t startIndex,
+        size_t stopIndex, bool exact, const antlrcpp::BitSet &ambigAlts, antlr4::atn::ATNConfigSet *configs) {
+
+        Diagnostic warning;
+
+        antlr4::TokenStream *tokens = recognizer->getTokenStream();
+        std::string ambiguousText = tokens->getText(antlr4::misc::Interval(startIndex, stopIndex));
+
+        // First token
+        antlr4::Token *startToken = tokens->get(startIndex);
+        size_t startLine = startToken->getLine();
+        size_t startPos = startToken->getCharPositionInLine();
+
+        // Last token
+        antlr4::Token *stopToken = tokens->get(stopIndex);
+        size_t endLine = stopToken->getLine();
+        size_t endPos = stopToken->getCharPositionInLine() + stopToken->getText().length();
+
+        // Update position data
+        warning.range.start.line = (uint32_t) (startLine - 1);
+        warning.range.start.character = (uint32_t) startPos;
+        warning.range.end.line = (uint32_t) (endLine - 1);
+        warning.range.end.character = (uint32_t) endPos;
+        
+        warning.severity = Severity::Warning;
+        warning.code = 11;
+        warning.message = CODE_11;
+
+        return std::move(warning);
     }
 }
