@@ -16,7 +16,7 @@
 namespace Capabilities {
     namespace Semantics {
         // Internal
-        lsp::DiagnosticSeverity getSeverity(Diagnostics::Severity &severity) {
+        lsp::DiagnosticSeverity internal_getSeverity(Diagnostics::Severity &severity) {
             switch (severity) {
             case Diagnostics::Severity::Error:
                 return lsp::DiagnosticSeverity::Error;
@@ -44,7 +44,7 @@ namespace Capabilities {
             diagnostic.range.end.line = std::move(diag.range.end.line);
             diagnostic.range.end.character = std::move(diag.range.end.character);
 
-            diagnostic.severity = getSeverity(diag.severity);
+            diagnostic.severity = internal_getSeverity(diag.severity);
 
             diagnostic.message = std::move(diag.message);
             diagnostic.code = std::move(diag.code);
@@ -63,7 +63,7 @@ namespace Capabilities {
             diagnostic.range.end.line = std::move(diag.range.end.line);
             diagnostic.range.end.character = std::move(diag.range.end.character);
 
-            diagnostic.severity = getSeverity(diag.severity);
+            diagnostic.severity = internal_getSeverity(diag.severity);
 
             diagnostic.message = std::move(diag.message);
             diagnostic.code = std::move(diag.code);
