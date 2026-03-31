@@ -20,8 +20,7 @@ options {
 //// Parser Rules
 
 prog
-    : (statement)*
-        EOF
+    : statement* EOF
     ; /* This is the initial scope in a file! */
 
 // Statements
@@ -67,7 +66,7 @@ stat_expr
 
 // Empty statement
 stat_empty
-    : SYM_SEMICOLON+
+    : SYM_SEMICOLON
     ;
 
 // NOTE: from here on, no semicolons are allowed within rules
@@ -80,8 +79,7 @@ expr
 
 // Primary data
 prim
-    : // identifier
-    | lit_string
+    : lit_string
     ;
 
 // Identifiers
