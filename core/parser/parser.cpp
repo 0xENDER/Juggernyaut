@@ -15,7 +15,6 @@
 
 namespace Parser {
     namespace Debug {
-        
         // Check for syntax errors
         // [true -> success, false -> failure]
         bool syntaxCheck(const std::string &file_contents, const TokenReport &onTokenCall, const TreeReport &onTreeCall,

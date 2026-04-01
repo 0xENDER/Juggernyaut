@@ -39,7 +39,7 @@ namespace Common {
             if (!file.is_open()) {
                 return false;
             }
-            
+
             // Read the entire file
             std::stringstream buffer;
             buffer << file.rdbuf();
