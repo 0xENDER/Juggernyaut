@@ -34,6 +34,13 @@ else()
     message(FATAL_ERROR "[C++] Compiler ${CMAKE_CXX_COMPILER_ID} not recognized. Character set flags not set.")
 endif()
 
+# Resolve <format> import issues
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "13.0")
+        message(FATAL_ERROR "[C++] GCC version 13.0 or higher is required for <format> support. Detected: ${CMAKE_CXX_COMPILER_VERSION}")
+    endif()
+endif()
+
 # Optimisation flags for Release builds
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     # GCC or Clang
