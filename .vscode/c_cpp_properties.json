@@ -3,7 +3,8 @@
         {
             "includePath": [
                 "${workspaceFolder}/.deps/**",
-                "${workspaceFolder}/.build/**"
+                "${workspaceFolder}/.build/**",
+                "${workspaceFolder}/.build/*core/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/g++-13",
