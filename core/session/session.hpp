@@ -8,6 +8,9 @@
 #include "../common/headers.hpp"
 #include "dynamic.hpp" // JUG_SESSION_API
 
+// Store
+#include "../store/SourceStore.hpp"
+
 // Parser
 #include "../parser/Hooks.hpp"
 
@@ -22,6 +25,7 @@ namespace Session {
     };
     struct Configs {
         Stage terminateAfter = Stage::IRGen;
+        Store::SourceStore store;
     };
 
 
