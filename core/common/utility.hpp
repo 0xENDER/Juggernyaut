@@ -8,6 +8,9 @@
 #include "headers.hpp"
 #include "dynamic.hpp" // JUG_COMMON_API
 
+// Basic C++ libraries
+#include <algorithm>
+
 namespace Common {
     namespace Utility {
         template <typename Target, typename Source>
