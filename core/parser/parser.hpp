@@ -8,6 +8,9 @@
 #include "../common/headers.hpp"
 #include "dynamic.hpp" // JUG_PARSER_API
 
+// Data
+#include "../data/store/SourceStore.hpp"
+
 // Parser
 #include "Hooks.hpp"
 #include "Configs.hpp"
@@ -19,5 +22,5 @@ namespace Parser {
             const TreeReport &onTreeCall,
             Listeners::DiagnosticListener *lexerErrorListener, Listeners::DiagnosticListener *parserErrorListener) ;
     }
-    extern JUG_PARSER_API void sessionWorkflow(const Configs &configs, const Hooks &hooks) ;
+    extern JUG_PARSER_API void sessionWorkflow(const Configs &configs, const Hooks &hooks, const Data::Store::SourceStore &store) ;
 }

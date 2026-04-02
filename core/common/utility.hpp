@@ -16,6 +16,17 @@ namespace Common {
             return dynamic_cast<const Target*>(obj) != nullptr;
         }
 
+        template <typename Type>
+        void fastVectorRemove(std::vector<Type> &vec, Type target) {
+            auto it = std::find(vec.begin(), vec.end(), target);
+            if (it != vec.end()) {
+                // Swap the found element with the last element
+                *it = vec.back(); 
+                // Pop the last element off the end
+                vec.pop_back();   
+            }
+        }
+
         extern JUG_COMMON_API bool isNumber(const std::string &text) ;
     }
 }

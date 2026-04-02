@@ -50,14 +50,27 @@ namespace Parser {
             return Listeners::errorsDetected;
         }
     }
-    void sessionWorkflow(const Configs &configs, const Hooks &hooks) {
+
+    // 
+    void contextWorkflow(const Configs &configs, Data::Store::Source &source) {
         // [STAGE] Lexer
-        // ...
         if (configs.terminateAfterLexer) {
             return;
         }
 
         // [STAGE] Parser
         // ...
+    }
+
+    // Triggered by Session::initiate
+    void sessionWorkflow(const Configs &configs, const Hooks &hooks, Data::Store::SourceStore &store) {
+        Listeners::DiagnosticListener *listener = configs.diagListener;
+
+        store.visitEntries([&configs, &store](const Data::Store::SourceID entryID){
+            // Get source object
+            Data::Store::Source &src = store.getSourceById(entryID);
+
+            contextWorkflow(configs, src);
+        });
     }
 }

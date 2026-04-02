@@ -8,6 +8,7 @@
 #include "../../common/headers.hpp"
 #include "../dynamic.hpp" // JUG_DATA_API
 
+#include "types.hpp"
 #include "SourceStore.hpp"
 
 #pragma warning(push)
@@ -15,27 +16,43 @@
 
 namespace Data {
     namespace Store {
-        class SourceStore;
         class JUG_DATA_API Source {
+            public:
             private:
-                std::string rawContent;
+                SourceID id;
                 std::string uri;
                 SourceStore *store;
+                std::string rawContent;
                 void fetchRawContent() ;
 
                 // Tracking
+                bool isEntryPoint = false;
                 bool shouldUpdateRawContent = true;
+
+                // Dependency tracking
+                std::vector<SourceID> neededSources;
             public:
                 Source() = default;
-                Source(SourceStore *srcStore, std::string srcUri)
-                : store(srcStore), uri(srcUri) {}
-            
+                Source(SourceStore *srcStore, std::string srcUri) ;
+
                 // Tracking
+                SourceID getID();
+
+                // Dependency tracking
+                void addSourceDependency(SourceID dep) ;
+                void removeSourceDependency(SourceID dep) ;
+                void resetSourceDependencies() ;
+
+                // Content Tracking
                 void requestRawUpdate() ;
 
                 // You know nothing about the source's raw content!
                 // This is handled by the store object!
                 const std::string& getRawContent() ;
+
+                // If a file is imported by the user (not through an internal core process),
+                // a source should be treated as an entry point!
+                void setIsEntryPoint(const bool state) ;
         };
     }
 }

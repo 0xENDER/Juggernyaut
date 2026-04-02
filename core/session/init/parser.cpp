@@ -13,12 +13,13 @@ namespace Session {
         void parser(const Session &session) {
             Configs &configs = session.configs;
             Hooks &hooks = session.hooks;
+            Data::Store::SourceStore &store = session.store;
 
             // Generate configs
             Parser::Configs parserConfigs;
             parserConfigs.terminateAfterLexer = (configs.terminateAfter == Stage::Lexer);
 
-            Parser::sessionWorkflow(parserConfigs, hooks.parser);
+            Parser::sessionWorkflow(parserConfigs, hooks.parser, store);
         }
     }
 }
