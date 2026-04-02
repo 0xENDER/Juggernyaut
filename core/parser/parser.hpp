@@ -22,5 +22,5 @@ namespace Parser {
             const TreeReport &onTreeCall,
             Listeners::DiagnosticListener *lexerErrorListener, Listeners::DiagnosticListener *parserErrorListener) ;
     }
-    extern JUG_PARSER_API void sessionWorkflow(const Configs &configs, const Hooks &hooks, const Data::Store::SourceStore &store) ;
+    extern JUG_PARSER_API void sessionWorkflow(const Configs &configs, const Hooks &hooks, Data::Store::SourceStore &store) ;
 }
