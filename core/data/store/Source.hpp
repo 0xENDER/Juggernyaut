@@ -9,7 +9,6 @@
 #include "../dynamic.hpp" // JUG_DATA_API
 
 #include "types.hpp"
-#include "SourceStore.hpp"
 
 #pragma warning(push)
 #pragma warning(disable: 4251) // Suppress DLL interface warning for STL types

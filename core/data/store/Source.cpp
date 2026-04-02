@@ -10,6 +10,8 @@
 // Basic C++ libraries
 #include <algorithm>
 
+#include "SourceStore.hpp"
+
 namespace Data {
     namespace Store {
         // Init
