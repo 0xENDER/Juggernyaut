@@ -7,6 +7,9 @@
 
 #include "../../common/utility.hpp"
 
+// Basic C++ libraries
+#include <algorithm>
+
 namespace Data {
     namespace Store {
         // Entry
