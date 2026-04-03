@@ -11,9 +11,9 @@
 namespace Session {
     namespace Init {
         void parser(const Session &session) {
-            Configs &configs = session.configs;
-            Hooks &hooks = session.hooks;
-            Data::Store::SourceStore &store = session.store;
+            const Configs &configs = session.configs;
+            const Hooks &hooks = session.hooks;
+            Data::Store::SourceStore *store = session.store;
 
             // Generate configs
             Parser::Configs parserConfigs;

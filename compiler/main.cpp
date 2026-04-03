@@ -15,10 +15,6 @@
 // Parser
 // #include "../core/parser/parser.hpp"
 
-// Diagnostics
-#include "../core/diagnostics/Diagnostic.hpp"
-#include "../core/diagnostics/antlr.hpp"
-
 // Store
 #include "store/FileStore.hpp"
 
@@ -28,6 +24,21 @@
 // Base
 #include "base/config.hpp"
 #include "base/info.hpp"
+
+const Console::ReportType getReportType(Diagnostics::Severity severity) {
+    switch (severity) {
+    case Diagnostics::Severity::Error:
+        return Console::CRITICAL_REPORT;
+    case Diagnostics::Severity::Warning:
+        return Console::WARNING_REPORT;
+    case Diagnostics::Severity::Info:
+        return Console::NORMAL_REPORT;
+    case Diagnostics::Severity::Hint:
+        return Console::NORMAL_REPORT;
+    default:
+        return Console::UNKNOWN_REPORT;
+    }
+}
 
 int main(int argc, const char *argv[]) {
     // Test for memory leaks
@@ -61,97 +72,23 @@ int main(int argc, const char *argv[]) {
         return Console::ProcessReport::programStatus;
     }
 
-    class ReportListener : public Parser::Listeners::DiagnosticListener {
-        private:
-            const char* stage; // "Lexer" or "Parser"
-            static const Console::ReportType getReportType(Diagnostics::Severity severity) {
-                switch (severity) {
-                case Diagnostics::Severity::Error:
-                    return Console::CRITICAL_REPORT;
-                case Diagnostics::Severity::Warning:
-                    return Console::WARNING_REPORT;
-                case Diagnostics::Severity::Info:
-                    return Console::NORMAL_REPORT;
-                case Diagnostics::Severity::Hint:
-                    return Console::NORMAL_REPORT;
-                default:
-                    return Console::UNKNOWN_REPORT;
-                }
-            }
-        public:
-            // Constructors
-            ReportListener() = default;
-
-            // ANTLR4 functions
-            void onSyntaxError(Diagnostics::Diagnostic diag) override {
-                REPORT(Console::END_REPORT);
-
-                // Get the position
-                Console::IndividualReport::startLine = diag.range.start.line;
-                Console::IndividualReport::startColumn = diag.range.start.character;
-                Console::IndividualReport::endLine = diag.range.end.line;
-                Console::IndividualReport::endColumn = diag.range.end.character;
-
-                // Get the token
-                std::string tokenText = "?<N/A>?";
-
-                Console::ReportType reportType = getReportType(diag.severity);
-
-                // Update stage data
-                int stageId = std::floor(diag.code / 100000);
-                if (stageId == 1) {
-                    Console::IndividualReport::stage = "Lexer";
-                } else if (stageId == 2) {
-                    Console::IndividualReport::stage = "Parser";
-                } else {
-                    Console::IndividualReport::stage = "?Unknown Stage?";
-                }
-
-                // Report the error
-                REPORT(Console::START_REPORT, reportType,
-                    diag.message, " (Token Text: '", tokenText, "')",
-                    Console::END_REPORT);
-
-                REPORT(Console::START_REPORT, Console::DEBUG_REPORT, "\n");
-            }
-            void onAmbiguity(Diagnostics::Diagnostic diag) override {
-                REPORT(Console::START_REPORT, getReportType(diag.severity), diag.message, " (source: ",
-                    diag.range.start.line, ":", diag.range.start.character ," to  " ,
-                    diag.range.end.line, ":", diag.range.end.character, ")", Console::END_REPORT);
-            }
-    };
-
-    Session::ParserConfigs parserConfigs;
-    Session::Configs sessionConfigs = {
-        ,
-        parserConfigs
-    };
-
-    Session::ParserHooks parserHooks;
-    Session::Hooks sessionHooks = {
-        parserHooks
-    };
-
-    Store::FileStore fileStore;
-
-    Session::Session session = {
-        sessionConfigs,
-        sessionHooks,
-        fileStore
-    };
+    // Setup session
+    Store::FileStore store;
+    Session::Session session = Session::getSessionDefaults();
+    session.store = &store;
 
     // Debug action
     if (Base::InitialConfigs::Debug::Parser::activateAntlrSyntaxTest) {
-        parserHooks.onParserContextStart = [](){
+        session.hooks.parser.onContextStart = [](){
             REPORT(Console::START_REPORT, Console::DEBUG_REPORT, "Tokens: \n");
         };
-        parserHooks.onANTLRTokenDetected = [](const std::string &tokenText){
+        session.hooks.parser.onANTLRTokenDetected = [](const std::string &tokenText){
             REPORT(tokenText, "\n");
         };
-        parserHooks.onANTLRTreeGenerated = [](const std::string &treeText){
+        session.hooks.parser.onANTLRTreeGenerated = [](const std::string &treeText){
             REPORT(Console::START_REPORT, Console::DEBUG_REPORT, "Parse Tree: \n", treeText, Console::END_REPORT);
         };
-        parserHooks.onParserContextEnd = [](){
+        session.hooks.parser.onContextEnd = [](){
             REPORT(Console::END_REPORT);
         };
     }
@@ -162,6 +99,44 @@ int main(int argc, const char *argv[]) {
         Console::finalize();
         return Console::ProcessReport::programStatus;
     }
+
+    // Parser Diagnostics
+    session.hooks.parser.onSyntaxError = [](Diagnostics::Diagnostic diag){
+        REPORT(Console::END_REPORT);
+
+        // Get the position
+        Console::IndividualReport::startLine = diag.range.start.line;
+        Console::IndividualReport::startColumn = diag.range.start.character;
+        Console::IndividualReport::endLine = diag.range.end.line;
+        Console::IndividualReport::endColumn = diag.range.end.character;
+
+        // Get the token
+        std::string tokenText = "?<N/A>?";
+
+        Console::ReportType reportType = getReportType(diag.severity);
+
+        // Update stage data
+        int stageId = static_cast<int>(std::floor(diag.code / 100000));
+        if (stageId == 1) {
+            Console::IndividualReport::stage = "Lexer";
+        } else if (stageId == 2) {
+            Console::IndividualReport::stage = "Parser";
+        } else {
+            Console::IndividualReport::stage = "?Unknown Stage?";
+        }
+
+        // Report the error
+        REPORT(Console::START_REPORT, reportType,
+            diag.message, " (Token Text: '", tokenText, "')",
+            Console::END_REPORT);
+
+        REPORT(Console::START_REPORT, Console::DEBUG_REPORT, "\n");
+    };
+    session.hooks.parser.onAmbiguity = [](Diagnostics::Diagnostic diag){
+        REPORT(Console::START_REPORT, getReportType(diag.severity), diag.message, " (source: ",
+            diag.range.start.line, ":", diag.range.start.character ," to  " ,
+            diag.range.end.line, ":", diag.range.end.character, ")", Console::END_REPORT);
+    };
 
     // Begin the actual work here...
     Session::initiate(session);

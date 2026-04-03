@@ -13,7 +13,8 @@
 namespace Parser {
     struct Configs {
         bool terminateAfterLexer = false;
-
-        Listeners::DiagnosticListener *diagListener = nullptr;
+    };
+    struct SharedConfigs {
+        // ...
     };
 }

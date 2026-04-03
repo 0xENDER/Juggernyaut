@@ -13,6 +13,8 @@
 
 #include "internal/JugLexer.hpp"
 
+#include "listeners/WorkflowDiagListener.hpp"
+
 namespace Parser {
     namespace Debug {
         // Check for syntax errors
@@ -51,29 +53,32 @@ namespace Parser {
         }
     }
 
-    void contextWorkflow(const Configs &configs, const Hooks &hooks, Data::Store::SourceStore &store, std::unique_ptr<Data::Store::Source> &source) ;
+    void contextWorkflow(const Configs &configs, const Hooks &hooks, Data::Store::SourceStore *store, std::unique_ptr<Data::Store::Source> &source,
+        Listeners::WorkflowDiagListener *listener) ;
 
     // Visit sources
-    void investegateContexts(const Configs &configs, const Hooks &hooks, Data::Store::SourceStore &store, std::unique_ptr<Data::Store::Source> &source) {
-        source->visitDependencies([&configs, &hooks, &store](Data::Store::SourceID depId){
-            std::unique_ptr<Data::Store::Source> &dep = store.getSourceById(depId);
-            contextWorkflow(configs, hooks, store, dep);
+    void investegateContexts(const Configs &configs, const Hooks &hooks, Data::Store::SourceStore *store, std::unique_ptr<Data::Store::Source> &source,
+        Listeners::WorkflowDiagListener *listener) {
+        source->visitDependencies([&configs, &hooks, &store, &listener](Data::Store::SourceID depId){
+            std::unique_ptr<Data::Store::Source> &dep = store->getSourceById(depId);
+            contextWorkflow(configs, hooks, store, dep, listener);
         });
     }
 
     // Workflow for individual sources
-    void contextWorkflow(const Configs &configs, const Hooks &hooks, Data::Store::SourceStore &store, std::unique_ptr<Data::Store::Source> &source) {
+    void contextWorkflow(const Configs &configs, const Hooks &hooks, Data::Store::SourceStore *store, std::unique_ptr<Data::Store::Source> &source,
+        Listeners::WorkflowDiagListener *listener) {
         // Check the need for updates
         if (!source->getUpdateAST()) {
             return;
         }
 
         // Trigger context-level event
-        if (hooks.onParserContextStart != nullptr) {
-            hooks.onParserContextStart();
+        if (hooks.onContextStart != nullptr) {
+            hooks.onContextStart();
         }
 
-        Listeners::DiagnosticListener *listener = configs.diagListener;
+        // Get raw content
         const std::string &rawContent = source->getRawContent();
 
         // [STAGE] Lexer
@@ -101,8 +106,8 @@ namespace Parser {
 
         if (configs.terminateAfterLexer) {
             // Trigger context-level event
-            if (hooks.onParserContextEnd != nullptr) {
-                hooks.onParserContextEnd();
+            if (hooks.onContextEnd != nullptr) {
+                hooks.onContextEnd();
             }
             return;
         }
@@ -131,21 +136,23 @@ namespace Parser {
         // ...
 
         // Trigger context-level event
-        if (hooks.onParserContextEnd != nullptr) {
-            hooks.onParserContextEnd();
+        if (hooks.onContextEnd != nullptr) {
+            hooks.onContextEnd();
         }
 
         // Visit dependencies
-        investegateContexts(configs, hooks, store, source);
+        investegateContexts(configs, hooks, store, source, listener);
     }
 
     // Triggered by Session::initiate
-    void sessionWorkflow(const Configs &configs, const Hooks &hooks, Data::Store::SourceStore &store) {
-        store.visitEntries([&configs, &hooks, &store](const Data::Store::SourceID entryID) {
-            // Get source object
-            std::unique_ptr<Data::Store::Source> &src = store.getSourceById(entryID);
+    void sessionWorkflow(const Configs &configs, const Hooks &hooks, Data::Store::SourceStore *store) {
+        Listeners::WorkflowDiagListener listener = Listeners::WorkflowDiagListener(hooks);
 
-            contextWorkflow(configs, hooks, store, src);
+        store->visitEntries([&configs, &hooks, &store, &listener](const Data::Store::SourceID entryID) {
+            // Get source object
+            std::unique_ptr<Data::Store::Source> &src = store->getSourceById(entryID);
+
+            contextWorkflow(configs, hooks, store, src, &listener);
         });
     }
 }

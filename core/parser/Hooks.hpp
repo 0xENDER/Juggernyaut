@@ -14,26 +14,35 @@
 //// Data
 //#include "../data/store/Source.hpp"
 
-#include "listeners/DiagnosticListener.hpp"
+// Diagnostics
+#include "../diagnostics/Diagnostic.hpp"
 
 namespace Parser {
     typedef std::function<void(const std::string&)> TokenReport;
     typedef std::function<void(const std::string&)> TreeReport;
     typedef std::function<void()> StageCall;
 
+    typedef std::function<void(Diagnostics::Diagnostic diag)> ParserDiagEvent;
+
     // typedef std::function<Data::Store::Source(const std::string)> SourceRequest;
 
     struct Hooks {
         // [StageCall]
-        StageCall onParserContextStart = nullptr;
+        StageCall onContextStart = nullptr;
+        StageCall onContextEnd = nullptr;
         // [TokenReport]
-        // Args: <token_text> (const std::string)
+        // Args: <token_text> (const std::string&)
         TokenReport onANTLRTokenDetected = nullptr;
         // [TreeReport]
-        // Args: <AST_text> (const std::string)
+        // Args: <AST_text> (const std::string&)
         TreeReport onANTLRTreeGenerated = nullptr;
-        // [StageCall]
-        StageCall onParserContextEnd = nullptr;
+
+        // [ParserDiagEvent]
+        // Args: <diagnostics_obj> (Diagnostics::Diagnostic)
+        ParserDiagEvent onSyntaxError = nullptr;
+        ParserDiagEvent onAmbiguity = nullptr;
+        ParserDiagEvent onAttemptingFullContext = nullptr;
+        ParserDiagEvent onContextSensitivity = nullptr;
 
         //// [SourceRequest]
         //// Args: <file_uri> (const std::string)
