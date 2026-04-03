@@ -3,8 +3,6 @@
  * Session Workflow listeners
 **/
 
-#pragma once
-
 #include "WorkflowDiagListener.hpp"
 
 namespace Parser {
