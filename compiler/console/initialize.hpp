@@ -12,7 +12,7 @@
 
 namespace Console {
     namespace Internal {
-        extern std::chrono::steady_clock::time_point start;
+        extern std::chrono::high_resolution_clock::time_point start;
 
         // Handle CLI initialisation
         extern void initialize() ;
