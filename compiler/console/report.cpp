@@ -11,7 +11,7 @@
 
 // Shortent the syntax for printing to the console
 #define INTERNAL_C_OUT(DATA, CHANNEL_VAR)                   \
-    (((CHANNEL_VAR == 0) ? std::cout : std::cerr << DATA) << DATA)
+    ((CHANNEL_VAR == 0 ? std::cout : std::clog) << DATA)
 
 namespace Console {
     namespace Internal {
@@ -42,7 +42,7 @@ namespace Console {
             void print() {
                 // Track output data printing
                 uint32_t color;
-                int channel = 0; // [0 -> cout, 1 -> cerr]
+                int channel = 0; // [0 -> cout, 1 -> clog]
                 bool shouldColor = true;
                 bool shouldPrompt = true;
                 std::stringstream prompt;
@@ -61,7 +61,7 @@ namespace Console {
                 switch (IndividualReport::type) {
                 case WARNING_REPORT:
                     color = Color::golden_rod;
-                    channel = 1;
+                    channel = 0;
                     // Title
                     if (!IndividualReport::isContinuation) {
                         prompt << "[Warning]";
@@ -85,7 +85,7 @@ namespace Console {
                     break;
                 case ACTION_REPORT:
                     color = Color::sea_green;
-                    channel = 1;
+                    channel = 0;
                     // Title
                     if (!IndividualReport::isContinuation) {
                         prompt << "[Action]";

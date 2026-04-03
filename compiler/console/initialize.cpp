@@ -14,12 +14,15 @@ namespace Console {
     namespace Internal {
         // Track status
         static bool isInitialized = false;
+        std::chrono::steady_clock::time_point start;
 
         // Handle CLI initialisation
         void initialize() {
             if (isInitialized) { // TMP
                 return;
             }
+
+            start = std::chrono::high_resolution_clock::now();
 
             /**
              *   ,-.       _,---._ __  / \
