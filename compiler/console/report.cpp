@@ -11,32 +11,28 @@
 
 // Shortent the syntax for printing to the console
 #define INTERNAL_C_OUT(DATA, CHANNEL_VAR)                   \
-    if (CHANNEL_VAR == 0) {                                 \
-        std::cout << DATA << std::flush;                    \
-    } else {                                                \
-        std::cerr << DATA << std::flush;                    \
-    }                                                       \
+    (((CHANNEL_VAR == 0) ? std::cout : std::cerr << DATA) << DATA)
 
 namespace Console {
     namespace Internal {
         // Handle reports CLI outputs
         namespace Reports {
             // Sanitise strings for console output
-            static void sanitize(std::string &str) {
-                // Symbols to replace ({fmt})
-                static std::array<std::array<std::string, 2>, 2> symbols = {
-                    std::array<std::string, 2>{"{", "{{"},
-                    std::array<std::string, 2>{"}", "}}"}
-                };
+            std::string sanitize(const std::string &str) {
+                std::string result;
+                result.reserve(str.length()); 
 
-                // Replace all symbols
-                for (const auto& pair : symbols) {
-                    size_t pos = 0;
-                    while ((pos = str.find(pair[0], pos)) != std::string::npos) {
-                        str.replace(pos, 1, pair[1]); // Replace 1 char at pos with newString
-                        pos += pair[1].length(); // Move past the replaced string
+                for (char c : str) {
+                    if (c == '{') {
+                        result += "{{";
+                    } else if (c == '}') {
+                        result += "}}";
+                    } else {
+                        result += c;
                     }
                 }
+
+                return result;
             }
 
             // Keep track of print statistics
@@ -50,15 +46,15 @@ namespace Console {
                 bool shouldColor = true;
                 bool shouldPrompt = true;
                 std::stringstream prompt;
-                auto out = [&channel, &color, &shouldColor](std::string data) {
+                auto out = [&channel, &color, &shouldColor](const std::string &data) {
                     // {fmt}
-                    sanitize(data);
+                    const std::string &final = sanitize(data);
 
                     // Print to the chosen output channel
                     if (shouldColor) {
-                        INTERNAL_C_OUT(Console::Internal::color(data, color), channel);
+                        INTERNAL_C_OUT(Console::Internal::color(final, color), channel);
                     } else {
-                        INTERNAL_C_OUT(data, channel);
+                        INTERNAL_C_OUT(final, channel);
                     }
                 };
 
@@ -112,7 +108,7 @@ namespace Console {
 
                 // Print a new line for new reports
                 if (!isFirstPrint) {
-                    INTERNAL_C_OUT(std::endl, channel);
+                    INTERNAL_C_OUT('\n', channel);
                 }
                 
                 // Print report type info

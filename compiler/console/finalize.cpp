@@ -91,14 +91,14 @@ namespace Console {
              * 0 action(s), 0 warning(s), 0 error(s), 0 fatal error(s)
             **/
             // Print summary
-            std::cout << std::endl << std::endl << color(status, Color::light_sea_green) << std::endl;
+            std::cout << '\n' << '\n' << color(status, Color::light_sea_green) << std::endl;
             if (reports > 0) {
-                std::cout << std::endl;
-                std::cout << color("                |\\__/,|   (`\\", Color::golden_rod) << std::endl;
-                std::cout << color("              _.|o o  |_   ) )", Color::golden_rod) << std::endl;
+                std::cout << '\n';
+                std::cout << color("                |\\__/,|   (`\\", Color::golden_rod) << '\n';
+                std::cout << color("              _.|o o  |_   ) )", Color::golden_rod) << '\n';
                 std::cout << color("-------------", Color::light_sea_green) << color("(((", Color::golden_rod)
                     << color("---", Color::light_sea_green) << color("(((", Color::golden_rod)
-                    << color("---------------------------------", Color::light_sea_green) << std::endl << std::endl;
+                    << color("---------------------------------", Color::light_sea_green) << '\n' << '\n';
                 std::cout << actionsString.str() << warningsString.str() << criticalsString.str()
                     << fatalsString.str() << std::endl;    
             }
