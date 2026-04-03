@@ -19,6 +19,7 @@ namespace Base {
 
         // Main source file
         std::string mainPath = "";
+        std::vector<std::string> mainPaths;
 
         // Debug-related
         namespace Debug {
@@ -82,11 +83,16 @@ namespace Base {
 
                 // Use this function to get the next argument
                 // [true - success, false = failure]
-                const Actions::ActionNextFunction getNextArg = [&i, &argc, &argv](std::string &store, bool skip) {
+                const Actions::ActionNextFunction getNextArg = [&i, &argc, &argv](std::string *store, bool skip) {
                     // Check for the next argument
                     if (i + 1 < argc) {
-                        // Get the next argument (and skip it when necessary!)
-                        store = std::string(argv[(skip) ? ++i : i + 1]);
+                        if (store != nullptr) {
+                            // Get the next argument (and skip it when necessary!)
+                            *store = std::string(argv[i + 1]);
+                        }
+                        if (skip) {
+                            i++;
+                        }
                         return true;
                     } else {
                         return false;

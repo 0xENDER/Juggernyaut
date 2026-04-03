@@ -62,16 +62,41 @@ namespace Base {
                 "Set a path for the main user input file.",
                 { "<path>" },
                 {
+                    // Store
+                    std::string filePath;
+
                     // Get the next argument and save it!
-                    bool success = getNextArg(Base::InitialConfigs::mainPath, true);
+                    bool success = getNextArg(&filePath, false);
 
                     // Check if the action was successful!
-                    if (!success) {
+                    if (!success || filePath.at(0) == '-') {
                         // Missing input argument!
                         REPORT(Console::START_REPORT, Console::FATAL_REPORT,
                             "Missing the <path> input argument! (-i, --input)", Console::END_REPORT);
                         ACTION_FATAL_FAILURE;
                     }
+
+                    do {
+                        // Keep the value!
+                        getNextArg(nullptr, true); // Skip the item
+                        Base::InitialConfigs::mainPaths.push_back(filePath);
+                    } while(getNextArg(&filePath, false) && filePath.at(0) != '-');
+
+                    // TMP
+                    if (Base::InitialConfigs::mainPaths.size() != 1) {
+                        REPORT(Console::START_REPORT, Console::WARNING_REPORT, "Ignored input files: ");
+                        int count = 0;
+                        for (auto path : Base::InitialConfigs::mainPaths) {
+                            if (++count != 1) {
+                                REPORT("\"", path, "\", ");
+                            }
+                        }
+                        REPORT(Console::END_REPORT);
+                    }
+
+
+                    // TMP
+                    Base::InitialConfigs::mainPath = Base::InitialConfigs::mainPaths.front();
 
                     // Check if the file can be opened!
                     if (!Common::Files::isFileAccessible(Base::InitialConfigs::mainPath)) {

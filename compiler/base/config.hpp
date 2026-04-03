@@ -22,6 +22,7 @@ namespace Base {
 
         // Main source file
         extern std::string mainPath;
+        extern std::vector<std::string> mainPaths;
 
         // Debug-related
         namespace Debug {

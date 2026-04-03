@@ -14,7 +14,7 @@
 namespace Base {
     namespace Actions {
         // Action-related function types
-        typedef std::function<bool(std::string&, bool)> ActionNextFunction;
+        typedef std::function<bool(std::string*, bool)> ActionNextFunction;
         typedef std::array<std::string, 3> ActionInfo;
         typedef std::vector<std::string> ActionInput; // Change as needed!
         typedef std::function<bool(const ActionNextFunction)> ActionFunction;
