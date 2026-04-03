@@ -21,8 +21,20 @@ add_internal_target_cxx_flags(JugCompilerConsoleLibrary FALSE)
 add_dependencies(JugCompilerConsoleLibrary fmt::fmt)
 target_link_libraries(JugCompilerConsoleLibrary PUBLIC fmt::fmt)
 
+# Create a library from /store
+add_library(JugCompilerStoreLibrary STATIC)
+target_sources_search(JugCompilerStoreLibrary ${JUG_COMPILER_SOURCE_DIR}/store/*.cpp FALSE)
+# Attach manifest data
+attach_manifest_data(JugCompilerStoreLibrary ${JUG_COMPILER_MANIFEST_FILE} FALSE)
+# Add compiler flags
+add_internal_target_cxx_flags(JugCompilerStoreLibrary FALSE)
+# Link other libraries to the library
+add_dependencies(JugCompilerStoreLibrary JuggernyautDataLibrary JugCompilerConsoleLibrary)
+target_link_libraries(JugCompilerStoreLibrary PUBLIC JuggernyautDataLibrary JugCompilerConsoleLibrary)
+
 # Compiler libraries
 set(COMPILER_LIBRARIES
     JugCompilerBaseLibrary
     JugCompilerConsoleLibrary
+    JugCompilerStoreLibrary
 )

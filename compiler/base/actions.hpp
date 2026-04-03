@@ -5,8 +5,7 @@
 
 #pragma once
 
-// Common
-#include "../../core/common/files.hpp"
+#include "../../core/common/headers.hpp"
 
 // Basic C++ headers
 #include <functional>

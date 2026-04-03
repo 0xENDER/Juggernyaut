@@ -17,18 +17,23 @@
 #include "listeners/DiagnosticListener.hpp"
 
 namespace Parser {
-    typedef std::function<void(const std::string)> TokenReport;
-    typedef std::function<void(const std::string)> TreeReport;
+    typedef std::function<void(const std::string&)> TokenReport;
+    typedef std::function<void(const std::string&)> TreeReport;
+    typedef std::function<void()> StageCall;
 
     // typedef std::function<Data::Store::Source(const std::string)> SourceRequest;
 
     struct Hooks {
+        // [StageCall]
+        StageCall onParserContextStart = nullptr;
         // [TokenReport]
         // Args: <token_text> (const std::string)
         TokenReport onANTLRTokenDetected = nullptr;
         // [TreeReport]
         // Args: <AST_text> (const std::string)
         TreeReport onANTLRTreeGenerated = nullptr;
+        // [StageCall]
+        StageCall onParserContextEnd = nullptr;
 
         //// [SourceRequest]
         //// Args: <file_uri> (const std::string)

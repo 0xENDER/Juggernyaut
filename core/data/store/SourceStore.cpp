@@ -38,9 +38,8 @@ namespace Data {
         }
 
         // Sources
-        Source& SourceStore::getSourceById(const SourceID &id) {
-
-            std::unordered_map<SourceID, Source> &srcs = this->sources;
+        std::unique_ptr<Source>& SourceStore::getSourceById(const SourceID &id) {
+            std::unordered_map<SourceID, std::unique_ptr<Source>> &srcs = this->sources;
 
             return srcs.at(id);
         }

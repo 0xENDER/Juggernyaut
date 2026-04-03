@@ -14,6 +14,6 @@ namespace Parser {
     struct Configs {
         bool terminateAfterLexer = false;
 
-        Listeners::DiagnosticListener *diagListener;
+        Listeners::DiagnosticListener *diagListener = nullptr;
     };
 }

@@ -11,6 +11,8 @@
 
 #include "../console/console.hpp"
 
+#include "../store/files.hpp"
+
 // Shorten the syntax for defining an action
 #define DEFINE_ACTION(FLAG1, FLAG2, DESCRIPTION, ARGS, FUNCTION){   \
     {                                                               \
@@ -82,39 +84,6 @@ namespace Base {
                         Base::InitialConfigs::mainPaths.push_back(filePath);
                     } while(getNextArg(&filePath, false) && filePath.at(0) != '-');
 
-                    // TMP
-                    if (Base::InitialConfigs::mainPaths.size() != 1) {
-                        REPORT(Console::START_REPORT, Console::WARNING_REPORT, "Ignored input files: ");
-                        int count = 0;
-                        for (auto path : Base::InitialConfigs::mainPaths) {
-                            if (++count != 1) {
-                                REPORT("\"", path, "\", ");
-                            }
-                        }
-                        REPORT(Console::END_REPORT);
-                    }
-
-
-                    // TMP
-                    Base::InitialConfigs::mainPath = Base::InitialConfigs::mainPaths.front();
-
-                    // Check if the file can be opened!
-                    if (!Common::Files::isFileAccessible(Base::InitialConfigs::mainPath)) {
-                        // File isn't accessible!
-                        REPORT(Console::START_REPORT, Console::FATAL_REPORT, "Input file is non-existent or inaccessible!",
-                            Console::END_REPORT);
-                        ACTION_FATAL_FAILURE;
-                    }
-
-                    // Check if the file can be opened!
-                    if (!Common::Files::isFileValid(Base::InitialConfigs::mainPath)) {
-                        // File isn't accessible!
-                        REPORT(Console::START_REPORT, Console::FATAL_REPORT,
-                            "Input file is corrupted or of an invalid type! (Must use a valid .jug file)",
-                            Console::END_REPORT);
-                        ACTION_FATAL_FAILURE;
-                    }
-
                     ACTION_PROGRESS;
                 }
             ),
@@ -130,7 +99,7 @@ namespace Base {
                     // Get the license text
                     std::string content;
                     std::string licensePath = InitialConfigs::compilerBinPath + "/LICENSE";
-                    if (!Common::Files::getFileContent(licensePath, content)) {
+                    if (!Files::getFileContent(licensePath, content)) {
                         // File isn't accessible!
                         REPORT(Console::START_REPORT, Console::FATAL_REPORT,
                             "Couldn't access the LICENSE file: ",

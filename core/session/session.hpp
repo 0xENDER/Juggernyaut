@@ -13,6 +13,7 @@
 
 // Parser
 #include "../parser/Hooks.hpp"
+#include "../parser/Configs.hpp"
 
 namespace Session {
     // Session data
@@ -23,12 +24,16 @@ namespace Session {
         Semantic=4,
         IRGen=5 // Strictly needed for the compiler - easier to handle here!
     };
-    struct Configs {
-        Stage terminateAfter = Stage::IRGen;
-    };
 
     // Core libs
+    using ParserConfigs = Parser::Configs;
     using ParserHooks = Parser::Hooks; // Note that Lexer hooks are parser hooks!
+
+    // Configs
+    struct Configs {
+        Stage terminateAfter = Stage::IRGen;
+        ParserConfigs &parser;
+    };
 
     // Hooks are the way the session is supposed to interact with all other libraries!
     struct Hooks {

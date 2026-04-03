@@ -26,11 +26,14 @@ namespace Data {
         class JUG_DATA_API SourceStore {
             private:
                 std::unordered_map<std::string, SourceID> store; // Uri-based tracking
-                std::unordered_map<SourceID, Source> sources; // ID-based tracking
+                std::unordered_map<SourceID, std::unique_ptr<Source>> sources; // ID-based tracking
                 std::vector<SourceID> entryPoints;
             public:
                 SourceID lastID = 0;
                 SourceStore() = default;
+                // Fix std::unique_ptr bug
+                SourceStore(const SourceStore&) = delete;
+                SourceStore& operator=(const SourceStore&) = delete;
 
                 // Unique implementations
                 virtual std::string onFileRawRequest(const std::string &uri) = 0;
@@ -42,7 +45,7 @@ namespace Data {
                 void visitEntries(const EntryCall entryCall) ;
 
                 // Sources
-                Source& getSourceById(const SourceID &id) ;
+                std::unique_ptr<Source>& getSourceById(const SourceID &id) ;
 
                 // Memory housekeeping
                 // ...

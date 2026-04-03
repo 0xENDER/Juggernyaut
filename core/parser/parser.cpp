@@ -51,25 +51,30 @@ namespace Parser {
         }
     }
 
-    void contextWorkflow(const Configs &configs, const Hooks &hooks, Data::Store::SourceStore &store, Data::Store::Source &source) ;
+    void contextWorkflow(const Configs &configs, const Hooks &hooks, Data::Store::SourceStore &store, std::unique_ptr<Data::Store::Source> &source) ;
 
     // Visit sources
-    void investegateContexts(const Configs &configs, const Hooks &hooks, Data::Store::SourceStore &store, Data::Store::Source &source) {
-        source.visitDependencies([&configs, &hooks, &store](Data::Store::SourceID depId){
-            Data::Store::Source &dep = store.getSourceById(depId);
+    void investegateContexts(const Configs &configs, const Hooks &hooks, Data::Store::SourceStore &store, std::unique_ptr<Data::Store::Source> &source) {
+        source->visitDependencies([&configs, &hooks, &store](Data::Store::SourceID depId){
+            std::unique_ptr<Data::Store::Source> &dep = store.getSourceById(depId);
             contextWorkflow(configs, hooks, store, dep);
         });
     }
 
     // Workflow for individual sources
-    void contextWorkflow(const Configs &configs, const Hooks &hooks, Data::Store::SourceStore &store, Data::Store::Source &source) {
+    void contextWorkflow(const Configs &configs, const Hooks &hooks, Data::Store::SourceStore &store, std::unique_ptr<Data::Store::Source> &source) {
         // Check the need for updates
-        if (!source.getUpdateAST()) {
+        if (!source->getUpdateAST()) {
             return;
         }
 
+        // Trigger context-level event
+        if (hooks.onParserContextStart != nullptr) {
+            hooks.onParserContextStart();
+        }
+
         Listeners::DiagnosticListener *listener = configs.diagListener;
-        const std::string &rawContent = source.getRawContent();
+        const std::string &rawContent = source->getRawContent();
 
         // [STAGE] Lexer
         // Use the file's input
@@ -95,6 +100,10 @@ namespace Parser {
         } while (token->getType() != antlr4::Token::EOF);
 
         if (configs.terminateAfterLexer) {
+            // Trigger context-level event
+            if (hooks.onParserContextEnd != nullptr) {
+                hooks.onParserContextEnd();
+            }
             return;
         }
 
@@ -121,6 +130,11 @@ namespace Parser {
         // Attach AST data to <Source>
         // ...
 
+        // Trigger context-level event
+        if (hooks.onParserContextEnd != nullptr) {
+            hooks.onParserContextEnd();
+        }
+
         // Visit dependencies
         investegateContexts(configs, hooks, store, source);
     }
@@ -129,7 +143,7 @@ namespace Parser {
     void sessionWorkflow(const Configs &configs, const Hooks &hooks, Data::Store::SourceStore &store) {
         store.visitEntries([&configs, &hooks, &store](const Data::Store::SourceID entryID) {
             // Get source object
-            Data::Store::Source &src = store.getSourceById(entryID);
+            std::unique_ptr<Data::Store::Source> &src = store.getSourceById(entryID);
 
             contextWorkflow(configs, hooks, store, src);
         });

@@ -5,8 +5,6 @@
 
 #include "DocumentStore.hpp"
 
-#include "../../core/common/files.hpp"
-
 // Capabilities
 #include "../capabilities/basic.hpp"
 #include "../capabilities/semantics/diagnostics.hpp"
@@ -23,10 +21,10 @@ namespace Store {
         // Get file contents
         if (fetchContent) {
             std::string rawText;
-            bool success = Common::Files::getFileContent(uri, rawText);
-            if(!success) {
-                rawText = "TEMPORARY:ERROR: COULDN'T FETCH THE FILE!"; // TO-DO: THROW A PROPER ERROR...
-            }
+            // bool success = Common::Files::getFileContent(uri, rawText);
+            // if(!success) {
+            rawText = "TEMPORARY:ERROR: COULDN'T FETCH THE FILE!"; // TO-DO: THROW A PROPER ERROR...
+            // }
 
             doc.setRawContent(rawText);
         }
