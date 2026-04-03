@@ -26,7 +26,7 @@ namespace Base {
 
         // Debug-related
         namespace Debug {
-            // --debug-parser-antlr-syntax-test <path>
+            // --debug-antlr-syntax
             namespace Parser {
                 extern bool activateAntlrSyntaxTest;
             }
