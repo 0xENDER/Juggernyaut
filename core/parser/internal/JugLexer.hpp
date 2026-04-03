@@ -12,6 +12,9 @@
 #include "../antlr4.hpp"
 #include "JuggernyautLexer.h"
 
+// Basic C++ headers
+#include <memory>
+
 namespace Parser {
     namespace Internal {
         class JUG_PARSER_API JugLexer : public GeneratedLexer::JuggernyautLexer {

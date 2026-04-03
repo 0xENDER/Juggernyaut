@@ -14,6 +14,7 @@
 // Basic C++ headers
 #include <functional>
 #include <unordered_map>
+#include <memory>
 
 #ifdef _MSC_VER
 #pragma warning(push)
