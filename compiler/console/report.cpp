@@ -39,6 +39,7 @@ namespace Console {
             static bool isFirstPrint = true;
 
             // Print report details
+            int lastChannel = 0;
             void print() {
                 // Track output data printing
                 uint32_t color;
@@ -49,6 +50,11 @@ namespace Console {
                 auto out = [&channel, &color, &shouldColor](const std::string &data) {
                     // {fmt}
                     const std::string &final = sanitize(data);
+
+                    if (lastChannel != channel) {
+                        INTERNAL_C_OUT(std::flush, lastChannel);
+                        lastChannel = channel;
+                    }
 
                     // Print to the chosen output channel
                     if (shouldColor) {

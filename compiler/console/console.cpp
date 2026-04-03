@@ -8,11 +8,19 @@
 namespace Console {
     // Handle error throw statement
     static void throwError(std::string msg) {
+
+        // Flush channels
+        std::cout.flush();
+        std::clog.flush();
+        std::fflush(stdout);
+        std::fflush(stderr);
+
         std::cerr << "\n" << Internal::color("[Internal Error] ", Console::Internal::Color::red)
             << Internal::color(msg, Console::Internal::Color::red)
             << Internal::color(BAD_CODE_OR_MEMORY_LEAKS,
                 Console::Internal::Color::red)
             << "\n" << std::endl;
+
         throw std::runtime_error(msg);
     }
 

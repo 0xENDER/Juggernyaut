@@ -22,6 +22,19 @@ namespace Console {
                 return;
             }
 
+            // Optimise console output
+            std::cout.flush();
+            std::clog.flush();
+            std::fflush(stdout);
+            std::fflush(stderr);
+            std::cout << std::nounitbuf;
+            std::clog << std::nounitbuf;
+            std::cin.tie(nullptr);
+            static std::vector<char> outBuffer(4096);
+            static std::vector<char> errBuffer(4096);
+            std::setvbuf(stdout, outBuffer.data(), _IOFBF, outBuffer.size());
+            std::setvbuf(stderr, errBuffer.data(), _IOFBF, errBuffer.size());
+
             start = std::chrono::high_resolution_clock::now();
 
             /**

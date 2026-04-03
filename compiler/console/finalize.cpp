@@ -138,9 +138,18 @@ namespace Console {
                     << color("---", Color::light_sea_green) << color("(((", Color::golden_rod)
                     << color("---------------------------------", Color::light_sea_green) << '\n' << '\n';
                 std::cout << actionsString.str() << warningsString.str() << criticalsString.str() << fatalsString.str()
-                    << '\n' << '\n'
-                    << timeString.str() << std::endl;
+                    << std::endl;
             }
+            std::cout << '\n' << timeString.str() << std::endl;
+
+            // Revert optimisation
+            std::cout.flush();
+            std::clog.flush();
+            std::fflush(stdout);
+            std::fflush(stderr);
+            std::cin.tie(&std::cout);
+            std::setvbuf(stderr, nullptr, _IONBF, 0);
+            std::setvbuf(stdout, nullptr, _IONBF, 0);
         }
     }
 }
