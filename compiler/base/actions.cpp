@@ -81,7 +81,7 @@ namespace Base {
                     do {
                         // Keep the value!
                         getNextArg(nullptr, true); // Skip the item
-                        Base::InitialConfigs::mainPaths.push_back(filePath);
+                        Base::InitialConfigs::entryPaths.push_back(filePath);
                     } while(getNextArg(&filePath, false) && filePath.at(0) != '-');
 
                     ACTION_PROGRESS;

@@ -60,6 +60,8 @@ namespace Console {
         extern std::string stage;
         extern std::stringstream messageStream;
 
+        extern bool isContinuation;
+
         // Code-related report data
         extern std::string path;
         extern size_t startLine;

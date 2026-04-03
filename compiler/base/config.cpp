@@ -18,7 +18,7 @@ namespace Base {
 
         // Main source file
         std::string mainPath = "";
-        std::vector<std::string> mainPaths;
+        std::vector<std::string> entryPaths;
 
         // Debug-related
         namespace Debug {

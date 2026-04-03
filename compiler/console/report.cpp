@@ -62,32 +62,48 @@ namespace Console {
                     }
                 };
 
-                if (IndividualReport::type == WARNING_REPORT) {
+                switch (IndividualReport::type) {
+                case WARNING_REPORT:
                     color = Color::golden_rod;
                     channel = 1;
                     // Title
-                    prompt << "[Warning]";
-                } else if (IndividualReport::type == CRITICAL_REPORT) {
+                    if (!IndividualReport::isContinuation) {
+                        prompt << "[Warning]";
+                    }
+                    break;
+                case CRITICAL_REPORT:
                     color = Color::crimson;
                     channel = 1;
                     // Title
-                    prompt << "[Error]";
-                } else if (IndividualReport::type == FATAL_REPORT) {
+                    if (!IndividualReport::isContinuation) {
+                        prompt << "[Error]";
+                    }
+                    break;
+                case FATAL_REPORT:
                     color = Color::crimson;
                     channel = 1;
                     // Title
-                    prompt << "[Fatal Error]";
-                } else if (IndividualReport::type == ACTION_REPORT) {
+                    if (!IndividualReport::isContinuation) {
+                        prompt << "[Fatal Error]";
+                    }
+                    break;
+                case ACTION_REPORT:
                     color = Color::sea_green;
                     channel = 1;
                     // Title
-                    prompt << "[Action]";
-                } else if (IndividualReport::type == DEBUG_REPORT) {
+                    if (!IndividualReport::isContinuation) {
+                        prompt << "[Action]";
+                    }
+                    break;
+                case DEBUG_REPORT:
                     color = Color::blue_violet;
                     channel = 0;
                     // Title
-                    prompt << "[Debug]";
-                } else {
+                    if (!IndividualReport::isContinuation) {
+                        prompt << "[Debug]";
+                    }
+                    break;
+                default:
                     shouldColor = false;
                     channel = 0;
                     // No prompts
