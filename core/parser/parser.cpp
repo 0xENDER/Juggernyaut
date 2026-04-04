@@ -16,43 +16,6 @@
 #include "listeners/WorkflowDiagListener.hpp"
 
 namespace Parser {
-    namespace Debug {
-        // Check for syntax errors
-        // [true -> success, false -> failure]
-        bool syntaxCheck(const std::string &file_contents, const TokenReport &onTokenCall, const TreeReport &onTreeCall,
-            Listeners::DiagnosticListener *lexerErrorListener, Listeners::DiagnosticListener *parserErrorListener) {
-            // Use the file's input
-            antlr4::ANTLRInputStream input(file_contents);
-
-            // Tokens
-            Internal::JugLexer lexer(&input);
-            antlr4::CommonTokenStream tokens(&lexer);
-
-            // Parse tree
-            GeneratedParser::JuggernyautParser parser(&tokens);
-
-            // Check for syntax errors
-            lexer.removeErrorListeners();// remove default parser error listeners.
-            lexer.addErrorListener(lexerErrorListener);
-            parser.removeErrorListeners();// remove default parser error listeners.
-            parser.addErrorListener(parserErrorListener);
-
-            // Pass tokens
-            tokens.fill();
-            for (auto token : tokens.getTokens()) {
-                onTokenCall((const std::string) token->toString());
-            }
-
-            // Get the start tree!
-            antlr4::tree::ParseTree *tree = parser.prog();
-
-            // Pass the parse tree!
-            onTreeCall((const std::string) tree->toStringTree(&parser));
-
-            return Listeners::errorsDetected;
-        }
-    }
-
     void contextWorkflow(const Configs &configs, const Hooks &hooks, Data::Store::SourceStore *store,
         std::unique_ptr<Data::Store::Source> &source) ;
 

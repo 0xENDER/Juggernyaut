@@ -16,11 +16,5 @@
 #include "Configs.hpp"
 
 namespace Parser {
-    namespace Debug {
-        // Check for syntax errors
-        extern JUG_PARSER_API bool syntaxCheck(const std::string &file_contents, const TokenReport &onTokenCall,
-            const TreeReport &onTreeCall,
-            Listeners::DiagnosticListener *lexerErrorListener, Listeners::DiagnosticListener *parserErrorListener) ;
-    }
     extern JUG_PARSER_API void sessionWorkflow(const Configs &configs, const Hooks &hooks, Data::Store::SourceStore *store) ;
 }
