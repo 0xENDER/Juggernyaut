@@ -6,12 +6,9 @@
 // Parser
 #include "parser.hpp"
 
-// ANTLR4 imports
-#include "antlr4.hpp"
-#include "JuggernyautLexer.h"
-#include "JuggernyautParser.h"
-
+// Internal
 #include "internal/JugLexer.hpp"
+#include "internal/JugParser.hpp"
 
 #include "listeners/WorkflowDiagListener.hpp"
 
@@ -94,7 +91,7 @@ namespace Parser {
 
         // [STAGE] Parser
         // Parser
-        GeneratedParser::JuggernyautParser parser(&tokens);
+        Internal::JugParser parser(&tokens);
 
         // Check for syntax errors
         parser.removeErrorListeners(); // Remove default error listeners
