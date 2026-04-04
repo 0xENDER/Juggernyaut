@@ -99,7 +99,7 @@ namespace Base {
                     // Get the license text
                     std::string content;
                     std::string licensePath = InitialConfigs::compilerBinPath + "/LICENSE";
-                    if (!Files::getFileContent(licensePath, content)) {
+                    if (!Store::getFileContent(licensePath, content)) {
                         // File isn't accessible!
                         REPORT(Console::START_REPORT, Console::FATAL_REPORT,
                             "Couldn't access the LICENSE file: ",

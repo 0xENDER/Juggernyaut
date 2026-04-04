@@ -10,7 +10,7 @@
 
 namespace fs = std::filesystem;
 
-namespace Files {
+namespace Store {
     // Internal functions
     fs::path normalizePath(fs::path &path) {
         return path.append(".").lexically_normal();
