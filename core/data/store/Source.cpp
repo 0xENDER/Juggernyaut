@@ -19,7 +19,7 @@ namespace Data {
             : uri(srcUri), store(srcStore) {
             this->id = ++(this->store->lastID);
         }
-        SourceID Source::getID() {
+        SourceId Source::getId() {
             return this->id;
         }
 
@@ -31,23 +31,23 @@ namespace Data {
         }
 
         // Dependency tracking
-        void Source::addSourceDependency(SourceID dep) {
-            std::vector<SourceID> &srcs = this->neededSources;
+        void Source::addSourceDependency(SourceId dep) {
+            std::vector<SourceId> &srcs = this->neededSources;
             if (std::ranges::find(srcs, dep) == srcs.end()) {
                 srcs.push_back(dep);
             }
         }
-        void Source::removeSourceDependency(SourceID dep) {
-            std::vector<SourceID> &srcs = this->neededSources;
+        void Source::removeSourceDependency(SourceId dep) {
+            std::vector<SourceId> &srcs = this->neededSources;
             Common::Utility::fastVectorRemove(srcs, dep);
         }
         void Source::resetSourceDependencies() {
-            std::vector<SourceID> &srcs = this->neededSources;
+            std::vector<SourceId> &srcs = this->neededSources;
             srcs.clear();
             srcs.shrink_to_fit();
         }
         void Source::visitDependencies(DependencyCall depCall) {
-            std::vector<SourceID> deps = this->neededSources;
+            std::vector<SourceId> deps = this->neededSources;
             for (auto dep : deps) {
                 if (depCall != nullptr) {
                     depCall(dep);

@@ -12,6 +12,6 @@ namespace Data {
     namespace Store {
         class Source;
         class SourceStore;
-        using SourceID = uint32_t;
+        using SourceId = uint32_t;
     }
 }

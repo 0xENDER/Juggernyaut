@@ -56,21 +56,21 @@ namespace Parser {
         }
     }
 
-    void contextWorkflow(const Configs &configs, const Hooks &hooks, Data::Store::SourceStore *store, std::unique_ptr<Data::Store::Source> &source,
-        Listeners::WorkflowDiagListener *listener) ;
+    void contextWorkflow(const Configs &configs, const Hooks &hooks, Data::Store::SourceStore *store,
+        std::unique_ptr<Data::Store::Source> &source) ;
 
     // Visit sources
-    void investegateContexts(const Configs &configs, const Hooks &hooks, Data::Store::SourceStore *store, std::unique_ptr<Data::Store::Source> &source,
-        Listeners::WorkflowDiagListener *listener) {
-        source->visitDependencies([&configs, &hooks, &store, &listener](Data::Store::SourceID depId){
+    void investegateContexts(const Configs &configs, const Hooks &hooks, Data::Store::SourceStore *store,
+        std::unique_ptr<Data::Store::Source> &source) {
+        source->visitDependencies([&configs, &hooks, &store](Data::Store::SourceId depId){
             std::unique_ptr<Data::Store::Source> &dep = store->getSourceById(depId);
-            contextWorkflow(configs, hooks, store, dep, listener);
+            contextWorkflow(configs, hooks, store, dep);
         });
     }
 
     // Workflow for individual sources
-    void contextWorkflow(const Configs &configs, const Hooks &hooks, Data::Store::SourceStore *store, std::unique_ptr<Data::Store::Source> &source,
-        Listeners::WorkflowDiagListener *listener) {
+    void contextWorkflow(const Configs &configs, const Hooks &hooks, Data::Store::SourceStore *store,
+        std::unique_ptr<Data::Store::Source> &source) {
         // Check the need for updates
         if (!source->getUpdateAST()) {
             return;
@@ -80,6 +80,8 @@ namespace Parser {
         if (hooks.onContextStart != nullptr) {
             hooks.onContextStart();
         }
+
+        Listeners::WorkflowDiagListener listener = Listeners::WorkflowDiagListener(hooks, source->getId());
 
         // Get raw content
         const std::string &rawContent = source->getRawContent();
@@ -94,7 +96,7 @@ namespace Parser {
 
         // Check for syntax errors
         lexer.removeErrorListeners(); // Remove default error listeners
-        lexer.addErrorListener(listener);
+        lexer.addErrorListener(&listener);
 
         // Process tokens
         antlr4::Token *token = nullptr;
@@ -133,7 +135,7 @@ namespace Parser {
 
         // Check for syntax errors
         parser.removeErrorListeners(); // Remove default error listeners
-        parser.addErrorListener(listener);
+        parser.addErrorListener(&listener);
 
         // Get the start tree!
         antlr4::tree::ParseTree *tree = parser.prog();
@@ -156,18 +158,16 @@ namespace Parser {
         }
 
         // Visit dependencies
-        investegateContexts(configs, hooks, store, source, listener);
+        investegateContexts(configs, hooks, store, source);
     }
 
     // Triggered by Session::initiate
     void sessionWorkflow(const Configs &configs, const Hooks &hooks, Data::Store::SourceStore *store) {
-        Listeners::WorkflowDiagListener listener = Listeners::WorkflowDiagListener(hooks);
-
-        store->visitEntries([&configs, &hooks, &store, &listener](const Data::Store::SourceID entryID) {
+        store->visitEntries([&configs, &hooks, &store](const Data::Store::SourceId entryID) {
             // Get source object
             std::unique_ptr<Data::Store::Source> &src = store->getSourceById(entryID);
 
-            contextWorkflow(configs, hooks, store, src, &listener);
+            contextWorkflow(configs, hooks, store, src);
         });
     }
 }

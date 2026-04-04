@@ -20,11 +20,11 @@
 
 namespace Data {
     namespace Store {
-        typedef std::function<void(const SourceID&)> DependencyCall;
+        typedef std::function<void(const SourceId&)> DependencyCall;
         class JUG_DATA_API Source {
             public:
             private:
-                SourceID id;
+                SourceId id;
                 std::string uri;
                 SourceStore *store;
                 std::string rawContent;
@@ -36,16 +36,16 @@ namespace Data {
                 bool shouldUpdateAST = true;
 
                 // Dependency tracking
-                std::vector<SourceID> neededSources;
+                std::vector<SourceId> neededSources;
             public:
                 Source(std::string srcUri, SourceStore *srcStore) ;
 
                 // Tracking
-                SourceID getID();
+                SourceId getId();
 
                 // Dependency tracking
-                void addSourceDependency(SourceID dep) ;
-                void removeSourceDependency(SourceID dep) ;
+                void addSourceDependency(SourceId dep) ;
+                void removeSourceDependency(SourceId dep) ;
                 void resetSourceDependencies() ;
                 void visitDependencies(DependencyCall depCall) ;
 

@@ -13,23 +13,23 @@
 namespace Data {
     namespace Store {
         // Entry
-        void SourceStore::addEntry(SourceID entry) {
-            std::vector<SourceID> &entries = this->entryPoints;
+        void SourceStore::addEntry(SourceId entry) {
+            std::vector<SourceId> &entries = this->entryPoints;
             if (std::ranges::find(entries, entry) == entries.end()) {
                 entries.push_back(entry);
             }
         }
-        void SourceStore::removeEntry(SourceID entry) {
-            std::vector<SourceID> &entries = this->entryPoints;
+        void SourceStore::removeEntry(SourceId entry) {
+            std::vector<SourceId> &entries = this->entryPoints;
             Common::Utility::fastVectorRemove(entries, entry);
         }
         void SourceStore::resetEntries() {
-            std::vector<SourceID> &entries = this->entryPoints;
+            std::vector<SourceId> &entries = this->entryPoints;
             entries.clear();
             entries.shrink_to_fit();
         }
         void SourceStore::visitEntries(const EntryCall entryCall) {
-            std::vector<SourceID> &entries = this->entryPoints;
+            std::vector<SourceId> &entries = this->entryPoints;
             for (auto entry : entries) {
                 if (entryCall != nullptr) {
                     entryCall(entry);
@@ -38,19 +38,19 @@ namespace Data {
         }
 
         // Sources
-        std::unique_ptr<Source>& SourceStore::getSourceById(const SourceID &id) {
-            std::unordered_map<SourceID, std::unique_ptr<Source>> &srcs = this->sources;
+        std::unique_ptr<Source>& SourceStore::getSourceById(const SourceId &id) {
+            std::unordered_map<SourceId, std::unique_ptr<Source>> &srcs = this->sources;
 
             return srcs.at(id);
         }
         void SourceStore::addSource(const std::string &uri, bool isEntry = false) {
-            std::unordered_map<std::string, SourceID> &sourceStore = this->store;
+            std::unordered_map<std::string, SourceId> &sourceStore = this->store;
             if (!sourceStore.contains(uri)) {
-                std::unordered_map<SourceID, std::unique_ptr<Source>> &srcs = this->sources;
+                std::unordered_map<SourceId, std::unique_ptr<Source>> &srcs = this->sources;
 
                 // Create a <Source> object
                 std::unique_ptr<Source> src = std::make_unique<Source>(uri, this);
-                const SourceID &srcId = src->getID();
+                const SourceId &srcId = src->getId();
 
                 if (isEntry) {
                     // Update <Source> data
