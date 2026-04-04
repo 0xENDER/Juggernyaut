@@ -50,9 +50,7 @@ namespace Data {
             std::unordered_map<std::string, SourceId> &uriIndex = this->index;
 
             if (uriIndex.contains(uri)) {
-                std::unordered_map<SourceId, std::unique_ptr<Source>> &srcs = this->sources;
-
-                return uriIndex.contains(uri);
+                return uriIndex.at(uri);
             } else {
                 return 0;
             }
