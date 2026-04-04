@@ -57,7 +57,7 @@ namespace Capabilities {
                 std::vector<lsp::Diagnostic> diagnostics;
 
                 source->visitParserDiagnostics([&diagnostics](const Diagnostics::Diagnostic &diag) {
-                    diagnostics.push_back(std::move(internal_diagToLSP(diag)));
+                    diagnostics.push_back(internal_diagToLSP(diag));
                 });
 
                 // Publish the diagnostics to the editor
