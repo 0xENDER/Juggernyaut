@@ -143,7 +143,7 @@ namespace Console {
             std::cout << '\n' << timeString.str() << std::endl;
 
             // Revert
-            Optimization::reverse();
+            Optimization::revert();
         }
     }
 }

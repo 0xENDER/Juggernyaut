@@ -27,7 +27,7 @@ namespace Console {
             std::setvbuf(stdout, outBuffer.data(), _IOFBF, outBuffer.size());
             std::setvbuf(stderr, errBuffer.data(), _IOFBF, errBuffer.size());
         }
-        void reverse() {
+        void revert() {
             // Flush all channels
             std::cout.flush();
             std::clog.flush();

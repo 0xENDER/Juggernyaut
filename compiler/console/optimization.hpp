@@ -10,7 +10,7 @@
 namespace Console {
     namespace Optimization {
         extern void optimize() ;
-        extern void reverse() ;
+        extern void revert() ;
         extern void safetyCheck() ;
     }
 }
