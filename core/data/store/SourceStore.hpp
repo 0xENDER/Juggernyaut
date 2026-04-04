@@ -34,6 +34,10 @@ namespace Data {
 
                 // Unique implementations
                 virtual std::string onFileRawRequest(const std::string &uri) = 0;
+                // resolvePath:
+                // Returns: <is_success> (bool)
+                // Note: <output> is used as an error message container on failure
+                virtual bool resolvePath(const std::string &uri, std::string &output) = 0;
                 // virtual std::string onFileAbsoluteUriRequest(const std::string &uri) = 0;
 
                 // Entry

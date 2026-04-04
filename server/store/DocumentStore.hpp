@@ -20,5 +20,6 @@ namespace Store {
             void syncStatus(const std::string &uri, bool isInEditor) ;
 
             std::string onFileRawRequest(const std::string &uri) override;
+            bool resolvePath(const std::string &uri, std::string &output) override;
     };
 }

@@ -36,4 +36,16 @@ namespace Store {
             return std::string("");
         }
     }
+    bool FileStore::resolvePath(const std::string &uri, std::string &output) {
+        if (!isFileAccessible(uri)){
+            output = "file is inaccessible";
+            return false;
+        } else if (!isFileValid(uri)) {
+            output = "file is invalid";
+            return false;
+        }
+
+        output = normalizePath(uri);
+        return true;
+    }
 }

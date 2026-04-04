@@ -15,6 +15,10 @@ namespace Store {
     fs::path normalizePath(fs::path &path) {
         return path.append(".").lexically_normal();
     }
+    std::string normalizePath(const std::string &path) {
+        fs::path fsPath(path);
+        return normalizePath(fsPath).string();
+    }
     // Check if a file is accessible
     bool isFileAccessible(const std::string &filePath) {
         // Check if the file is open!

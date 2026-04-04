@@ -72,7 +72,7 @@ int main(int argc, const char *argv[]) {
     }
 
     // Manage input files
-    Store::FileStore store;
+    Store::FileStore store = Store::FileStore();
 
     // Add input files
     for (auto path : Base::InitialConfigs::entryPaths) {

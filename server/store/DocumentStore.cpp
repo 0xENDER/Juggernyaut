@@ -58,4 +58,16 @@ namespace Store {
             return std::string("");
         }
     }
+    bool DocumentStore::resolvePath(const std::string &uri, std::string &output) {
+        if (!Store::isFileAccessible(uri)){
+            output = "file is inaccessible";
+            return false;
+        } else if (!Store::isFileValid(uri)) {
+            output = "file is invalid";
+            return false;
+        }
+
+        output = lsp::DocumentUri::fromPath(uri).path();
+        return true;
+    }
 }
