@@ -1,0 +1,31 @@
+/**
+ * @brief
+ * Manage document objects and content updates
+**/
+
+#pragma once
+
+// Common headers
+#include "../../core/common/headers.hpp"
+
+// Session
+#include "../../core/session/session.hpp"
+
+namespace Session {
+    class SessionDebouncer {
+        private:
+            std::mutex mtx;
+            std::condition_variable cv;
+            std::atomic<bool> shutdown{false};
+            std::chrono::steady_clock::time_point triggerTime;
+            bool pending = false;
+            std::thread worker;
+
+            Session* sessionPtr;
+
+        public:
+            SessionDebouncer(Session& session) ;
+            ~SessionDebouncer() ;
+            void trigger() ;
+    };
+}

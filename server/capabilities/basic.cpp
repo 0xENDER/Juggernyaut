@@ -9,15 +9,22 @@
 #include "../base/info.hpp"
 
 // Session
-#include "../../core/session/session.hpp"
+#include "../session/SessionDebouncer.hpp"
 
 // Store
 #include "../store/DocumentStore.hpp"
 
 namespace Capabilities {
+    static std::unique_ptr<Session::SessionDebouncer> debouncer = nullptr;
+
     void configureProtocol(lsp::MessageHandler &messageHandler, Session::Session &session, int &exit_code) {
         bool received_shutdown = false;
         Store::DocumentStore *store = static_cast<Store::DocumentStore*>(session.store);
+
+        if (debouncer == nullptr) {
+            debouncer = std::make_unique<Session::SessionDebouncer>(session);
+        }
+
         messageHandler.add<lsp::requests::Initialize>(
             [](lsp::requests::Initialize::Params&& params) {
                 printMessage<lsp::requests::Initialize>(params);
@@ -65,7 +72,7 @@ namespace Capabilities {
                 store->syncRaw(rawUri, sourceCode);
 
                 // Refresh the session
-                Session::initiate(session);
+                debouncer->trigger();
             }
         ).add<lsp::notifications::TextDocument_DidChange>(
             [store, &session](lsp::notifications::TextDocument_DidChange::Params&& params) {
@@ -85,7 +92,7 @@ namespace Capabilities {
                     store->syncStatus(rawUri, true);
 
                     // Refresh the session
-                    Session::initiate(session);
+                    debouncer->trigger();
                 }
             }
         ).add<lsp::notifications::TextDocument_DidClose>(
@@ -96,7 +103,7 @@ namespace Capabilities {
                 store->syncStatus(rawUri, false);
 
                 // Refresh the session
-                Session::initiate(session);
+                debouncer->trigger();
             }
         );
     }
