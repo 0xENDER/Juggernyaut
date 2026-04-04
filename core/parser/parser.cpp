@@ -73,12 +73,15 @@ namespace Parser {
             return;
         }
 
+        // Reset diagnostics
+        source->resetParserDiagnostics();
+
         // Trigger context-level event
         if (hooks.onContextStart != nullptr) {
             hooks.onContextStart(source->getId());
         }
 
-        Listeners::WorkflowDiagListener listener = Listeners::WorkflowDiagListener(hooks, source->getId());
+        Listeners::WorkflowDiagListener listener = Listeners::WorkflowDiagListener(hooks, source);
 
         // Get raw content
         const std::string &rawContent = source->getRawContent();

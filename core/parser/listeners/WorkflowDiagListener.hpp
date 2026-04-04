@@ -10,17 +10,19 @@
 // Parser
 #include "../Hooks.hpp"
 
+#include "../../data/store/SourceStore.hpp"
+
 namespace Parser {
     namespace Listeners {
         // Listen for syntax-related errors
         class JUG_PARSER_API WorkflowDiagListener : public DiagnosticListener {
             private:
                 const Hooks &hooks;
-                const Data::Store::SourceId srcId;
+                std::unique_ptr<Data::Store::Source> &src;
             public:
                 // Constructors
-                WorkflowDiagListener(const Hooks &parserHooks, Data::Store::SourceId sourceId)
-                    : hooks(parserHooks), srcId(sourceId) {};
+                WorkflowDiagListener(const Hooks &parserHooks, std::unique_ptr<Data::Store::Source> &source)
+                    : hooks(parserHooks), src(source) {};
 
                 void onSyntaxError(Diagnostics::Diagnostic diag) override;
                 void onAmbiguity(Diagnostics::Diagnostic diag) override;

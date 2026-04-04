@@ -104,8 +104,8 @@ int main(int argc, const char *argv[]) {
         return Console::ProcessReport::programStatus;
     }
 
-    // Parser Diagnostics
-    session.hooks.parser.onSyntaxError = [](Diagnostics::Diagnostic diag) {
+    // Parser Diagnostics (OLD! SWITCH TO FILE-BASED REPORTING)
+    session.hooks.parser.onSyntaxError = [](const Diagnostics::Diagnostic &diag) {
         // Get the position
         Console::IndividualReport::startLine = diag.range.start.line;
         Console::IndividualReport::startColumn = diag.range.start.character;
@@ -125,7 +125,7 @@ int main(int argc, const char *argv[]) {
         // Report the error
         REPORT(Console::START_REPORT, getReportType(diag.severity), diag.message, Console::END_REPORT);
     };
-    session.hooks.parser.onAmbiguity = [](Diagnostics::Diagnostic diag) {
+    session.hooks.parser.onAmbiguity = [](const Diagnostics::Diagnostic &diag) {
         REPORT(Console::START_REPORT, getReportType(diag.severity), diag.message, " (source: ",
             diag.range.start.line, ":", diag.range.start.character ," to  " ,
             diag.range.end.line, ":", diag.range.end.character, ")", Console::END_REPORT);

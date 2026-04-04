@@ -16,7 +16,7 @@ namespace Parser {
     typedef std::function<void(const std::string&)> TreeReport;
     typedef std::function<void(const Data::Store::SourceId)> StageCall;
 
-    typedef std::function<void(Diagnostics::Diagnostic diag)> ParserDiagEvent;
+    typedef std::function<void(const Diagnostics::Diagnostic&)> ParserDiagEvent;
 
     // typedef std::function<Data::Store::Source(const std::string)> SourceRequest;
 

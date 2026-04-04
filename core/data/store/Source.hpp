@@ -8,6 +8,8 @@
 #include "../../common/headers.hpp"
 #include "../dynamic.hpp" // JUG_DATA_API
 
+#include "../../diagnostics/Diagnostic.hpp"
+
 #include "types.hpp"
 
 #ifdef _MSC_VER
@@ -34,6 +36,9 @@ namespace Data {
 
                 // Dependency tracking
                 std::vector<SourceId> neededSources;
+
+                // Diagnostics
+                std::vector<Diagnostics::Diagnostic> parserDiagnostics;
             public:
                 Source(std::string srcUri, SourceStore *srcStore) ;
 
@@ -60,6 +65,10 @@ namespace Data {
                 // If a file is imported by the user (not through an internal core process),
                 // a source should be treated as an entry point!
                 void setIsEntryPoint(const bool state) ;
+
+                // Diagnostics
+                void addParserDiagnostic(Diagnostics::Diagnostic diag) ;
+                void resetParserDiagnostics() ;
         };
     }
 }

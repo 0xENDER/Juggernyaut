@@ -79,5 +79,18 @@ namespace Data {
         void Source::setIsEntryPoint(const bool state) {
             this->isEntryPoint = state;
         }
+
+        // Diagnostics
+        void Source::addParserDiagnostic(Diagnostics::Diagnostic diag) {
+            std::vector<Diagnostics::Diagnostic> &diags = this->parserDiagnostics;
+
+            diags.push_back(diag);
+        }
+        void Source::resetParserDiagnostics() {
+            std::vector<Diagnostics::Diagnostic> &diags = this->parserDiagnostics;
+
+            diags.clear();
+            diags.shrink_to_fit();
+        }
     }
 }
