@@ -12,10 +12,7 @@
 
 #include "console/console.hpp"
 
-// Parser
-// #include "../core/parser/parser.hpp"
-
-// Store
+// Compiler Store
 #include "store/FileStore.hpp"
 
 // Session
