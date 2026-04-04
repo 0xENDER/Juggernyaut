@@ -69,7 +69,7 @@ namespace Parser {
     void contextWorkflow(const Configs &configs, const Hooks &hooks, Data::Store::SourceStore *store,
         std::unique_ptr<Data::Store::Source> &source) {
         // Check the need for updates
-        if (!source->getUpdateAST()) {
+        if (!(source->getUpdateAST())) {
             return;
         }
 
