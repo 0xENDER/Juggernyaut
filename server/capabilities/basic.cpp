@@ -8,11 +8,14 @@
 
 #include "../base/info.hpp"
 
+// Session
+#include "../core/session/session.hpp"
+
 // Store
 #include "../store/DocumentStore.hpp"
 
 namespace Capabilities {
-    lsp::MessageHandler *handler = nullptr;
+    lsp::MessageHandler *handler = nullptr; // REMOVE THIS??
     void configureProtocol(lsp::MessageHandler &messageHandler, Session::Session &session, int &exit_code) {
         bool received_shutdown = false;
         handler = &messageHandler;
@@ -53,16 +56,19 @@ namespace Capabilities {
                 exit_code = received_shutdown ? 0 : 1;
             }
         ).add<lsp::notifications::TextDocument_DidOpen>(
-            [&store](lsp::notifications::TextDocument_DidOpen::Params&& params) {
+            [&store, &session](lsp::notifications::TextDocument_DidOpen::Params&& params) {
                 const std::string rawUri = std::string(params.textDocument.uri.path());
                 std::string sourceCode = std::move(params.textDocument.text);
 
                 // Load doc
                 store->syncRaw(rawUri, sourceCode);
                 store->syncStatus(rawUri, true);
+
+                // Refresh the session
+                Session::initiate(session);
             }
         ).add<lsp::notifications::TextDocument_DidChange>(
-            [&store](lsp::notifications::TextDocument_DidChange::Params&& params) {
+            [&store, &session](lsp::notifications::TextDocument_DidChange::Params&& params) {
                 // Note: If you requested Full sync in your InitializeResult, 
                 // params.contentChanges[0].text will contain the entire updated file.
                 if (!params.contentChanges.empty()) {
@@ -77,14 +83,20 @@ namespace Capabilities {
                     // Load doc
                     store->syncRaw(rawUri, updatedSourceCode);
                     store->syncStatus(rawUri, true);
+
+                    // Refresh the session
+                    Session::initiate(session);
                 }
             }
         ).add<lsp::notifications::TextDocument_DidClose>(
-            [&store](lsp::notifications::TextDocument_DidClose::Params&& params) {
+            [&store, &session](lsp::notifications::TextDocument_DidClose::Params&& params) {
                 const std::string rawUri = std::string(params.textDocument.uri.path());
-
                 // Load doc
                 store->syncStatus(rawUri, false);
+
+
+                // Refresh the session
+                Session::initiate(session);
             }
         );
     }
