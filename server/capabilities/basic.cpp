@@ -58,9 +58,11 @@ namespace Capabilities {
                 const std::string rawUri = std::string(params.textDocument.uri.path());
                 std::string sourceCode = std::move(params.textDocument.text);
 
+                // Create doc
+                store->addSource(rawUri, true);
+
                 // Load doc
                 store->syncRaw(rawUri, sourceCode);
-                store->syncStatus(rawUri, true);
 
                 // Refresh the session
                 Session::initiate(session);
@@ -90,8 +92,8 @@ namespace Capabilities {
             [store, &session](lsp::notifications::TextDocument_DidClose::Params&& params) {
                 const std::string rawUri = std::string(params.textDocument.uri.path());
                 // Load doc
+                // TO-DO: Update content too??
                 store->syncStatus(rawUri, false);
-
 
                 // Refresh the session
                 Session::initiate(session);

@@ -21,12 +21,23 @@ namespace Store {
         } else {
             raws.insert({uri, rawContent});
         }
+
+        // Invalidate file raw file content
+        std::unique_ptr<Data::Store::Source> *srcPtr = this->getSourceByUri(uri);
+        if (srcPtr != nullptr) {
+            std::unique_ptr<Data::Store::Source> &src = *srcPtr;
+            src->invalidateRawContent();
+        }
     }
     void DocumentStore::syncStatus(const std::string &uri, bool isInEditor) {
         const Data::Store::SourceId &srcId = this->getSourceIdByUri(uri);
 
         if (srcId != 0) {
-            this->addEntry(srcId);
+            if (isInEditor) {
+                this->addEntry(srcId);
+            } else {
+                this->removeEntry(srcId);
+            }
         }
     }
 
