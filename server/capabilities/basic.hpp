@@ -13,10 +13,10 @@
 
 #include "print.hpp"
 
-// Store
-#include "../store/DocumentStore.hpp"
+// Session
+#include "../../core/session/session.hpp"
 
 namespace Capabilities {
-    extern lsp::MessageHandler *handler;
-    extern void configureProtocol(lsp::MessageHandler &messageHandler, Store::DocumentStore &store, int &exit_code) ;
+    extern lsp::MessageHandler *handler; // REMOVE THIS??
+    extern void configureProtocol(lsp::MessageHandler &messageHandler, Session::Session &session, int &exit_code) ;
 }

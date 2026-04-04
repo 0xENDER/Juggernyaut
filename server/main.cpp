@@ -21,17 +21,16 @@
 // Base
 #include "base/info.hpp"
 
-// Store
-#include "store/DocumentStore.hpp"
-
 // Capabilities
 #include "capabilities/print.hpp"
 #include "capabilities/basic.hpp"
 #include "capabilities/semantics/diagnostics.hpp"
 
-// Parser
-#include "../core/parser/parser.hpp"
-#include "../core/parser/listeners/DiagnosticListener.hpp"
+// Store
+#include "store/DocumentStore.hpp"
+
+// Session
+#include "../core/session/session.hpp"
 
 int main(int argc, const char *argv[]) {
     // Test for memory leaks
@@ -39,14 +38,18 @@ int main(int argc, const char *argv[]) {
 
     int exit_code = false;
 
+    // Setup session
+    Session::Session session = Session::getSessionDefaults();
+    Store::DocumentStore store;
+    session.store = &store;
+
     // Initalise communications protocol
     try {
         auto connection = lsp::Connection(lsp::io::standardIO());
         auto messageHandler = lsp::MessageHandler(connection);
 
-        Store::DocumentStore store;
-
-        Capabilities::configureProtocol(messageHandler, store, exit_code);
+        Capabilities::configureProtocol(messageHandler, session, exit_code);
+        Capabilities::Semantics::setupParserDiagnostics(messageHandler, session);
 
         while(true) {
             messageHandler.processIncomingMessages();

@@ -7,58 +7,38 @@
 
 // Capabilities
 #include "../capabilities/basic.hpp"
-#include "../capabilities/semantics/diagnostics.hpp"
 
 // lsp-framework
 #include "../lspFramework.hpp"
 
-#include "Document.hpp"
-
 namespace Store {
-    void DocumentStore::addDocument(const std::string &uri, bool fetchContent) {
-        Document doc = Document(uri);
+    // LSP synchronisation
+    void DocumentStore::syncRaw(const std::string &uri, const std::string &rawContent) {
+        std::unordered_map<std::string, std::string> &raws = this->syncedRaws;
 
-        // Get file contents
-        if (fetchContent) {
-            std::string rawText;
-            // bool success = Common::Files::getFileContent(uri, rawText);
-            // if(!success) {
-            rawText = "TEMPORARY:ERROR: COULDN'T FETCH THE FILE!"; // TO-DO: THROW A PROPER ERROR...
-            // }
-
-            doc.setRawContent(rawText);
-        }
-
-        // Events
-        doc.onRawContentChange = [](Document &document){
-            Capabilities::Semantics::validateDocumentSyntax(*Capabilities::handler, document);
-        };
-
-        this->documents.insert({uri, std::move(doc)});
-    }
-    Document* DocumentStore::getDocument(const std::string &uri) {
-        auto doc = this->documents.find(uri);
-        if (doc != this->documents.end()) {
-            return &(doc->second);
+        if (raws.contains(uri)) {
+            raws.at(uri) = rawContent;
         } else {
-            return nullptr;
+            raws.insert({uri, rawContent});
         }
     }
-    const Document* DocumentStore::getDocument(const std::string &uri) const {
-        auto doc = this->documents.find(uri);
-        if (doc != this->documents.end()) {
-            return &(doc->second);
+    void DocumentStore::syncStatus(const std::string &uri, bool isInEditor) {
+        std::unordered_map<std::string, Data::Store::SourceId> &index = this->index;
+
+        std::unique_ptr<Data::Store::Source> *src = this->getSourceByUri(uri);
+
+        if (src != nullptr) {
+            //
+        }
+    }
+
+    std::string DocumentStore::onFileRawRequest(const std::string &uri) {
+        std::unordered_map<std::string, std::string> &raws = this->syncedRaws;
+
+        if (raws.contains(uri)) {
+            return raws.at(uri);
         } else {
-            return nullptr;
-        }
-    }
-    void DocumentStore::deleteDocument(const std::string uri) {
-        this->documents.erase(uri);
-    }
-    void DocumentStore::initDocument(const std::string &uri) {
-        auto doc = this->documents.find(uri);
-        if (doc == this->documents.end()) {
-            this->addDocument(uri, false);
+            return std::string("TMP: COULDN'T SYNC!");
         }
     }
 }

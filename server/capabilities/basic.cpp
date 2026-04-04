@@ -8,11 +8,15 @@
 
 #include "../base/info.hpp"
 
+// Store
+#include "../store/DocumentStore.hpp"
+
 namespace Capabilities {
     lsp::MessageHandler *handler = nullptr;
-    void configureProtocol(lsp::MessageHandler &messageHandler, Store::DocumentStore &store, int &exit_code) {
+    void configureProtocol(lsp::MessageHandler &messageHandler, Session::Session &session, int &exit_code) {
         bool received_shutdown = false;
         handler = &messageHandler;
+        Store::DocumentStore *store = static_cast<Store::DocumentStore*>(session.store);
         messageHandler.add<lsp::requests::Initialize>(
             [](lsp::requests::Initialize::Params&& params) {
                 printMessage<lsp::requests::Initialize>(params);
@@ -54,16 +58,8 @@ namespace Capabilities {
                 std::string sourceCode = std::move(params.textDocument.text);
 
                 // Load doc
-                store.initDocument(rawUri);
-                Store::Document *docPtr = store.getDocument(rawUri);
-                if (docPtr == nullptr) {
-                    // THROW AN ERROR!
-                    return;
-                }
-                Store::Document &doc = *docPtr;
-
-                doc.setIsInEditor(true);
-                doc.setRawContent(sourceCode);
+                store->syncRaw(rawUri, sourceCode);
+                store->syncStatus(rawUri, true);
             }
         ).add<lsp::notifications::TextDocument_DidChange>(
             [&store](lsp::notifications::TextDocument_DidChange::Params&& params) {
@@ -79,16 +75,8 @@ namespace Capabilities {
                     );
 
                     // Load doc
-                    store.initDocument(rawUri);
-                    Store::Document *docPtr = store.getDocument(rawUri);
-                    if (docPtr == nullptr) {
-                        // THROW AN ERROR!
-                        return;
-                    }
-                    Store::Document &doc = *docPtr;
-
-                    doc.setIsInEditor(true);
-                    doc.setRawContent(updatedSourceCode);
+                    store->syncRaw(rawUri, updatedSourceCode);
+                    store->syncStatus(rawUri, true);
                 }
             }
         ).add<lsp::notifications::TextDocument_DidClose>(
@@ -96,18 +84,7 @@ namespace Capabilities {
                 const std::string rawUri = std::string(params.textDocument.uri.path());
 
                 // Load doc
-                store.initDocument(rawUri);
-                Store::Document *docPtr = store.getDocument(rawUri);
-                if (docPtr == nullptr) {
-                    // THROW AN ERROR!
-                    return;
-                }
-                Store::Document &doc = *docPtr;
-
-                // Delete if not in use!
-                if (!doc.getIsImported()) {
-                    store.deleteDocument(doc.uri);
-                }
+                store->syncStatus(rawUri, false);
             }
         );
     }
