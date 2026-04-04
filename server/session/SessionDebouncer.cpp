@@ -12,6 +12,8 @@
 #include <chrono>
 #include <atomic>
 
+// Full disclosure: I barely have any idea how this works...
+
 namespace Session {
     SessionDebouncer::SessionDebouncer(Session& session)
         : sessionPtr(&session) {
