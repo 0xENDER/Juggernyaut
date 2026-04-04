@@ -11,6 +11,8 @@
 // lsp-framework
 #include "../lspFramework.hpp"
 
+#include "files.hpp"
+
 namespace Store {
     // LSP synchronisation
     void DocumentStore::syncRaw(const std::string &uri, const std::string &rawContent) {
@@ -47,7 +49,13 @@ namespace Store {
         if (raws.contains(uri)) {
             return raws.at(uri);
         } else {
-            return std::string("TMP: COULDN'T SYNC!");
+            if (Store::isFileAccessible(uri) && Store::isFileValid(uri)) {
+                std::string content;
+                if (Store::getFileContent(uri, content)) {
+                    return content;
+                }
+            }
+            return std::string("");
         }
     }
 }
