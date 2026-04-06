@@ -109,6 +109,11 @@
                 "command": "juggernyaut.server.session.trigger",
                 "title": "Trigger the Juggernyaut language server's session workflow",
                 "category": "Juggernyaut"
+            },
+            {
+                "command": "juggernyaut.server.session.rejuvenate",
+                "title": "Rejuvenate the Juggernyaut language server's session",
+                "category": "Juggernyaut"
             }
         ],
         "files": [

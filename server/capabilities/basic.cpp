@@ -23,16 +23,22 @@ namespace Capabilities {
 
         // Register Juggernyaut's specific commands
         cmdOptions.commands = {
-            "juggernyaut.server.session.trigger"
+            "juggernyaut.server.session.trigger",
+            "juggernyaut.server.session.rejuvenate"
         };
 
         messageHandler.add<lsp::requests::Workspace_ExecuteCommand>(
-            [](const lsp::ExecuteCommandParams&& params) -> lsp::NullOr<lsp::LSPAny> {
+            [&session](const lsp::ExecuteCommandParams&& params) -> lsp::NullOr<lsp::LSPAny> {
 
                 // Route the specific command
                 if (params.command == "juggernyaut.server.session.trigger") {
 
                     debouncer->trigger();
+
+                    return nullptr;
+                } else if (params.command == "juggernyaut.server.session.rejuvenate") {
+
+                    Session::rejuvenate(session);
 
                     return nullptr;
                 }
