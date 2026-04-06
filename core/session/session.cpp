@@ -5,6 +5,9 @@
 
 #include "session.hpp"
 
+// External library
+#include <mimalloc.h>
+
 // initiation
 #include "init/parser.hpp"
 
@@ -67,5 +70,8 @@ namespace Session {
         store->cleanup();
 
         Init::rejuvenateParser();
+
+        // Free unused memory
+        mi_collect(true);
     }
 }
