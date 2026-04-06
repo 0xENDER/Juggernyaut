@@ -1,6 +1,3 @@
-# Diagnostic codes
-include(${JUG_CMAKE_DIR}/diagnostics.cmake)
-
 # CMake functions & macros
 include(${JUG_CMAKE_DIR}/utility.cmake)
 
@@ -15,3 +12,6 @@ include(${JUG_CMAKE_DIR}/dependencies.cmake)
 
 # CMake files that are not related to the main building process
 include(${JUG_CMAKE_DIR}/other/legal.cmake)
+
+# Diagnostic codes
+include(${JUG_CMAKE_DIR}/diagnostics.cmake)
