@@ -42,6 +42,7 @@ namespace Data {
                 std::vector<Diagnostics::Diagnostic> parserDiagnostics;
             public:
                 const std::string uri;
+                uint32_t round = 0;
 
                 Source(std::string srcUri, SourceStore *srcStore) ;
                 Source(const Source&) = delete;

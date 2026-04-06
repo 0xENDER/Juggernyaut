@@ -8,6 +8,9 @@
 // initiation
 #include "init/parser.hpp"
 
+// Store
+#include "../data/store/SourceStore.hpp"
+
 namespace Session {
     Session getSessionDefaults() {
         ParserConfigs parserConfigs; // Empty
@@ -55,6 +58,14 @@ namespace Session {
         }
 
         // [STAGE] LLVM IR Code Generation
+        // ...
+    }
+
+    void rejuvenate(const Session &session) {
+        // Delete unused documents
+        Data::Store::SourceStore *store = session.store;
+        store->cleanup();
+
         // ...
     }
 }

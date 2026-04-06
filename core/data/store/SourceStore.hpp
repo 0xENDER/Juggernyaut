@@ -55,7 +55,8 @@ namespace Data {
                 void addSource(const std::string &uri, bool isEntry) ;
 
                 // Memory housekeeping
-                // ...
+                void deleteSource(std::unique_ptr<Source> &src) ;
+                void cleanup() ;
         };
     }
 }
