@@ -268,7 +268,7 @@ function(copy_shared_library FUNC_TARGET LIB_PATH LIB_VERSION)
     add_custom_command(TARGET ${FUNC_TARGET}
                     POST_BUILD
                     COMMAND ${CMAKE_COMMAND}
-                           -E copy ${LIB_PATH} .
+                           -E copy_if_different ${LIB_PATH} .
                     WORKING_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
     # Fix antlr4-runtime library naming!
     if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -282,4 +282,14 @@ function(copy_shared_library FUNC_TARGET LIB_PATH LIB_VERSION)
         rename_file(${FUNC_TARGET} "${LIB_FILENAME_NOEXT}.dylib" "${LIB_FILENAME_NOEXT}.${LIB_VERSION}.dylib")
         create_symbolic_link(${FUNC_TARGET} "${LIB_FILENAME_NOEXT}.${LIB_VERSION}.dylib" "${LIB_FILENAME_NOEXT}.dylib" FALSE)
     endif()
+endfunction()
+
+function(copy_proper_shared_library FUNC_TARGET SRC DEST)
+    add_custom_command(TARGET ${FUNC_TARGET} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} 
+            -DSRC_DIR="${SRC}" 
+            -DDST_DIR="${DEST}" 
+            -P "${JUG_CMAKE_DIR}/components/copy_shared_libs.cmake"
+        COMMENT "Gathering dynamic libraries..."
+    )
 endfunction()
