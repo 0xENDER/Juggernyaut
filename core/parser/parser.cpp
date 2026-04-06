@@ -64,23 +64,25 @@ namespace Parser {
         lexer.addErrorListener(&listener);
 
         // Process tokens
-        antlr4::Token *token = nullptr;
-        do {
-            // Look ahead and store
-            token = tokens.LT(1);
+        if (hooks.onANTLRTokenDetected == nullptr) {
+            tokens.fill();
+        } else {
+            antlr4::Token *token = nullptr;
+            do {
+                // Look ahead and store
+                token = tokens.LT(1);
 
-            // Trigger events
-            if (hooks.onANTLRTokenDetected != nullptr) {
+                // Trigger events
                 hooks.onANTLRTokenDetected(token->toString());
-            }
-
-            // Advance
-            if (token->getType() != antlr4::Token::EOF) {
-                tokens.consume();
-            }
-        } while (token->getType() != antlr4::Token::EOF);
-        // Rewind
-        tokens.seek(0);
+    
+                // Advance
+                if (token->getType() != antlr4::Token::EOF) {
+                    tokens.consume();
+                }
+            } while (token->getType() != antlr4::Token::EOF);
+            // Rewind
+            tokens.seek(0);
+        }
 
         // Trigger context-level event
         if (hooks.onLexerContextEnd != nullptr) {
