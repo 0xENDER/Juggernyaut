@@ -66,6 +66,6 @@ namespace Session {
         Data::Store::SourceStore *store = session.store;
         store->cleanup();
 
-        // ...
+        Init::rejuvenateParser();
     }
 }

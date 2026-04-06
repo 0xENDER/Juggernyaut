@@ -9,6 +9,7 @@
 // Internal
 #include "internal/JugLexer.hpp"
 #include "internal/JugParser.hpp"
+#include "internal/cleanup.hpp"
 
 // Listeners
 #include "listeners/WorkflowDiagListener.hpp"
@@ -141,5 +142,11 @@ namespace Parser {
 
             contextWorkflow(configs, hooks, store, src);
         });
+    }
+
+    void cleanup() {
+        Internal::flushAntlrCache();
+
+        // ...
     }
 }
