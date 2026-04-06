@@ -261,3 +261,25 @@ function(rename_file TARGET OLD_PATH NEW_PATH)
         WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     )
 endfunction()
+
+# Fix dynamic libraries
+function(copy_shared_library FUNC_TARGET LIB_PATH LIB_VERSION)
+    # Libraries
+    add_custom_command(TARGET ${FUNC_TARGET}
+                    POST_BUILD
+                    COMMAND ${CMAKE_COMMAND}
+                           -E copy ${LIB_PATH} .
+                    WORKING_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+    # Fix antlr4-runtime library naming!
+    if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        get_filename_component(LIB_FILENAME "${LIB_PATH}" NAME)
+        delete_file(${FUNC_TARGET} "${LIB_FILENAME}.${LIB_VERSION}")
+        rename_file(${FUNC_TARGET} ${LIB_FILENAME} "${LIB_FILENAME}.${LIB_VERSION}")
+        create_symbolic_link(${FUNC_TARGET} "${LIB_FILENAME}.${LIB_VERSION}" ${LIB_FILENAME} FALSE)
+    elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+        get_filename_component(LIB_FILENAME_NOEXT "${LIB_PATH}" NAME_WE)
+        delete_file(${FUNC_TARGET} "${LIB_FILENAME_NOEXT}.${LIB_VERSION}.dylib")
+        rename_file(${FUNC_TARGET} "${LIB_FILENAME_NOEXT}.dylib" "${LIB_FILENAME_NOEXT}.${LIB_VERSION}.dylib")
+        create_symbolic_link(${FUNC_TARGET} "${LIB_FILENAME_NOEXT}.${LIB_VERSION}.dylib" "${LIB_FILENAME_NOEXT}.dylib" FALSE)
+    endif()
+endfunction()

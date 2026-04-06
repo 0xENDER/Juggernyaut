@@ -146,17 +146,19 @@ endif()
 set(ANTLR_EXECUTABLE ${JUG_DEPENDENCIES_ANTLR4_JAR_PATH})
 
 # mimalloc
-if(NOT TARGET mimalloc-static)
+if(NOT TARGET mimalloc)
+    set(MIMALLOC_VERSION 3.2.8 CACHE STRING "mimalloc version" FORCE)
     FetchContent_Declare(
         mimalloc
         GIT_REPOSITORY https://github.com/microsoft/mimalloc.git
-        GIT_TAG v3.2.8
+        GIT_TAG v${MIMALLOC_VERSION}
         SOURCE_DIR ${JUG_DEPENDENCIES_DIR}/mimalloc
     )
-    set(MI_BUILD_SHARED OFF CACHE BOOL "Build static library" FORCE)
+    set(MI_BUILD_STATIC OFF CACHE BOOL "Build static library" FORCE)
+    set(MI_BUILD_SHARED ON CACHE BOOL "Build shared library" FORCE)
     set(MI_BUILD_OBJECT OFF CACHE BOOL "Build object library" FORCE)
     set(MI_BUILD_TESTS OFF CACHE BOOL "Skip mimalloc tests" FORCE)
     set(MI_OVERRIDE ON CACHE BOOL "Override standard allocations" FORCE)
     FetchContent_MakeAvailable(mimalloc)
 endif()
-link_libraries(mimalloc-static)
+link_libraries(mimalloc)
