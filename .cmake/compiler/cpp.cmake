@@ -182,17 +182,7 @@ check_c_compiler_flag("-fsanitize=address,undefined" CMAKE_CXX_SUPPORTS_FSANITIZ
 # For ARM targets without FPU, use soft-float ABI
 if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang" AND NOT APPLE)
     if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
-        # Check if target supports hard float
-        try_compile(HAS_HARD_FLOAT
-            ${CMAKE_BINARY_DIR}
-            ${JUG_CMAKE_DIR}/compiler/test_hard_float.c
-            COMPILE_DEFINITIONS "-mfloat-abi=hard"
-        )
-
-        if(NOT HAS_HARD_FLOAT)
-            # Fall back to soft-float for targets without FPU
-            set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfloat-abi=soft")
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mfloat-abi=soft")
-        endif()
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfloat-abi=soft")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mfloat-abi=soft")
     endif()
 endif()
