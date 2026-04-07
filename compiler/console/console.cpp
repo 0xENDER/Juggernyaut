@@ -132,7 +132,7 @@ namespace Console {
                     case FATAL_REPORT:
                         Statistics::fatalReports++;
                         // Update program status
-                        ProcessReport::programStatus = 1;
+                        ProcessReport::programStatus = 2;
                         break;
                     case ACTION_REPORT:
                         Statistics::actionReports++;
