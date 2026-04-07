@@ -13,7 +13,7 @@ namespace fs = std::filesystem;
 namespace Store {
     // Internal functions
     fs::path normalizePath(fs::path &path) {
-        return path.append(".").lexically_normal();
+        return fs::weakly_canonical(path);
     }
     std::string normalizePath(const std::string &path) {
         fs::path fsPath(path);
