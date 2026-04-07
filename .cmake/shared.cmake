@@ -1,8 +1,8 @@
-# CMake functions & macros
-include(${JUG_CMAKE_DIR}/utility.cmake)
-
 # Manage C++ compiler settings
 include(${JUG_CMAKE_DIR}/compiler/cpp.cmake)
+
+# CMake functions & macros
+include(${JUG_CMAKE_DIR}/utility.cmake)
 
 # Manage binary output
 include(${JUG_CMAKE_DIR}/build-output.cmake)
