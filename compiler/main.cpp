@@ -85,12 +85,14 @@ int main(int argc, const char *argv[]) {
 
     // Debug action
     if (Base::InitialConfigs::Debug::Parser::activateAntlrSyntaxTest) {
-        session.hooks.parser.onContextStart = [](const Data::Store::SourceId srcId) {
-            REPORT(Console::START_REPORT, Console::DEBUG_REPORT, "Tokens:", Console::END_REPORT);
-        };
-        session.hooks.parser.onANTLRTokenDetected = [](const std::string &tokenText) {
-            Console::IndividualReport::isContinuation = true;
-            REPORT(Console::START_REPORT, Console::DEBUG_REPORT, tokenText, Console::END_REPORT);
+        session.hooks.parser.onANTLRTokenDetected = [](const uint8_t &stage, const std::string &tokenText) {
+            if (stage == 2) {
+                REPORT(tokenText, "\n");
+            } else if (stage == 1) {
+                REPORT(Console::START_REPORT, Console::DEBUG_REPORT, "Tokens: \n");
+            } else if (stage == 3) {
+                REPORT(Console::END_REPORT);
+            }
         };
         session.hooks.parser.onANTLRTreeGenerated = [](const std::string &treeText) {
             REPORT(Console::START_REPORT, Console::DEBUG_REPORT, "Parse Tree: \n", treeText, Console::END_REPORT);
@@ -104,7 +106,13 @@ int main(int argc, const char *argv[]) {
         return Console::ProcessReport::programStatus;
     }
 
-    // Parser Diagnostics (OLD! SWITCH TO FILE-BASED REPORTING)
+    session.hooks.parser.onContextStart = [&session](const Data::Store::SourceId srcId) {
+        std::unique_ptr<Data::Store::Source> &source = (session.store)->getSourceById(srcId);
+
+        REPORT(Console::START_REPORT, Console::NORMAL_REPORT, "Processing: ", source->uri, Console::END_REPORT);
+    };
+
+    // Parser Diagnostics
     session.hooks.parser.onContextEnd = [&session](const Data::Store::SourceId srcId) {
         std::unique_ptr<Data::Store::Source> &source = (session.store)->getSourceById(srcId);
 
