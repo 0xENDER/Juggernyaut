@@ -185,7 +185,7 @@ if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
         # Check if target supports hard float
         try_compile(HAS_HARD_FLOAT
             ${CMAKE_BINARY_DIR}
-            ${CMAKE_CURRENT_SOURCE_DIR}/test_hard_float.c
+            ${JUG_CMAKE_DIR}/compiler/test_hard_float.c
             COMPILE_DEFINITIONS "-mfloat-abi=hard"
         )
 
