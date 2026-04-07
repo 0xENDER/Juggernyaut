@@ -102,6 +102,7 @@ namespace Data {
             }
         }
 
+        // Memory housekeeping
         static uint32_t currentRound = 0;
         void SourceStore::deleteSource(std::unique_ptr<Source> &source) {
             std::unordered_map<std::string, SourceId> &srcIndex = this->index;
