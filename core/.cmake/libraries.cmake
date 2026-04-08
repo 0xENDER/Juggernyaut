@@ -16,7 +16,6 @@ if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
     copy_proper_shared_library(JuggernyautCommonLibrary $<TARGET_FILE_DIR:mimalloc> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 endif()
 
-
 # Create a library from /diagnostics
 add_library(JuggernyautDiagnosticsLibrary SHARED)
 target_sources_search(JuggernyautDiagnosticsLibrary ${JUG_CORE_SOURCE_DIR}/diagnostics/*.cpp TRUE)
