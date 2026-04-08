@@ -49,7 +49,7 @@ int main(int argc, const char *argv[]) {
     // Update initial configurations
     if(!Base::InitialConfigs::updateUsingArgs(argc, argv)){
         // This process failed!
-        if (Console::Statistics::fatalReports == 0) {
+        if (Console::Statistics::fatalReports != 0) {
             REPORT(Console::START_REPORT, Console::FATAL_REPORT, "Terminating program due to a Base::InitialConfigs error!",
                 BAD_CODE_OR_MEMORY_LEAKS,
                 Console::END_REPORT);

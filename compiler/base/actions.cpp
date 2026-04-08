@@ -73,7 +73,7 @@ namespace Base {
                     // Check if the action was successful!
                     if (!success || filePath.at(0) == '-') {
                         // Missing input argument!
-                        REPORT(Console::START_REPORT, Console::FATAL_REPORT,
+                        REPORT(Console::START_REPORT, Console::CRITICAL_REPORT,
                             "Missing the <path> argument! (-i, --input)", Console::END_REPORT);
                         ACTION_FATAL_FAILURE;
                     }
@@ -101,7 +101,7 @@ namespace Base {
                     // Check if the action was successful!
                     if (!success || dirPath.at(0) == '-') {
                         // Missing input argument!
-                        REPORT(Console::START_REPORT, Console::FATAL_REPORT,
+                        REPORT(Console::START_REPORT, Console::CRITICAL_REPORT,
                             "Missing the <path> argument! (-d, --dirs)", Console::END_REPORT);
                         ACTION_FATAL_FAILURE;
                     }
@@ -120,10 +120,6 @@ namespace Base {
                 "Get license text.",
                 {},
                 {
-                    // Report action
-                    REPORT(Console::START_REPORT, Console::ACTION_REPORT, "Printing license text!",
-                        Console::END_REPORT);
-
                     // Get the license text
                     std::string content;
                     std::string licensePath = InitialConfigs::compilerBinPath + "/LICENSE";
