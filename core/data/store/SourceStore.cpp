@@ -17,7 +17,9 @@ namespace Data {
             std::vector<std::string> &paths = this->importDirs;
 
             if (this->_isDirValid(path)) {
-                paths.push_back(path);
+                if (!Common::Utility::isInVector(paths, path)) {
+                    paths.push_back(path);
+                }
             }
         }
         void SourceStore::resetImportDirs() {
