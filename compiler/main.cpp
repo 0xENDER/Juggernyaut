@@ -53,7 +53,7 @@ int main(int argc, const char *argv[]) {
     if(!Base::InitialConfigs::updateUsingArgs(argc, argv)){
         // This process failed!
         if (Console::Statistics::fatalReports != 0) {
-            REPORT(Console::START_REPORT, Console::FATAL_REPORT, "Terminating program due to a Base::InitialConfigs error!",
+            REPORT(Console::START_REPORT, Console::FATAL_REPORT, "terminating program due to a Base::InitialConfigs error!",
                 BAD_CODE_OR_MEMORY_LEAKS,
                 Console::END_REPORT);
         }
@@ -109,13 +109,13 @@ int main(int argc, const char *argv[]) {
             if (stage == 2) {
                 REPORT(tokenText, "\n");
             } else if (stage == 1) {
-                REPORT(Console::START_REPORT, Console::DEBUG_REPORT, "Tokens: \n");
+                REPORT(Console::START_REPORT, Console::DEBUG_REPORT, "tokens: \n");
             } else if (stage == 3) {
                 REPORT(Console::END_REPORT);
             }
         };
         session.hooks.parser.onANTLRTreeGenerated = [](const std::string &treeText) {
-            REPORT(Console::START_REPORT, Console::DEBUG_REPORT, "Parse Tree: \n", treeText, Console::END_REPORT);
+            REPORT(Console::START_REPORT, Console::DEBUG_REPORT, "parse tree: \n", treeText, Console::END_REPORT);
         };
     }
 

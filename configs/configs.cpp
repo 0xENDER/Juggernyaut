@@ -25,7 +25,7 @@ namespace Configs {
         toml::parse_result result = toml::parse(rawContent);
         if (!result) {
             std::stringstream details;
-            details << "parsing failed:\n"
+            details << "parsing failed:\n    "
                 << result.error().description()
                 << "\n    ("
                 << result.error().source().begin

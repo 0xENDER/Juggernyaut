@@ -70,7 +70,7 @@ namespace Base {
             // Get the compiler's path
             if (!Store::getExecutableDir(compilerBinPath)) { // Same as /path/to/bin
                 REPORT(Console::START_REPORT, Console::FATAL_REPORT,
-                    "Couldn't get the compiler's path!",
+                    "couldn't get the compiler's path!",
                     BAD_CODE_OR_MEMORY_LEAKS,
                     Console::END_REPORT);
             }
@@ -107,7 +107,7 @@ namespace Base {
                     // Unexpected input!
                     REPORT(Console::START_REPORT,
                         (InitialConfigs::Technical::strictFlagDetection) ? Console::FATAL_REPORT : Console::WARNING_REPORT,
-                        "Unexpected command line input: '", arg, "'",
+                        "unexpected command line input: '", arg, "'",
                         Console::END_REPORT);
                     if (InitialConfigs::Technical::strictFlagDetection) {
                         return false;
@@ -123,7 +123,7 @@ namespace Base {
                     // Unknown argument!
                     REPORT(Console::START_REPORT,
                         (InitialConfigs::Technical::strictFlagDetection) ? Console::FATAL_REPORT : Console::WARNING_REPORT,
-                        "Unknown command line flag: ", arg,
+                        "unknown command line flag: ", arg,
                         Console::END_REPORT);
                     if (InitialConfigs::Technical::strictFlagDetection) {
                         return false;
