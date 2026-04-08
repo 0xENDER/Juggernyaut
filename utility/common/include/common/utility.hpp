@@ -20,7 +20,7 @@ namespace Common {
         }
 
         template <typename Type>
-        void fastVectorRemove(std::vector<Type> &vec, Type target) {
+        void fastVectorRemove(const std::vector<Type> &vec, const Type &target) {
             auto it = std::find(vec.begin(), vec.end(), target);
             if (it != vec.end()) {
                 // Swap the found element with the last element
@@ -28,6 +28,11 @@ namespace Common {
                 // Pop the last element off the end
                 vec.pop_back();   
             }
+        }
+
+        template <typename Type>
+        constexpr bool isInVector(const std::vector<Type> &vec, const Type &target) {
+            return std::find(vec.begin(), vec.end(), target) != vec.end();
         }
 
         extern JUG_COMMON_API bool isNumber(const std::string &text) ;
