@@ -20,7 +20,10 @@ namespace Store {
     bool isFileAccessible(const std::string &filePath) {
         // Check if the file is open!
         std::ifstream file(filePath);
-        return file.is_open(); // FIle will be closed when out of scope
+        return file.is_open(); // File will be closed when out of scope
+    }
+    bool isValidDir(const std::string &path) {
+        return (fs::exists(path) && fs::is_directory(path));
     }
     std::string getFileExtension(const std::string &filePath) {
         // Check file extension

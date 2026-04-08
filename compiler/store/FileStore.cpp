@@ -21,6 +21,9 @@ namespace Store {
     bool FileStore::_isFileAccessible(const std::string &uri) {
         return isFileAccessible(uri);
     }
+    bool FileStore::_isDirValid(const std::string &path) {
+        return isValidDir(path);
+    }
     std::string FileStore::_getFileExtension(const std::string &uri) {
         return getFileExtension(uri);
     }

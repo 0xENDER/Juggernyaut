@@ -25,6 +25,8 @@ namespace Data {
             private:
                 std::unordered_map<SourceId, std::unique_ptr<Source>> sources; // ID-based tracking
                 std::vector<SourceId> entryPoints;
+
+                std::vector<std::string> importDirs;
             public:
                 SourceId lastID = 10; // 0-10 are used for internal purposes
                 SourceStore() = default;
@@ -38,10 +40,15 @@ namespace Data {
                 // Returns: <is_success> (bool)
                 virtual bool _getRawFile(const std::string &uri, std::string &output) = 0;
                 virtual bool _isFileAccessible(const std::string &uri) = 0;
+                virtual bool _isDirValid(const std::string &path) = 0;
                 virtual std::string _getFileExtension(const std::string &uri) = 0;
                 virtual std::string _getPathDir(const std::string &uri) = 0;
                 virtual std::string _getCanonical(const std::string &uri) = 0;
                 virtual std::string _joinPaths(const std::string &base, const std::string &path) = 0;
+
+                // Import paths
+                void addImportDir(const std::string &path) ;
+                void resetImportDirs() ;
 
                 // General path lookup
                 // resolvePath:

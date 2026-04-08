@@ -16,6 +16,7 @@ namespace Store {
         public:
             bool _getRawFile(const std::string &uri, std::string &output) override;
             bool _isFileAccessible(const std::string &uri) override;
+            bool _isDirValid(const std::string &path) override;
             std::string _getFileExtension(const std::string &uri) override;
             std::string _getPathDir(const std::string &uri) override;
             std::string _getCanonical(const std::string &uri) override;

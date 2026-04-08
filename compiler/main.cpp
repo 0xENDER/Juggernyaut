@@ -71,12 +71,19 @@ int main(int argc, const char *argv[]) {
         return Console::ProcessReport::programStatus;
     }
 
-    // Manage input files
+    // Setup session
     Store::FileStore store = Store::FileStore();
+    Session::Session session = Session::getSessionDefaults();
+    session.store = &store;
+
+    // Add import directories
+    for (const auto &dir : Base::InitialConfigs::Input::importDirs) {
+        store.addImportDir(dir);
+    }
 
     // Add input files
     std::string currentPath;
-    for (const auto &path : Base::InitialConfigs::entryPaths) {
+    for (const auto &path : Base::InitialConfigs::Input::entryPaths) {
         if (store.resolvePath(path, currentPath)) {
             store.addSource(currentPath, true);
         } else {
@@ -85,10 +92,6 @@ int main(int argc, const char *argv[]) {
     }
     currentPath.clear();
     currentPath.shrink_to_fit();
-
-    // Setup session
-    Session::Session session = Session::getSessionDefaults();
-    session.store = &store;
 
     // Debug action
     if (Base::InitialConfigs::Debug::Parser::activateAntlrSyntaxTest) {

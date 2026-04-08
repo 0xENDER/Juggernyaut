@@ -12,6 +12,21 @@
 
 namespace Data {
     namespace Store {
+        // Import paths
+        void SourceStore::addImportDir(const std::string &path) {
+            std::vector<std::string> &paths = this->importDirs;
+
+            if (this->_isDirValid(path)) {
+                paths.push_back(path);
+            }
+        }
+        void SourceStore::resetImportDirs() {
+            std::vector<std::string> &paths = this->importDirs;
+
+            paths.clear();
+            paths.shrink_to_fit();
+        }
+
         // General path lookup
         bool SourceStore::resolvePath(const std::string &uri, std::string &output, SourceId callerId) {
             std::string path = uri;
@@ -32,6 +47,15 @@ namespace Data {
             } else { // to the running directory
                 if (this->_isFileAccessible(path)) {
                     output = this->_getCanonical(path);
+                    return true;
+                }
+            }
+
+            std::string importDir;
+            for (const auto &dir : this->importDirs) {
+                importDir = this->_joinPaths(dir, path);
+                if (this->_isFileAccessible(importDir)) {
+                    output = this->_getCanonical(importDir);
                     return true;
                 }
             }
