@@ -5,6 +5,8 @@
 
 #include "files.hpp"
 
+#include "../_external_sys.hpp"
+
 // Basic C++ headers
 #include <fstream>
 

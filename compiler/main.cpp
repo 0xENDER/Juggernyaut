@@ -8,7 +8,6 @@
 
 // Common headers
 #include "../core/common/headers.hpp"
-#include "../core/common/debug.hpp"
 
 #include "console/console.hpp"
 
@@ -39,9 +38,6 @@ const Console::ReportType getReportType(Diagnostics::Severity severity) {
 
 int main(int argc, const char *argv[]) {
     Console::runtimeTracking();
-
-    // Test for memory leaks
-    Common::CrtDebug::initiateCrtMemoryChecks();
 
     // Initalise communications protocol
     // (Basiclly allowing the default protocol to take effect)
@@ -150,15 +146,6 @@ int main(int argc, const char *argv[]) {
     // Begin the actual work here...
     Session::initiate(session);
     
-    // Handle memory check results
-    if(Common::CrtDebug::processCrtMemoryReports()){
-        // Exist with an error on memory leaks!
-        REPORT(Console::START_REPORT, Console::CRITICAL_REPORT,
-            "Terminating program due to detected memory errors! Please contact the developers of Juggernyaut!",
-            Console::END_REPORT);
-        return 1;
-    }
-
     // End the program
     Console::finalize(activeSources);
     return Console::ProcessReport::programStatus;
