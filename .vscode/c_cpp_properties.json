@@ -4,7 +4,8 @@
             "includePath": [
                 "${workspaceFolder}/.deps/**",
                 "${workspaceFolder}/.build/**",
-                "${workspaceFolder}/.build/*core/**"
+                "${workspaceFolder}/.build/*core/**",
+                "${workspaceFolder}/utility/common/include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/g++-13",

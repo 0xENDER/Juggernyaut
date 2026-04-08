@@ -7,7 +7,7 @@
 #include <fstream>
 
 // Common headers
-#include "../core/common/headers.hpp"
+#include "common/headers.hpp"
 
 #include "console/console.hpp"
 

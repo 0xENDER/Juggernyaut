@@ -5,7 +5,7 @@
 
 #include "SourceStore.hpp"
 
-#include "../../common/utility.hpp"
+#include "common/utility.hpp"
 
 // Basic C++ libraries
 #include <algorithm>

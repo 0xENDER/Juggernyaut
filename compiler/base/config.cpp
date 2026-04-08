@@ -4,7 +4,7 @@
 **/
 
 #include "config.hpp"
-#include "../../core/common/strings.hpp"
+#include "common/strings.hpp"
 
 #include "../console/console.hpp"
 
