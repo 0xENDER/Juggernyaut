@@ -75,10 +75,16 @@ int main(int argc, const char *argv[]) {
     Store::FileStore store = Store::FileStore();
 
     // Add input files
-    for (auto path : Base::InitialConfigs::entryPaths) {
-        // TO-DO: USE STORE RESOLVE
-        store.addSource(path, true);
+    std::string currentPath;
+    for (const auto &path : Base::InitialConfigs::entryPaths) {
+        if (store.resolvePath(path, currentPath)) {
+            store.addSource(currentPath, true);
+        } else {
+            REPORT(Console::START_REPORT, Console::CRITICAL_REPORT, "Couldn't resolve input path: ", store._getCanonical(path), Console::END_REPORT);
+        }
     }
+    currentPath.clear();
+    currentPath.shrink_to_fit();
 
     // Setup session
     Session::Session session = Session::getSessionDefaults();

@@ -26,15 +26,12 @@ namespace Data {
                 std::string relativePath = this->_joinPaths(this->_getPathDir(src->uri), path);
 
                 if (this->_isFileAccessible(relativePath)) {
-                    path = this->_getCanonical(relativePath);
-
-                    output = std::move(path);
+                    output = this->_getCanonical(relativePath);
                     return true;
                 }
             } else { // to the running directory
                 if (this->_isFileAccessible(path)) {
-
-                    output = std::move(path);
+                    output = this->_getCanonical(path);
                     return true;
                 }
             }
