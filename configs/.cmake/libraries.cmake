@@ -14,3 +14,4 @@ add_internal_target_cxx_flags(JuggernyautConfigsLibrary FALSE)
 # Dependencies
 add_dependencies(JuggernyautConfigsLibrary JuggernyautSessionLibrary)
 target_link_libraries(JuggernyautConfigsLibrary PUBLIC JuggernyautSessionLibrary)
+target_include_directories(JuggernyautConfigsLibrary PRIVATE ${TOMLPP_INCLUDE_DIR})
