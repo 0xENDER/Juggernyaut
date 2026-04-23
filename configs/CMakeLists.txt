@@ -13,10 +13,6 @@ set(JUG_LICENSE_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../LICENSE)
 set(JUG_DEPENDENCIES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../.deps)
 set(JUG_BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../.dist)
 
-if(NOT DEFINED JUG_CORE_BUILD)
-    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../core ${JUG_BUILD_DIR}/configs_core)
-endif()
-
 # Directories
 set(JUG_CONFIGS_CMAKE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/.cmake)
 set(JUG_CONFIGS_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
@@ -42,6 +38,11 @@ include(${JUG_CONFIGS_CMAKE_DIR}/dependencies.cmake)
 
 # CMake functions & macros
 include(${JUG_CMAKE_DIR}/shared.cmake)
+
+# Other sub-builds
+if(NOT DEFINED JUG_CORE_BUILD)
+    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../core ${JUG_BUILD_DIR}/configs_core)
+endif()
 
 # Build the libraries!
 include(${JUG_CONFIGS_CMAKE_DIR}/libraries.cmake)

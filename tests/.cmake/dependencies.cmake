@@ -1,5 +1,7 @@
 message(STATUS "[DEPENDENCIES] Checking dependencies...")
 
+include(FetchContent)
+
 # googletest
 set(GTEST_VERSION 1.17.0)
 set(INSTALL_GTEST OFF CACHE BOOL "Disable GTest installation" FORCE)

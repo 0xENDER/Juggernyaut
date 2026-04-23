@@ -13,13 +13,6 @@ set(JUG_LICENSE_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../LICENSE)
 set(JUG_DEPENDENCIES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../.deps)
 set(JUG_BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../.dist)
 
-if(NOT DEFINED JUG_CORE_BUILD)
-    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../core ${JUG_BUILD_DIR}/compiler_core)
-endif()
-if(NOT DEFINED JUG_CONFIGS_BUILD)
-    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../configs ${JUG_BUILD_DIR}/compiler_configs)
-endif()
-
 # Directories
 set(JUG_COMPILER_CMAKE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/.cmake)
 set(JUG_COMPILER_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
@@ -45,6 +38,14 @@ include(${JUG_COMPILER_CMAKE_DIR}/dependencies.cmake)
 
 # CMake functions & macros
 include(${JUG_CMAKE_DIR}/shared.cmake)
+
+# Other sub-builds
+if(NOT DEFINED JUG_CORE_BUILD)
+    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../core ${JUG_BUILD_DIR}/compiler_core)
+endif()
+if(NOT DEFINED JUG_CONFIGS_BUILD)
+    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../configs ${JUG_BUILD_DIR}/compiler_configs)
+endif()
 
 # Build the compiler executable!
 include(${JUG_COMPILER_CMAKE_DIR}/build-executable.cmake)
