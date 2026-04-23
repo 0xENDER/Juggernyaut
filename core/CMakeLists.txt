@@ -1,7 +1,7 @@
 # Basic info
 cmake_minimum_required(VERSION 4.2 FATAL_ERROR)
 project(juggernyaut_core)
-#enable_testing()
+set(JUG_CORE_BUILD ON CACHE BOOL "Jug dependency tracking" FORCE)
 
 # Stop build when errors occur
 set(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION ON)

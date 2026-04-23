@@ -1,7 +1,7 @@
 # Basic info
 cmake_minimum_required(VERSION 4.2 FATAL_ERROR)
 project(juggernyaut_configs)
-#enable_testing()
+set(JUG_CONFIGS_BUILD ON CACHE BOOL "Jug dependency tracking" FORCE)
 
 # Stop build when errors occur
 set(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION ON)
@@ -13,7 +13,7 @@ set(JUG_LICENSE_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../LICENSE)
 set(JUG_DEPENDENCIES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../.deps)
 set(JUG_BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../.dist)
 
-if(NOT DEFINED JUG_GLOBAL_BUILD)
+if(NOT DEFINED JUG_CORE_BUILD)
     add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../core ${JUG_BUILD_DIR}/configs_core)
 endif()
 
