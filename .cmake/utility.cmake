@@ -135,6 +135,10 @@ macro(generate_command SOURCE_NAME)
             "${JUG_CMAKE_DIR}/components/${SOURCE_NAME}.sh.in"
             "${JUG_DIST_FINAL_DIR}.${SOURCE_NAME}.sh"
             @ONLY
+            FILE_PERMISSIONS 
+                OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                GROUP_READ GROUP_EXECUTE
+                WORLD_READ WORLD_EXECUTE
         )
     endif()
 endmacro()
