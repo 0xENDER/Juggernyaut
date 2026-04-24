@@ -23,7 +23,7 @@ on:
         default: 0.0.0-github_mac.000
       run_tests:
         type: boolean
-        default: false
+        default: true
 
 jobs:
 
