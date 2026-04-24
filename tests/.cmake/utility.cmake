@@ -35,4 +35,10 @@ macro(add_test_target TARGET DIR)
     if(MSVC)
         target_compile_options(${TARGET} PRIVATE /wd6326)
     endif()
+
+    # Handle local library linking
+    set_target_properties(JugTestsCore PROPERTIES 
+        BUILD_RPATH "$ORIGIN/../../bin"
+        INSTALL_RPATH "$ORIGIN/../../bin"
+    )
 endmacro()
