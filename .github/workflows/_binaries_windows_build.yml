@@ -22,7 +22,6 @@ on:
         type: string
         default: 0.0.0-github_windows.000
       run_tests:
-        required: true
         type: boolean
         default: false
 
