@@ -7,7 +7,7 @@ endmacro()
 
 # Linking libraries
 macro(link_external_test_target CURR_TARGET EXTERNAL)
-    target_link_libraries(${TARGET}
+    target_link_libraries(${CURR_TARGET}
         PRIVATE
         ${EXTERNAL}
     )
