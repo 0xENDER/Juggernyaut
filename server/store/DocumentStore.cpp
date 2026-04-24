@@ -7,6 +7,7 @@
 
 // Capabilities
 #include "../capabilities/basic.hpp"
+#include "../capabilities/semantics/diagnostics.hpp"
 
 // lsp-framework
 #include "../lspFramework.hpp"
@@ -24,7 +25,7 @@ namespace Store {
             raws.insert({uri, rawContent});
         }
 
-        // Invalidate file raw file content
+        // Invalidate raw content
         std::unique_ptr<Data::Store::Source> *srcPtr = this->getSourceByUri(uri);
         if (srcPtr != nullptr) {
             std::unique_ptr<Data::Store::Source> &src = *srcPtr;
@@ -84,6 +85,9 @@ namespace Store {
         Data::Store::SourceStore::deleteSource(src, erase);
 
         std::unordered_map<std::string, std::string> &raws = this->syncedRaws;
+
+        // Reset diagnostics
+        Capabilities::Semantics::resetSourceDiagnostics(uri);
 
         // Delete file data
         if (raws.contains(uri)) {
