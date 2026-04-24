@@ -21,6 +21,9 @@ on:
         required: false
         type: string
         default: 0.0.0-github_linux.000
+      run_tests:
+        type: boolean
+        default: true
 
 jobs:
 
@@ -71,7 +74,7 @@ jobs:
       if: inputs.build_platform_name != 'x86_32' && inputs.build_platform_name != 'arm32'
       run: |
         cmake .. -DCMAKE_BUILD_TYPE=${{inputs.build_mode}} -DCMAKE_UNIX_GENERATOR_PLATFORM=${{inputs.build_platform}} \
-          -DJUG_CLEANUP=ON -DJUG_RELEASE_VERSION="${{inputs.release_version}}"
+          -DJUG_CLEANUP=ON -DJUG_RELEASE_VERSION="${{inputs.release_version}}" -DJUG_BUILD_TESTS=${{inputs.run_tests}}
       working-directory: .build
 
     - name: Configure CMake (32-bit)
@@ -79,7 +82,7 @@ jobs:
       run: |
         cmake .. -DCMAKE_BUILD_TYPE=${{inputs.build_mode}} -DCMAKE_UNIX_GENERATOR_PLATFORM=${{inputs.build_platform}} \
           -DCMAKE_C_COMPILER=i686-linux-gnu-gcc -DCMAKE_CXX_COMPILER=i686-linux-gnu-g++ -DCMAKE_SYSTEM_PROCESSOR=i686 \
-          -DJUG_CLEANUP=ON -DJUG_RELEASE_VERSION="${{inputs.release_version}}"
+          -DJUG_CLEANUP=ON -DJUG_RELEASE_VERSION="${{inputs.release_version}}" -DJUG_BUILD_TESTS=${{inputs.run_tests}}
       working-directory: .build
 
     - name: Configure CMake (ARM 32-bit)
@@ -88,14 +91,17 @@ jobs:
         cmake .. -DCMAKE_BUILD_TYPE=${{inputs.build_mode}} -DCMAKE_UNIX_GENERATOR_PLATFORM=${{inputs.build_platform}} \
           -DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc -DCMAKE_CXX_COMPILER=arm-linux-gnueabihf-g++ \
           -DCMAKE_SYSTEM_PROCESSOR=arm \
-          -DJUG_CLEANUP=ON -DJUG_RELEASE_VERSION="${{inputs.release_version}}"
+          -DJUG_CLEANUP=ON -DJUG_RELEASE_VERSION="${{inputs.release_version}}" -DJUG_BUILD_TESTS=${{inputs.run_tests}}
       working-directory: .build
 
     - name: Build
       run: cmake --build . --config ${{inputs.build_mode}} --parallel 3 --verbose
       working-directory: .build
 
-    # TO-DO: ADD TESTS!
+    - name: Run Tests (optional)
+      if: inputs.run_tests
+      run: ctest -C ${{inputs.build_mode}} -V
+      working-directory: .build
 
     - name: Extract version (optional)
       if: inputs.bundle_binaries
@@ -104,6 +110,12 @@ jobs:
         VERSION=$(${{github.workspace}}/.dist/${{inputs.build_mode}}/${{inputs.build_platform_name}}/bin/jug --version \
           | head -n 1)
         echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+    - name: Clean up Tests (optional)
+      if: ${{inputs.run_tests == true && inputs.bundle_binaries == true}}
+      run: |
+        rm -rf ${{inputs.build_mode}}/${{inputs.build_platform_name}}/test
+      working-directory: .dist
 
     - name: Upload Binaries Artifact (optional)
       if: inputs.bundle_binaries

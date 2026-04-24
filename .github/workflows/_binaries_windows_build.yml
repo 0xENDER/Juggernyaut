@@ -21,6 +21,10 @@ on:
         required: false
         type: string
         default: 0.0.0-github_windows.000
+      run_tests:
+        required: true
+        type: boolean
+        default: false
 
 jobs:
 
@@ -72,14 +76,17 @@ jobs:
     - name: Configure CMake
       run: |
         cmake .. -DCMAKE_BUILD_TYPE=${{inputs.build_mode}} -DCMAKE_GENERATOR_PLATFORM=${{inputs.build_platform}} -DJUG_CLEANUP=ON `
-          -DJUG_RELEASE_VERSION="${{inputs.release_version}}"
+          -DJUG_RELEASE_VERSION="${{inputs.release_version}}" -DJUG_BUILD_TESTS=${{inputs.run_tests}}
       working-directory: .build
 
     - name: Build
       run: cmake --build . --config ${{inputs.build_mode}} --parallel 3 --verbose
       working-directory: .build
 
-    # TO-DO: ADD TESTS!
+    - name: Run Tests (optional)
+      if: inputs.run_tests
+      run: ctest -C ${{inputs.build_mode}} -V
+      working-directory: .build
 
     - name: Extract version (optional)
       if: inputs.bundle_binaries
@@ -92,6 +99,12 @@ jobs:
           exit 1
         }
       working-directory: ${{github.workspace}}/.dist/${{inputs.build_mode}}/${{inputs.build_platform_name}}/bin/
+
+    - name: Clean up Tests (optional)
+      if: ${{inputs.run_tests == true && inputs.bundle_binaries == true}}
+      run: |
+        rmdir /s /q "${{inputs.build_mode}}/${{inputs.build_platform_name}}/test"
+      working-directory: .dist
 
     - name: Upload Binaries Artifact (optional)
       if: inputs.bundle_binaries
