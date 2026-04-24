@@ -1,6 +1,7 @@
 # Basic info
 cmake_minimum_required(VERSION 4.2 FATAL_ERROR)
 project(juggernyaut_tests_core)
+set(JUG_TESTS_CORE ON CACHE BOOL "Test tracking" FORCE)
 
 # Stop build when errors occur
 set(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION ON)
