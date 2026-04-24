@@ -5,6 +5,21 @@ macro(dep_check)
     endif()
 endmacro()
 
+# Linking libraries
+macro(link_external_test_target CURR_TARGET EXTERNAL)
+    target_link_libraries(${TARGET}
+        PRIVATE
+        ${EXTERNAL}
+    )
+    if(WIN32)
+        add_custom_command(TARGET ${CURR_TARGET} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "$<TARGET_FILE:${EXTERNAL}>"
+            "$<TARGET_FILE_DIR:${CURR_TARGET}>"
+        )
+    endif()
+endmacro()
+
 # Defining targets
 macro(add_test_target TARGET DIR)
     message(STATUS "[BUILD] Adding '${TARGET}' tests...")
@@ -15,9 +30,12 @@ macro(add_test_target TARGET DIR)
     # Link against gtest and required libraries
     target_link_libraries(${TARGET}
         PRIVATE
-        JuggernyautCommonLibrary # Just in case (also, it should already be linked anyways...)
         GTest::gtest # Or gtest_main
     )
+    link_external_test_target(${TARGET} JuggernyautCommonLibrary)
+    if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+        link_external_test_target(${TARGET} mimalloc)
+    endif()
     
     # Attach manifest data
     attach_manifest_data(${TARGET} ${JUG_TESTS_MANIFEST_FILE} TRUE)
@@ -37,8 +55,10 @@ macro(add_test_target TARGET DIR)
     endif()
 
     # Handle local library linking
-    set_target_properties(JugTestsCore PROPERTIES 
-        BUILD_RPATH "$ORIGIN/../../bin"
-        INSTALL_RPATH "$ORIGIN/../../bin"
-    )
+    if(NOT WIN32)
+        set_target_properties(${TARGET} PROPERTIES 
+            BUILD_RPATH "$ORIGIN/../../bin"
+            INSTALL_RPATH "$ORIGIN/../../bin"
+        )
+    endif()
 endmacro()
