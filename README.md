@@ -8,7 +8,7 @@ An experimental general-purpose programming language in the making!
 ## Overview
 
 - `/compiler`:
-  The CLI wrapper.
+  The CLI wrapper and the bridge between the front-end and the back-end.
 - `/configs`:
   Processing `jug.toml` config files
 - `/core`:
@@ -25,6 +25,8 @@ An experimental general-purpose programming language in the making!
   Includes extensions for well-known code editors.
 - `/server`:
   The language server for IDEs. (Follows the LSP)
+- `/tests`:
+  Test files.
 - `/utility`:
   - `common`:
     The common library
