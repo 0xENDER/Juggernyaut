@@ -187,6 +187,15 @@ namespace Data {
                 source.reset(); // Reset resource safely!
             }
         }
+        void internal_visitDeps(std::unique_ptr<Data::Store::Source> &src, SourceStore *srcStore) {
+            src->visitDependencies([&srcStore](SourceId srcId) {
+                std::unique_ptr<Data::Store::Source> &src = srcStore->getSourceById(srcId);
+
+                src->round = currentRound;
+
+                internal_visitDeps(src, srcStore);
+            });
+        }
         void SourceStore::cleanup() {
             SourceStore *srcStore = this;
 
@@ -198,6 +207,8 @@ namespace Data {
                 std::unique_ptr<Data::Store::Source> &src = srcStore->getSourceById(srcId);
 
                 src->round = currentRound;
+
+                internal_visitDeps(src, srcStore);
             });
 
             // Discard inaccessible entries
