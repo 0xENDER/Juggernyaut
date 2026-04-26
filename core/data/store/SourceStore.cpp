@@ -130,13 +130,6 @@ namespace Data {
         void SourceStore::addSource(const std::string &uri, bool isEntry = false) {
             std::unordered_map<std::string, SourceId> &uriIndex = this->index;
 
-
-            
-            std::cerr << "OLD-NEW: " << uri << this->_getCanonical(uri) << std::endl;
-            std::cerr << "TEST: " << "./test.jug" << this->_getCanonical("./test.jug") << std::endl;
-
-
-
             const std::string canonical = this->_getCanonical(uri);
 
             if (!uriIndex.contains(canonical)) {
@@ -203,10 +196,6 @@ namespace Data {
             auto it = srcs.begin();
             while (it != srcs.end()) {
                 if (it->second->round != currentRound) {
-                    std::cerr << "AAAA: " << it->second->round << "-" << it->second->getId() << "-" << it->second->uri << std::endl;
-                    for (auto a:this->entryPoints) {
-                        std::cerr << "BBBB: " << a << std::endl;
-                    }
                     srcStore->deleteSource(it->second, false);
                     it = srcs.erase(it); // Erase, and fetch!
                 } else {
