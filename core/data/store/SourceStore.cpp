@@ -173,9 +173,10 @@ namespace Data {
             this->removeEntry(srcId);
 
             // Delete element
-            source.reset();
             if (erase && srcs.contains(srcId)) {
                 srcs.erase(srcId);
+            } else {
+                source.reset(); // Reset resource safely!
             }
         }
         void SourceStore::cleanup() {
