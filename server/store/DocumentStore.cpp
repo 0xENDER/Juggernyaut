@@ -91,8 +91,7 @@ namespace Store {
 
         // Delete file data
         if (raws.contains(uri)) {
-            raws.at(uri) = "";
-            // raws.erase(uri);
+            raws.erase(uri);
         }
     }
 }
