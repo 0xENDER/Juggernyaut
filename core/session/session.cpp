@@ -29,9 +29,12 @@ namespace Session {
             std::move(parserHooks)
         };
 
+        States states;
+
         return {
             std::move(sessionConfigs),
             std::move(sessionHooks),
+            states,
             nullptr
         };
     }
