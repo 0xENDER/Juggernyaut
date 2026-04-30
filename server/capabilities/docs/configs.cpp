@@ -45,6 +45,23 @@ namespace Capabilities {
         }
         void registerConfigsWatcher(lsp::MessageHandler &messageHandler, Session::Session &session,
             std::unique_ptr<Session::SessionDebouncer> &debouncer, const std::string &configUri) {
+            // Add update trigger
+            messageHandler.add<lsp::notifications::Workspace_DidChangeWatchedFiles>(
+                [&messageHandler, &session, &debouncer](lsp::notifications::Workspace_DidChangeWatchedFiles::Params&& params) {
+                    for (const auto& change : params.changes) {
+                        if (change.type == lsp::FileChangeType::Deleted) {
+                            Configs::BreakingChanges changes = Configs::resetSessionConfigs(session);
+                            Configs::refreshSessionState(session, changes);
+                            debouncer->trigger();
+                        } else if (change.type == lsp::FileChangeType::Changed) {
+                            Configs::BreakingChanges changes = Docs::updateSessionConfigs(messageHandler, session, (std::string) change.uri.path());
+                            Configs::refreshSessionState(session, changes);
+                            debouncer->trigger();
+                        }
+                    }
+                }
+            );
+
             // File watcher rule
             lsp::FileSystemWatcher watcher;
             watcher.globPattern = configUri;
@@ -64,23 +81,6 @@ namespace Capabilities {
 
             lsp::requests::Client_RegisterCapability::Params params;
             params.registrations.push_back(std::move(registration));
-
-            // Add update trigger
-            messageHandler.add<lsp::notifications::Workspace_DidChangeWatchedFiles>(
-                [&messageHandler, &session, &debouncer](lsp::notifications::Workspace_DidChangeWatchedFiles::Params&& params) {
-                    for (const auto& change : params.changes) {
-                        if (change.type == lsp::FileChangeType::Deleted) {
-                            Configs::BreakingChanges changes = Configs::resetSessionConfigs(session);
-                            Configs::refreshSessionState(session, changes);
-                            debouncer->trigger();
-                        } else if (change.type == lsp::FileChangeType::Changed) {
-                            Configs::BreakingChanges changes = Docs::updateSessionConfigs(messageHandler, session, (std::string) change.uri.path());
-                            Configs::refreshSessionState(session, changes);
-                            debouncer->trigger();
-                        }
-                    }
-                }
-            );
 
             // Send the request to the client
             messageHandler.sendRequest<lsp::requests::Client_RegisterCapability>(
