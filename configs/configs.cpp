@@ -17,7 +17,6 @@ namespace Configs {
         std::optional<Diagnostics::Diagnostic> getTable(Session::Session &session, const std::string &configUri, toml::table &table) {
             if (session.store == nullptr) {
                 throw std::runtime_error("No Session Store object found!");
-                return std::nullopt;
             }
 
             std::string rawContent;
