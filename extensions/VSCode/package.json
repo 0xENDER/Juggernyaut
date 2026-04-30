@@ -145,6 +145,9 @@
         "programming language",
         "general programming language"
     ],
+    "extensionPack": [
+        "tamasfe.even-better-toml"
+    ],
     "scripts": {
         "build": "esbuild ./scripts/extension.ts --bundle --outfile=./scripts/extension.js --external:vscode --format=cjs --platform=node && esbuild ./scripts/extension.light.ts --bundle --outfile=./scripts/extension.light.js --external:vscode --format=cjs --platform=browser --minify",
         "package:desktop": "vsce package --no-dependencies --baseContentUrl https://github.com/Ender-ing/juggernyaut/tree/main/extensions/VSCode",
