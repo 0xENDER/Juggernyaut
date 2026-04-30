@@ -61,6 +61,8 @@ int main(int argc, const char *argv[]) {
         // End the program
         Console::finalize();
         return Console::ProcessReport::programStatus;
+    } else if (Base::InitialConfigs::Input::config.empty()) {
+        Base::InitialConfigs::configsFallback();
     }
 
     // Check if other delayed actions are allowed to run
