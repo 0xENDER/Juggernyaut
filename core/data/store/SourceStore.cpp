@@ -95,7 +95,7 @@ namespace Data {
         }
 
         // IDs
-        SourceId SourceStore::getSourceIdByUri(const std::string &uri) {
+        SourceId SourceStore::getSourceIdByURI(const std::string &uri) {
             std::unordered_map<std::string, SourceId> &uriIndex = this->index;
 
             const std::string canonical = this->_getCanonical(uri);
@@ -117,7 +117,7 @@ namespace Data {
 
             return srcs.at(id);
         }
-        std::unique_ptr<Source>* SourceStore::getSourceByUri(const std::string &uri) {
+        std::unique_ptr<Source>* SourceStore::getSourceByURI(const std::string &uri) {
             std::unordered_map<std::string, SourceId> &uriIndex = this->index;
 
             const std::string canonical = this->_getCanonical(uri);

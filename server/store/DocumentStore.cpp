@@ -28,14 +28,14 @@ namespace Store {
         }
 
         // Invalidate raw content
-        std::unique_ptr<Data::Store::Source> *srcPtr = this->getSourceByUri(canonical);
+        std::unique_ptr<Data::Store::Source> *srcPtr = this->getSourceByURI(canonical);
         if (srcPtr != nullptr) {
             std::unique_ptr<Data::Store::Source> &src = *srcPtr;
             src->invalidateRawContent();
         }
     }
     void DocumentStore::syncStatus(const std::string &uri, bool isInEditor) {
-        const Data::Store::SourceId &srcId = this->getSourceIdByUri(uri);
+        const Data::Store::SourceId &srcId = this->getSourceIdByURI(uri);
 
         if (srcId != 0) {
             if (isInEditor) {
