@@ -87,6 +87,7 @@ int main(int argc, const char *argv[]) {
 
         for (const auto &diag : diags) {
             // Get the position
+            Console::IndividualReport::path = Base::InitialConfigs::Input::config;
             Console::IndividualReport::startLine = diag.range.start.line;
             Console::IndividualReport::startColumn = diag.range.start.character;
             Console::IndividualReport::endLine = diag.range.end.line;
@@ -150,15 +151,17 @@ int main(int argc, const char *argv[]) {
     session.hooks.parser.onContextStart = [&session, &activeSources](const Data::Store::SourceId srcId) {
         std::unique_ptr<Data::Store::Source> &source = (session.store)->getSourceById(srcId);
 
-        REPORT(Console::START_REPORT, Console::NORMAL_REPORT, "#", ++activeSources, ": ", source->uri, Console::END_REPORT);
+        REPORT(Console::START_REPORT, Console::NORMAL_REPORT, "\n#", ++activeSources, ": ", source->uri, Console::END_REPORT);
     };
 
     // Parser Diagnostics
     session.hooks.parser.onContextEnd = [&session](const Data::Store::SourceId srcId) {
         std::unique_ptr<Data::Store::Source> &source = (session.store)->getSourceById(srcId);
+        const std::string &srcPath = source->uri;
 
-        source->visitParserDiagnostics([](const Diagnostics::Diagnostic &diag) {
+        source->visitParserDiagnostics([&srcPath](const Diagnostics::Diagnostic &diag) {
             // Get the position
+            Console::IndividualReport::path = srcPath;
             Console::IndividualReport::startLine = diag.range.start.line;
             Console::IndividualReport::startColumn = diag.range.start.character;
             Console::IndividualReport::endLine = diag.range.end.line;
