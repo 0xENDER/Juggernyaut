@@ -62,7 +62,7 @@ namespace Data {
             return this->shouldUpdateAST;
         }
         void Source::preventUpdateAST() {
-            this->shouldUpdateAST = false;
+            this->shouldUpdateAST = false; // Only on a local level!
         }
 
         // Dependency tracking
