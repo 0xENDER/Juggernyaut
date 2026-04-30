@@ -44,17 +44,17 @@ namespace Configs {
 
                 // Get range
                 const auto errSrc = err.source();
-                diag.range.start.line = static_cast<uint32_t>((int) errSrc.begin.line);
-                diag.range.start.character = static_cast<uint32_t>((int) errSrc.begin.column);
-                diag.range.end.line = static_cast<uint32_t>((int) errSrc.end.line);
-                diag.range.end.character = static_cast<uint32_t>((int) errSrc.end.column);
+                diag.range.start.line = static_cast<uint32_t>((int) errSrc.begin.line - 1);
+                diag.range.start.character = static_cast<uint32_t>((int) errSrc.begin.column - 1);
+                diag.range.end.line = static_cast<uint32_t>((int) errSrc.end.line - 1);
+                diag.range.end.character = static_cast<uint32_t>((int) errSrc.end.column - 1);
 
                 return diag;
             }
             rawContent.clear();
             rawContent.shrink_to_fit();
 
-            table = result.table();
+            table = std::move(result).table();
             return std::nullopt;
         }
 
@@ -79,8 +79,8 @@ namespace Configs {
             return false;
         }
 
-        if (configs.contains("workspace")) {
-            Internal::trackChanges(breaking, Workspace::importDirs(session, diags, isStrict, configs, rootUri));
+        if (toml::table *workspaceTable = configs["workspace"].as_table()) {
+            Internal::trackChanges(breaking, Workspace::importDirs(session, diags, isStrict, *workspaceTable, rootUri));
         }
 
         return true;

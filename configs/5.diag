@@ -4,3 +4,5 @@
 -TOML parsing error: $MSG
 3:
 -any and all pre-existing import directories will be ignored (strict mode enabled)
+4:
+-invalid/inaccessible import directory (path ignored)

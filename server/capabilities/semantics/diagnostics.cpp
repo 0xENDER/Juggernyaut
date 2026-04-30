@@ -86,13 +86,21 @@ namespace Capabilities {
             std::vector<lsp::Diagnostic> diagnostics;
 
             for (const auto &diag : diags) {
+                std::cerr << "DIAG: " << diag.message << std::endl;
                 diagnostics.push_back(internal_diagToLSP(diag));
             }
 
             // Publish the diagnostics to the editor
             auto diagParams = lsp::notifications::TextDocument_PublishDiagnostics::Params{};
             diagParams.uri = lsp::DocumentUri::fromPath(uri); // The URI of the file you just checked
+            std::cerr << "PATH: " << uri << std::endl;
             diagParams.diagnostics = std::move(diagnostics);
+
+            if (handler == nullptr) {
+                throw std::runtime_error("The message handler has not been set!");
+            }
+
+            std::cerr << "------DATA------ \n" << diagParams.uri.path() << std::endl;
             handler->sendNotification<lsp::notifications::TextDocument_PublishDiagnostics>(std::move(diagParams));
         }
     }
