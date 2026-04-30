@@ -68,6 +68,8 @@ namespace Console {
         extern size_t startColumn;
         extern size_t endLine;
         extern size_t endColumn;
+
+        extern size_t code;
     }
 
     // Keep track of general report statistics

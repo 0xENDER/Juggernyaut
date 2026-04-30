@@ -77,12 +77,17 @@ int main(int argc, const char *argv[]) {
     Session::Session session = Session::getSessionDefaults();
     session.store = &store;
 
+    // Stats
+    uint32_t sourceVisits = 0;
+
     // Load external configs
     if (!Base::InitialConfigs::Input::config.empty()) {
         std::vector<Diagnostics::Diagnostic> diags;
         if (!Configs::modifySession(session, Base::InitialConfigs::Input::config, diags, false)) {
             REPORT(Console::START_REPORT, Console::CRITICAL_REPORT, "couldn't process configuration file!",
                 Console::END_REPORT);
+        } else {
+            sourceVisits++;
         }
 
         for (const auto &diag : diags) {
@@ -92,6 +97,8 @@ int main(int argc, const char *argv[]) {
             Console::IndividualReport::startColumn = diag.range.start.character;
             Console::IndividualReport::endLine = diag.range.end.line;
             Console::IndividualReport::endColumn = diag.range.end.character;
+
+            Console::IndividualReport::code = diag.code;
 
             // Update stage data
             int stageId = static_cast<int>(std::floor(diag.code / 100000));
@@ -147,11 +154,10 @@ int main(int argc, const char *argv[]) {
         return Console::ProcessReport::programStatus;
     }
 
-    uint32_t activeSources = 0;
-    session.hooks.parser.onContextStart = [&session, &activeSources](const Data::Store::SourceId srcId) {
+    session.hooks.parser.onContextStart = [&session, &sourceVisits](const Data::Store::SourceId srcId) {
         std::unique_ptr<Data::Store::Source> &source = (session.store)->getSourceById(srcId);
 
-        REPORT(Console::START_REPORT, Console::NORMAL_REPORT, "\n#", ++activeSources, ": ", source->uri, Console::END_REPORT);
+        REPORT(Console::START_REPORT, Console::NORMAL_REPORT, "\n#", ++sourceVisits, ": ", source->uri, Console::END_REPORT);
     };
 
     // Parser Diagnostics
@@ -166,6 +172,8 @@ int main(int argc, const char *argv[]) {
             Console::IndividualReport::startColumn = diag.range.start.character;
             Console::IndividualReport::endLine = diag.range.end.line;
             Console::IndividualReport::endColumn = diag.range.end.character;
+
+            Console::IndividualReport::code = diag.code;
 
             // Update stage data
             int stageId = static_cast<int>(std::floor(diag.code / 100000));
@@ -184,6 +192,6 @@ int main(int argc, const char *argv[]) {
     Session::initiate(session);
     
     // End the program
-    Console::finalize(activeSources);
+    Console::finalize(sourceVisits);
     return Console::ProcessReport::programStatus;
 }

@@ -51,7 +51,7 @@ namespace Console {
                 offsets.start = offset;
 
                 // Fast-forward through the rest of the newlines
-                for (size_t i = startLine; i < endLine; ++i) {
+                for (size_t i = startLine; i <= endLine; ++i) {
                     offset = content.find('\n', offset);
                     if (offset == std::string_view::npos) {
                         offset = content.size(); // Line out of bounds, return EOF
