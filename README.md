@@ -53,3 +53,4 @@ and it doesn't mess with the structure of the repository, it'd be gladly accepte
 - Temporary placeholder: 1
 - Lexer: 1xxxxx
 - Parser: 2xxxxx
+- Configs: 5xxxxx
