@@ -77,13 +77,31 @@ int main(int argc, const char *argv[]) {
 
     // Load external configs
     if (!Base::InitialConfigs::Input::config.empty()) {
-        std::string errorLog;
-        if (!Configs::modifySession(session, Base::InitialConfigs::Input::config, errorLog, false)) {
-            REPORT(Console::START_REPORT, Console::CRITICAL_REPORT, "couldn't process configuration file: ",
-                errorLog, Console::END_REPORT);
+        std::vector<Diagnostics::Diagnostic> diags;
+        if (!Configs::modifySession(session, Base::InitialConfigs::Input::config, diags, false)) {
+            REPORT(Console::START_REPORT, Console::CRITICAL_REPORT, "couldn't process configuration file!",
+                Console::END_REPORT);
         }
-        errorLog.clear();
-        errorLog.shrink_to_fit();
+
+        for (const auto &diag : diags) {
+            // Get the position
+            Console::IndividualReport::startLine = diag.range.start.line;
+            Console::IndividualReport::startColumn = diag.range.start.character;
+            Console::IndividualReport::endLine = diag.range.end.line;
+            Console::IndividualReport::endColumn = diag.range.end.character;
+
+            // Update stage data
+            int stageId = static_cast<int>(std::floor(diag.code / 100000));
+            if (stageId == 5) {
+                Console::IndividualReport::stage = "Configs";
+            } else {
+                Console::IndividualReport::stage = "?Unknown Stage?";
+            }
+            REPORT(Console::START_REPORT, getReportType(diag.severity), diag.message, Console::END_REPORT);
+        }
+
+        diags.clear();
+        diags.shrink_to_fit();
     }
 
     // Add import directories
