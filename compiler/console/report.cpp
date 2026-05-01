@@ -37,7 +37,7 @@ namespace Console {
             }
 
             // Padding
-            void padLeft(std::string& str, int min) {
+            void padLeft(std::string& str, size_t min) {
                 if (str.size() < min) {
                     // insert(index, count, character)
                     str.insert(0, min - str.size(), '-'); 
@@ -150,10 +150,10 @@ namespace Console {
 
                     bool paddedStart = false;
                     std::string rawFrame = Source::extractRange(IndividualReport::path, IndividualReport::startLine, IndividualReport::endLine, paddedStart);
-                    auto colorSrc = [&channel, &shouldColor](const std::string &str, const uint32_t color) {
+                    auto colorSrc = [&channel, &shouldColor](const std::string &str, const uint32_t clr) {
                         if (shouldColor) {
                             const std::string &final = sanitize(str);
-                            return Console::Internal::color(final, color);
+                            return Console::Internal::color(final, clr);
                         } else {
                             return str;
                         }
@@ -204,7 +204,7 @@ namespace Console {
                         bool linePrefix = true;
                         for (const auto &text : {preRange, range, postRange}) {
                             size_t startByte = 0;
-                            isRange = (++isRange) % 2;
+                            isRange = (isRange + 1) % 2;
                             while (startByte < text.size()) {
                                 if (linePrefix) {
                                     std::string lineCountStr = std::to_string(lineCount + 1);
