@@ -150,7 +150,7 @@ namespace Console {
 
                     bool paddedStart = false;
                     std::string rawFrame = Source::extractRange(IndividualReport::path, IndividualReport::startLine, IndividualReport::endLine, paddedStart);
-                    auto colorSrc = [&channel, &shouldColor](const std::string &str, const uint32_t clr) {
+                    auto colorSrc = [&shouldColor](const std::string &str, const uint32_t clr) {
                         if (shouldColor) {
                             const std::string &final = sanitize(str);
                             return Console::Internal::color(final, clr);
