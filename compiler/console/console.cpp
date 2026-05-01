@@ -50,7 +50,7 @@ namespace Console {
         size_t endLine = 0;
         size_t endColumn = 0;
 
-        size_t code = 1;
+        int code = 1;
 
         // Reset report data!
         static void reset() {
