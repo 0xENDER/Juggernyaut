@@ -129,9 +129,12 @@ namespace Console {
                 // Print report type info
                 if (shouldPrompt) {
                     if (IndividualReport::stage.length() > 0) {
-                        prompt << " (" << IndividualReport::stage << ") #" << Console::IndividualReport::code << " ";
-                    } else {
+                        prompt << " (" << IndividualReport::stage << ")";
+                    }
+                    if (IndividualReport::code != 1) {
                         prompt << " #" << Console::IndividualReport::code << " ";
+                    } else {
+                        prompt << " ";
                     }
                     out(prompt.str());
                 }
