@@ -146,7 +146,7 @@ namespace Base {
 
                 REPORT(Console::START_REPORT,
                     Console::ACTION_REPORT,
-                    "local jug.toml detected.",
+                    "jug.toml file detected in the current working directory.",
                     Console::END_REPORT);
                 Base::InitialConfigs::Input::config = defaultPath;
             }
