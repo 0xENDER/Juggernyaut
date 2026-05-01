@@ -20,11 +20,14 @@ namespace Console {
                 // Jump to the end to get file size
                 file.seekg(0, std::ios::end);
                 std::string content;
-                content.resize(file.tellg());
+                auto fileSize = file.tellg();
+
+                if (fileSize <= 0) return "";
+                content.resize(static_cast<size_t>(file.tellg()));
     
                 // Jump back and read everything in one single system call
                 file.seekg(0, std::ios::beg);
-                file.read(content.data(), content.size());
+                file.read(content.data(), static_cast<std::streamsize>(content.size()));
     
                 return content;
             }
