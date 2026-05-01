@@ -124,7 +124,7 @@ namespace Console {
             }
 
             std::stringstream files;
-            files << activeSrcs << " source file(s) processed";
+            files << activeSrcs << " file(s) processed";
 
 
             std::cout << '\n' << '\n' << color(files.str(), Color::light_sea_green) << std::endl;
