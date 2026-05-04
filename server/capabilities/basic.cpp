@@ -94,7 +94,7 @@ namespace Capabilities {
                             .save = true
                         },
                         .hoverProvider = false,
-                        .executeCommandProvider = std::move(configureCommands(messageHandler, session))
+                        .executeCommandProvider = configureCommands(messageHandler, session)
                     },
                     .serverInfo = lsp::InitializeResultServerInfo {
                         .name = "Juggernyaut Language Server",
