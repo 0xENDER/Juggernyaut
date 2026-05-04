@@ -33,17 +33,6 @@ namespace Configs {
 
                 if (isStrict) {
                     session.store->resetImportDirs();
-
-                    /*Diagnostics::Diagnostic diag;
-                    diag.severity = Diagnostics::Severity::Warning;
-                    diag.message = CODE_500003;
-                    diag.code = 500003;
-
-                    // Range
-                    toml::node *node = importDirsNode.node();
-                    Internal::tomlNodeRange(*node, diag);
-
-                    diags.push_back(std::move(diag));*/
                 }
 
                 for (toml::node& dir : *dirs) {
@@ -53,8 +42,8 @@ namespace Configs {
                         if (dirStr == "" || !(session.store->_isDirValid(dirStr))) {
                             Diagnostics::Diagnostic diag;
                             diag.severity = Diagnostics::Severity::Warning;
-                            diag.message = CODE_500004;
-                            diag.code = 500004;
+                            diag.message = CODE_500003;
+                            diag.code = 500003;
 
                             // Range
                             Internal::tomlNodeRange(dir, diag);
