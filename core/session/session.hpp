@@ -31,7 +31,7 @@ namespace Session {
 
     // Configs
     struct Configs {
-        Stage terminateAfter = Stage::IRGen;
+        Stage terminateAfter = Stage::IaRC;
         ParserConfigs parser;
     };
 

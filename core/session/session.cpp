@@ -20,7 +20,7 @@ namespace Session {
     Session getSessionDefaults() {
         ParserConfigs parserConfigs; // Empty
         Configs sessionConfigs = {
-            Stage::IRGen,
+            Stage::IaRC,
             std::move(parserConfigs)
         };
 
