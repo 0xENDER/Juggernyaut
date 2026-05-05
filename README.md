@@ -12,7 +12,7 @@ An experimental general-purpose programming language with *no particular purpose
   - [ ] Lexer & Parser
     > Diagnostics: syntax diagnostics, import diagnostics.
     >
-    > Goal: To attach a valid AST to all sources.
+    > Goal: To attach an AST to all sources.
     - ...
   - [ ] Semantic Analyser
     > Diagnostics: Cross-Source type-checking.
