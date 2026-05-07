@@ -1,2 +1,2 @@
-9:
--RESERVED (import source)
+9[TXT $PATH, TXT $CAUSE]:
+-failed to resolve import path "$PATH": $CAUSE

@@ -36,14 +36,9 @@ namespace Parser {
                 } else {
                     Diagnostics::Diagnostic diag = Diagnostics::getGenRuleDiagnostic(context);
 
-                    std::string msg = "failed to resolve import path '";
-                    msg.append(path);
-                    msg.append("': ");
-                    msg.append(output);
-
                     // Update diagnostic data
                     diag.code = 200009;
-                    diag.message = std::move(msg);
+                    diag.message = CODE_200009(path, output);
                     diag.severity = Diagnostics::Severity::Error;
 
                     // Attach diagnostic to source
