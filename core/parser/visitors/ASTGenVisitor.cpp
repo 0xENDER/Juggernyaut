@@ -48,17 +48,29 @@ namespace Parser {
             return nullptr;
         }
         std::any ASTGenVisitor::visitImport_library(ANTLRParser::Import_libraryContext *context) {
-            Diagnostics::Diagnostic diag = Diagnostics::getGenRuleDiagnostic(context);
-
             // auto tokens = context->IDENTIFIER();
 
-            // Update diagnostic data
-            diag.code = 1;
-            diag.message = "library imports have yet to be implemented (temporary)";
-            diag.severity = Diagnostics::Severity::Warning;
+            if (this->store != nullptr && this->store->isExternalFetchSet()) {
+                Diagnostics::Diagnostic diag = Diagnostics::getGenRuleDiagnostic(context);
 
-            // Attach diagnostic to source
-            this->listener->pushDiagnostic(diag);
+                // Update diagnostic data
+                diag.code = 1;
+                diag.message = "external resource inclusion is not supported yet.";
+                diag.severity = Diagnostics::Severity::Warning;
+
+                // Attach diagnostic to source
+                this->listener->pushDiagnostic(diag);
+            } else {
+                Diagnostics::Diagnostic diag = Diagnostics::getGenRuleDiagnostic(context);
+
+                // Update diagnostic data
+                diag.code = 200010;
+                diag.message = CODE_200010;
+                diag.severity = Diagnostics::Severity::Error;
+
+                // Attach diagnostic to source
+                this->listener->pushDiagnostic(diag);
+            }
 
             return nullptr;
         }
