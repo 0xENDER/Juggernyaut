@@ -20,7 +20,9 @@ An experimental general-purpose programming language with *no particular purpose
   - `parser`:
     Generates a parser AST and links processing contexts.
   - `session`
-    Kick starts the entire workflow of the language's front-end!
+    Kick starts the entire workflow of the language's front-end within one project! (recommended for isolated language debugging)
+  - `manager`
+    Kick starts concurrent sessions across multiple projects. (recommended for normal use)
 - `/extensions`:
   Includes extensions for well-known code editors.
 - `/server`:

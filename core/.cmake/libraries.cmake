@@ -58,3 +58,16 @@ add_internal_target_cxx_flags(JuggernyautSessionLibrary FALSE)
 # Dependencies
 add_dependencies(JuggernyautSessionLibrary JuggernyautDiagnosticsLibrary JugGlobalDiagnostics JuggernyautDataLibrary JuggernyautParserLibrary)
 target_link_libraries(JuggernyautSessionLibrary PUBLIC JuggernyautDiagnosticsLibrary JugGlobalDiagnostics JuggernyautDataLibrary JuggernyautParserLibrary)
+
+# Create a library from /manager
+add_library(JuggernyautManagerLibrary SHARED)
+target_sources_search(JuggernyautManagerLibrary ${JUG_CORE_SOURCE_DIR}/manager/*.cpp TRUE)
+# Expose library exports
+target_compile_definitions(JuggernyautManagerLibrary PRIVATE JUG_MANAGER_LIBRARY_EXPORTS)
+# Attach manifest data
+attach_manifest_data(JuggernyautManagerLibrary ${JUG_CORE_MANIFEST_FILE} TRUE)
+# Add compiler flags
+add_internal_target_cxx_flags(JuggernyautManagerLibrary FALSE)
+# Dependencies
+add_dependencies(JuggernyautManagerLibrary JuggernyautDiagnosticsLibrary JugGlobalDiagnostics JuggernyautDataLibrary JuggernyautSessionLibrary)
+target_link_libraries(JuggernyautManagerLibrary PUBLIC JuggernyautDiagnosticsLibrary JugGlobalDiagnostics JuggernyautDataLibrary JuggernyautSessionLibrary)
