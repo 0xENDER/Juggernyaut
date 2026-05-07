@@ -15,6 +15,8 @@ namespace Store {
         private:
             std::unordered_map<std::string, std::string> syncedRaws;
         public:
+            using Data::Store::SourceStore::SourceStore;
+
             // LSP synchronisation
             void syncRaw(const std::string &uri, const std::string &rawContent) ;
             void syncStatus(const std::string &uri, bool isInEditor) ;

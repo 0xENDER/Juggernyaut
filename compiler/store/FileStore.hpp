@@ -14,6 +14,8 @@ namespace Store {
     class FileStore : public Data::Store::SourceStore {
         private:
         public:
+            using Data::Store::SourceStore::SourceStore;
+
             bool _getRawFile(const std::string &uri, std::string &output) const override;
             bool _isFileAccessible(const std::string &uri) const override;
             bool _isDirValid(const std::string &path) const override;

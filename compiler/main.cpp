@@ -73,8 +73,8 @@ int main(int argc, const char *argv[]) {
     }
 
     // Setup session
-    Store::FileStore store = Store::FileStore();
     Session::Session session = Session::getSessionDefaults();
+    Store::FileStore store = Store::FileStore();
     session.store = &store;
 
     // Stats

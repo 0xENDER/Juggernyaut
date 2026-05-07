@@ -175,6 +175,18 @@ namespace Data {
             }
         }
 
+        // External
+        const bool SourceStore::isExternalFetchSet() {
+            return this->resolveLibraryPath != nullptr;
+        }
+        const void* SourceStore::getExternalSymbols(Data::Manager::LibraryPath path) {
+            if (this->resolveLibraryPath != nullptr) {
+                return this->resolveLibraryPath(path);
+            }
+
+            return nullptr;
+        }
+
         // Memory housekeeping
         static uint32_t currentRound = 0;
         void SourceStore::deleteSource(std::unique_ptr<Source> &source, bool erase) {
