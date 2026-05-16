@@ -21,9 +21,15 @@ target_link_libraries(JuggernyautPackageManager
         util            # libgit2's internal fs/utils (often required in v1.8+)
         llhttp          # The bundled HTTP parser
         xdiff           # The bundled diff engine
-        zlib            # Compression (if bundled/used)
-        pcre            # Regular expressions lib
     )
+# Regular expressions lib
+if(TARGET pcre)
+    target_link_libraries(JuggernyautPackageManager PRIVATE pcre)
+endif()
+# Compression
+if(TARGET zlib)
+    target_link_libraries(JuggernyautPackageManager PRIVATE zlib)
+endif()
 # Link system libraries on Windows
 if(WIN32)
     target_link_libraries(JuggernyautPackageManager PRIVATE
