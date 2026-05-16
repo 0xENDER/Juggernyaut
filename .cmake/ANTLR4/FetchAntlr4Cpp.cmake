@@ -25,6 +25,12 @@ if (NOT TARGET antlr4_shared)
     if(EXISTS ${JUG_DEP_ANTLR4_LIB_PATH}/runtime/Cpp/CMakeLists.txt)
         FetchContent_Declare(
             antlr4_runtime
+            SOURCE_DIR ${JUG_DEP_ANTLR4_LIB_PATH}
+            SOURCE_SUBDIR  runtime/Cpp
+        )
+    else()
+        FetchContent_Declare(
+            antlr4_runtime
             GIT_REPOSITORY ${ANTLR4_GIT_REPOSITORY}
             GIT_TAG        ${ANTLR4_TAG}
 
@@ -35,12 +41,6 @@ if (NOT TARGET antlr4_shared)
                 "-DPATCH_DIR=${JUG_CMAKE_DIR}/ANTLR4/patches"
                 "-DPATCH_EXE=${GIT_PATCH_EXECUTABLE}"
                 -P "${JUG_CMAKE_DIR}/ANTLR4/patches/apply.cmake"
-        )
-    else()
-        FetchContent_Declare(
-            antlr4_runtime
-            SOURCE_DIR ${JUG_DEP_ANTLR4_LIB_PATH}
-            SOURCE_SUBDIR  runtime/Cpp
         )
     endif()
     FetchContent_MakeAvailable(antlr4_runtime)
