@@ -29,6 +29,7 @@ add_subdirectory(core)
 add_subdirectory(configs)
 add_subdirectory(compiler)
 add_subdirectory(server)
+add_subdirectory(package-manager)
 
 # Tests
 option(JUG_BUILD_TESTS "Build the test suite" OFF)

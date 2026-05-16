@@ -9,7 +9,7 @@ An experimental general-purpose programming language with *no particular purpose
 
 - `/compiler`:
   The CLI wrapper and the bridge between the front-end and the back-end.
-- `/configs`:
+- `/configs`: (*refactoring...*)
   Processing `jug.toml` config files
 - `/core`:
   Includes the core components of the compilation process! (e.g. lexer, parser, etc.)  
@@ -21,10 +21,12 @@ An experimental general-purpose programming language with *no particular purpose
     Generates a parser AST and links processing contexts.
   - `session`
     Kick starts the entire workflow of the language's front-end within one project! (recommended for isolated language debugging)
-  - `manager`
+  - `manager` (*refactoring...*)
     Kick starts concurrent sessions across multiple projects. (recommended for normal use)
 - `/extensions`:
   Includes extensions for well-known code editors.
+- `/package-manager`:" (*empty*)
+  Includes language libraries package manager
 - `/server`:
   The language server for IDEs. (Follows the LSP)
 - `/tests`:
