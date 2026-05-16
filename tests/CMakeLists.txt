@@ -63,3 +63,7 @@ if(((DEFINED JUG_GLOBAL_BUILD) OR (DEFINED JUG_SERVER_BUILD)) AND NOT DEFINED JU
     message(STATUS "[TESTS] Configuring 'server' tests...")
     add_subdirectory(${JUG_TESTS_SOURCE_DIR}/server ${JUG_BUILD_DIR}/tests_server)
 endif()
+if(((DEFINED JUG_GLOBAL_BUILD) OR (DEFINED JUG_PACKAGE_MANAGER_BUILD)) AND NOT DEFINED JUG_TESTS_PACKAGE_MANAGER)
+    message(STATUS "[TESTS] Configuring 'package manager' tests...")
+    add_subdirectory(${JUG_TESTS_SOURCE_DIR}/package-manager ${JUG_BUILD_DIR}/tests_package_manager)
+endif()
