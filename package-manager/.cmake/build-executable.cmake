@@ -14,73 +14,8 @@ jug_common(JuggernyautPackageManager)
 # Link external libraries
 # libgit2
 add_dependencies(JuggernyautPackageManager libgit2)
-target_link_libraries(JuggernyautPackageManager PRIVATE libgit2)
-# Link internal libgit2 libraries
-target_link_libraries(JuggernyautPackageManager 
-    PRIVATE 
-        util            # libgit2's internal fs/utils (often required in v1.8+)
-        ntlmclient      # libgit2's internal NTLM static library
-        llhttp          # The bundled HTTP parser
-        xdiff           # The bundled diff engine
-    )
-# Regular expressions lib
-if(TARGET pcre)
-    target_link_libraries(JuggernyautPackageManager PRIVATE pcre)
-endif()
-# Compression
-if(TARGET zlib)
-    target_link_libraries(JuggernyautPackageManager PRIVATE zlib)
-endif()
-# Link system libraries on Windows
-if(WIN32)
-    target_link_libraries(JuggernyautPackageManager PRIVATE
-        ws2_32           # Winsock 2 (networking)
-        secur32          # Security functions (SSPI)
-        rpcrt4           # RPC runtime (UUID generation)
-        advapi32         # Windows API (registry, crypto)
-        winhttp          # WinHTTP
-        kernel32         # Kernel functions
-        crypt32          # Cryptography
-    )
-elseif(APPLE)
-    # macOS
-    # Find required Apple Frameworks and system libraries
-    find_library(CORE_FOUNDATION CoreFoundation)
-    find_library(SECURITY Security)
-    find_library(ICONV iconv)
-    
-    target_link_libraries(JuggernyautPackageManager PRIVATE
-        ${CORE_FOUNDATION} # Apple base APIs
-        ${SECURITY}        # Keychain and Cryptography
-        ${ICONV}           # Character encoding conversion
-        resolv             # DNS resolution
-    )
-elseif(UNIX AND NOT APPLE)
-    # Linux
-    # Find required POSIX packages
-    find_package(Threads REQUIRED)
-
-    set(OPENSSL_USE_STATIC_LIBS TRUE)
-    find_package(OpenSSL REQUIRED)
-
-    find_library(PCRE_LIB pcre REQUIRED)
-
-    target_link_libraries(JuggernyautPackageManager PRIVATE
-        Threads::Threads   # POSIX Threads (pthread)
-        OpenSSL::SSL       # Secure Sockets
-        OpenSSL::Crypto    # Cryptography
-        dl                 # Dynamic Linker (for loading shared objects)
-        rt                 # Real-time extensions (sometimes required by internal timers)
-        ${PCRE_LIB}        # System PCRE required by libgit2
-    )
-
-    if (NOT TARGET zlib)
-        find_package(ZLIB REQUIRED)
-        target_link_libraries(JuggernyautPackageManager PRIVATE
-            ZLIB::ZLIB         # Compression
-        )
-    endif()
-endif()
+target_link_libraries(JuggernyautPackageManager PRIVATE libgit2package)
+copy_proper_shared_library(JuggernyautPackageManager $<TARGET_FILE_DIR:libgit2package> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 # Handle dynamic libraries
 target_link_directories(JuggernyautPackageManager PRIVATE "$<TARGET_FILE_DIR:JuggernyautPackageManager>")
