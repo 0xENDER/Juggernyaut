@@ -35,6 +35,32 @@ if(WIN32)
         kernel32         # Kernel functions
         crypt32          # Cryptography
     )
+elseif(APPLE)
+    # macOS
+    # Find required Apple Frameworks and system libraries
+    find_library(CORE_FOUNDATION CoreFoundation)
+    find_library(SECURITY Security)
+    find_library(ICONV iconv)
+    
+    target_link_libraries(JuggernyautPackageManager PRIVATE
+        ${CORE_FOUNDATION} # Apple base APIs
+        ${SECURITY}        # Keychain and Cryptography
+        ${ICONV}           # Character encoding conversion
+        resolv             # DNS resolution
+    )
+elseif(UNIX AND NOT APPLE)
+    # Linux
+    # Find required POSIX packages
+    find_package(Threads REQUIRED)
+    find_package(OpenSSL REQUIRED)
+    
+    target_link_libraries(JuggernyautPackageManager PRIVATE
+        Threads::Threads   # POSIX Threads (pthread)
+        OpenSSL::SSL       # Secure Sockets
+        OpenSSL::Crypto    # Cryptography
+        dl                 # Dynamic Linker (for loading shared objects)
+        rt                 # Real-time extensions (sometimes required by internal timers)
+    )
 endif()
 
 # Handle dynamic libraries
