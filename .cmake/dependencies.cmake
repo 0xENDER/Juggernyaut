@@ -153,8 +153,8 @@ if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
         if(EXISTS ${JUG_DEP_MIMALLOC_LIB_PATH}/CMakeLists.txt)
             FetchContent_Declare(
                 mimalloc
-                GIT_TAG v${MIMALLOC_VERSION}
                 SOURCE_DIR ${JUG_DEP_MIMALLOC_LIB_PATH}
+                EXCLUDE_FROM_ALL
             )
         else()
             FetchContent_Declare(
@@ -162,6 +162,7 @@ if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
                 GIT_REPOSITORY https://github.com/microsoft/mimalloc.git
                 GIT_TAG v${MIMALLOC_VERSION}
                 SOURCE_DIR ${JUG_DEP_MIMALLOC_LIB_PATH}
+                EXCLUDE_FROM_ALL
             )
         endif()
         set(MI_BUILD_STATIC OFF CACHE BOOL "Build static library" FORCE)
