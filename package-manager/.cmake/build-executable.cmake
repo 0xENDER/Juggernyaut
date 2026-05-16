@@ -19,6 +19,7 @@ target_link_libraries(JuggernyautPackageManager PRIVATE libgit2)
 target_link_libraries(JuggernyautPackageManager 
     PRIVATE 
         util            # libgit2's internal fs/utils (often required in v1.8+)
+        ntlmclient      # libgit2's internal NTLM static library
         llhttp          # The bundled HTTP parser
         xdiff           # The bundled diff engine
     )
@@ -62,13 +63,23 @@ elseif(UNIX AND NOT APPLE)
     set(OPENSSL_USE_STATIC_LIBS TRUE)
     find_package(OpenSSL REQUIRED)
 
+    find_library(PCRE_LIB pcre REQUIRED)
+
     target_link_libraries(JuggernyautPackageManager PRIVATE
         Threads::Threads   # POSIX Threads (pthread)
         OpenSSL::SSL       # Secure Sockets
         OpenSSL::Crypto    # Cryptography
         dl                 # Dynamic Linker (for loading shared objects)
         rt                 # Real-time extensions (sometimes required by internal timers)
+        ${PCRE_LIB}        # System PCRE required by libgit2
     )
+
+    if (NOT TARGET zlib)
+        find_package(ZLIB REQUIRED)
+        target_link_libraries(JuggernyautPackageManager PRIVATE
+            ZLIB::ZLIB         # Compression
+        )
+    endif()
 endif()
 
 # Handle dynamic libraries
