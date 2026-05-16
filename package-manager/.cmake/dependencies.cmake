@@ -12,6 +12,7 @@ else()
     # Prevent tests & tools from being built
     set(BUILD_TESTS OFF CACHE BOOL "" FORCE)
     set(BUILD_CLI OFF CACHE BOOL "" FORCE)
+    set(USE_NSEC OFF CACHE BOOL "" FORCE)
     # Download libgit2
     message(STATUS "[DEPENDENCIES] Fetching libgit2...")
     set(JUG_DEP_GIT2_LIB_PATH ${JUG_DEPENDENCIES_DIR}/libgit2)
