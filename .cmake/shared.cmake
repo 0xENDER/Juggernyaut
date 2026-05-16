@@ -1,5 +1,7 @@
 # Manage C++ compiler settings
-include(${JUG_CMAKE_DIR}/compiler/cpp.cmake)
+if (NOT DEFINED add_c_cpp_global_flag)
+    include(${JUG_CMAKE_DIR}/compiler/cpp.cmake)
+endif()
 
 # CMake functions & macros
 if (NOT DEFINED target_sources_search)

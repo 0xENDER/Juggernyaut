@@ -25,6 +25,7 @@ info("[START] Configuring Juggernyaut...")
 set(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION ON)
 
 # Handle install configs
+include(${JUG_CMAKE_DIR}/compiler/cpp.cmake)
 include(${JUG_CMAKE_DIR}/utility.cmake)
 include(${JUG_CMAKE_DIR}/build-output.cmake)
 include(${JUG_CMAKE_DIR}/pre-install.cmake)
