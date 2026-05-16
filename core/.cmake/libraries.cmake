@@ -47,8 +47,6 @@ jug_common(JuggernyautParserLibrary)
 custom_malloc(antlr4_shared)
 add_dependencies(JuggernyautParserLibrary antlr4_shared JuggernyautDiagnosticsLibrary JuggernyautDataLibrary)
 target_link_libraries(JuggernyautParserLibrary PUBLIC antlr4_shared JuggernyautDiagnosticsLibrary JuggernyautDataLibrary)
-# Libraries
-copy_shared_library(JuggernyautParserLibrary ${ANTLR4_RUNTIME_LIBRARIES} ${ANTLR4_TAG})
 
 # Create a library from /session
 add_library(JuggernyautSessionLibrary SHARED)

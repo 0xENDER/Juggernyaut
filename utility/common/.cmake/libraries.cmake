@@ -11,10 +11,6 @@ target_compile_definitions(JuggernyautCommonLibrary PRIVATE JUG_COMMON_LIBRARY_E
 attach_manifest_data(JuggernyautCommonLibrary ${JUG_UTILITY_MANIFEST_FILE} TRUE)
 # Add compiler flags
 add_internal_target_cxx_flags(JuggernyautCommonLibrary FALSE)
-# Libraries
-if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
-    copy_proper_shared_library(JuggernyautCommonLibrary $<TARGET_FILE_DIR:mimalloc> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-endif()
 
 # Linking
 set(JUG_COMMON_INCLUDE_DIR "${JUG_UTILITY_COMMON_DIR}/include" CACHE STRING "Common include path" FORCE)

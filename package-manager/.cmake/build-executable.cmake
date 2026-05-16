@@ -15,7 +15,6 @@ jug_common(JuggernyautPackageManager)
 # libgit2
 add_dependencies(JuggernyautPackageManager libgit2 libgit2package)
 target_link_libraries(JuggernyautPackageManager PRIVATE libgit2package)
-copy_proper_shared_library(JuggernyautPackageManager $<TARGET_FILE_DIR:libgit2package> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 # Handle dynamic libraries
 target_link_directories(JuggernyautPackageManager PRIVATE "$<TARGET_FILE_DIR:JuggernyautPackageManager>")
@@ -23,9 +22,6 @@ target_link_directories(JuggernyautPackageManager PRIVATE "$<TARGET_FILE_DIR:Jug
 # Attach manifest data
 # The first use of the "attach_manifest_data" function must be for the main executable!
 attach_manifest_data(JuggernyautPackageManager ${JUG_PACKAGE_MANAGER_MANIFEST_FILE} TRUE)
-
-# Re-do symbolic linking (POST BUILD)
-manage_symbolic_links(JuggernyautPackageManager "jug-pck")
 
 # Add compiler flags
 add_internal_target_cxx_flags(JuggernyautPackageManager FALSE)

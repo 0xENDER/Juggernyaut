@@ -125,7 +125,7 @@ endif()
 
 # ANTLR4 jar
 if(DEFINED ANTLR4_TAG)
-    set(JUG_DEPENDENCIES_ANTLR4_JAR_PATH ${JUG_DEPENDENCIES_DIR}/antlr4/antlr.jar)
+    set(JUG_DEPENDENCIES_ANTLR4_JAR_PATH ${JUG_DEPENDENCIES_DIR}/antlr4-jar/antlr.jar)
     if(NOT EXISTS ${JUG_DEPENDENCIES_ANTLR4_JAR_PATH})
         message(STATUS "[DEPENDENCIES] Downloading ANTLR4 jar (v${ANTLR4_TAG})...")
         file(DOWNLOAD
@@ -155,6 +155,7 @@ if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
                 mimalloc
                 GIT_TAG v${MIMALLOC_VERSION}
                 SOURCE_DIR ${JUG_DEP_MIMALLOC_LIB_PATH}
+                EXCLUDE_FROM_ALL
             )
         else()
             FetchContent_Declare(
@@ -162,6 +163,7 @@ if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
                 GIT_REPOSITORY https://github.com/microsoft/mimalloc.git
                 GIT_TAG v${MIMALLOC_VERSION}
                 SOURCE_DIR ${JUG_DEP_MIMALLOC_LIB_PATH}
+                EXCLUDE_FROM_ALL
             )
         endif()
         set(MI_BUILD_STATIC OFF CACHE BOOL "Build static library" FORCE)

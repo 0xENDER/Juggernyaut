@@ -27,9 +27,6 @@ target_link_directories(JuggernyautServer PRIVATE "$<TARGET_FILE_DIR:Juggernyaut
 # The first use of the "attach_manifest_data" function must be for the main executable!
 attach_manifest_data(JuggernyautServer ${JUG_SERVER_MANIFEST_FILE} TRUE)
 
-# Re-do symbolic linking (POST BUILD)
-manage_symbolic_links(JuggernyautServer "jug-lsp")
-
 # Add compiler flags
 add_internal_target_cxx_flags(JuggernyautServer FALSE)
 

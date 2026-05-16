@@ -83,7 +83,7 @@ jobs:
 
     - name: Configure CMake
       run: |
-        cmake .. -DCMAKE_BUILD_TYPE=${{inputs.build_mode}} -DCMAKE_GENERATOR_PLATFORM=${{inputs.build_platform}} -DJUG_CLEANUP=ON `
+        cmake .. -DCMAKE_BUILD_TYPE=${{inputs.build_mode}} -DCMAKE_GENERATOR_PLATFORM=${{inputs.build_platform}} `
           -DJUG_RELEASE_VERSION="${{inputs.release_version}}" -DJUG_BUILD_TESTS=${{inputs.run_tests}}
       working-directory: .build
 
@@ -96,10 +96,15 @@ jobs:
       run: ctest -C ${{inputs.build_mode}} -V -j 3
       working-directory: .build
 
+    - name: Install (optional)
+      if: inputs.bundle_binaries
+      run: cmake --install . --config ${{inputs.build_mode}} --parallel 3 --verbose
+      working-directory: .build
+
     - name: Extract version (optional)
       if: inputs.bundle_binaries
       run: |
-        $version = (Get-Item "jug.exe").VersionInfo.FileVersion
+        $version = (Get-Item "jug-cmp.exe").VersionInfo.FileVersion
         if ($version) {
           echo "VERSION=$version" >> $env:GITHUB_ENV
         } else {
@@ -107,11 +112,6 @@ jobs:
           exit 1
         }
       working-directory: ${{github.workspace}}/.dist/${{inputs.build_mode}}/${{inputs.build_platform_name}}/bin/
-
-    - name: Cleanup (optional)
-      if: inputs.bundle_binaries
-      run: .\${{inputs.build_platform_name}}.cleanup.bat
-      working-directory: .dist/${{inputs.build_mode}}
 
     - name: Perform CodeQL Analysis
       if: ${{inputs.security_analysis && !startsWith(inputs.build_platform_name, 'arm')}}

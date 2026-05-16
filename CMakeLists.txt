@@ -11,15 +11,23 @@ endif()
 # Shared directories
 set(JUG_BUILD_DIR ${CMAKE_BINARY_DIR})
 set(JUG_CMAKE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/.cmake)
-set(JUG_LICENSE_FILE ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE)
 set(JUG_DEPENDENCIES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/.deps)
-set(JUG_BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/.dist)
+set(JUG_BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/.out)
+
+# Shared build dir
+set(JUG_DIST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/.dist)
+set(JUG_LICENSE_FILE ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE)
 
 include(${JUG_CMAKE_DIR}/messages.cmake)
 info("[START] Configuring Juggernyaut...")
 
 # Stop build when errors occur
 set(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION ON)
+
+# Handle install configs
+include(${JUG_CMAKE_DIR}/utility.cmake)
+include(${JUG_CMAKE_DIR}/build-output.cmake)
+include(${JUG_CMAKE_DIR}/pre-install.cmake)
 
 include(${JUG_CMAKE_DIR}/shared.cmake)
 
@@ -31,21 +39,10 @@ add_subdirectory(compiler)
 add_subdirectory(server)
 add_subdirectory(package-manager)
 
+include(${JUG_CMAKE_DIR}/install.cmake)
+
 # Tests
 option(JUG_BUILD_TESTS "Build the test suite" OFF)
 if(JUG_BUILD_TESTS)
     add_subdirectory(tests)
-endif()
-
-# Delete leftover files
-if(DEFINED JUG_CLEANUP)
-    #add_custom_target(PostBuildTask ALL
-    #    COMMAND ${CMAKE_COMMAND} -E rm -rf "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}"
-    #    COMMENT "Post-build cleanup..."
-    #)
-    #add_dependencies(PostBuildTask
-    #    JuggernyautCompiler
-    #    JuggernyautServer
-    #)
-    generate_command(cleanup)
 endif()

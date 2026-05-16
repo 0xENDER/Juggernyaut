@@ -26,9 +26,6 @@ target_link_directories(JuggernyautCompiler PRIVATE "$<TARGET_FILE_DIR:Juggernya
 # The first use of the "attach_manifest_data" function must be for the main executable!
 attach_manifest_data(JuggernyautCompiler ${JUG_COMPILER_MANIFEST_FILE} TRUE)
 
-# Re-do symbolic linking (POST BUILD)
-manage_symbolic_links(JuggernyautCompiler "jug")
-
 # Add compiler flags
 add_internal_target_cxx_flags(JuggernyautCompiler FALSE)
 

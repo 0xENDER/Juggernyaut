@@ -1,10 +1,15 @@
 #!/bin/bash
 echo "Cleaning up extra components..."
 
-# /lib
-rm -rf "@CMAKE_ARCHIVE_OUTPUT_DIRECTORY@"
+# dirs
+rm -rf "@NATIVE_OUT_DIR@/share"
+rm -rf "@NATIVE_OUT_DIR@/include"
 
-:: /tests
-rm -rf "@JUG_DIST_FINAL_DIR@/tests"
+# /bin/+
+rm -rf "@NATIVE_OUT_DIR@/bin/cmake"
+rm -rf "@NATIVE_OUT_DIR@/bin/pkgconfig"
+
+# Static libs
+find "@NATIVE_OUT_DIR@" -name "*.lib" -type f -delete
 
 echo "Cleanup complete!"

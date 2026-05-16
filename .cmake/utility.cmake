@@ -124,6 +124,7 @@ endfunction()
 
 macro(generate_command SOURCE_NAME)
     if(WIN32)
+        file(TO_NATIVE_PATH "${JUG_DIST_FINAL_DIR}" NATIVE_OUT_DIR) # Common
         configure_file(
             "${JUG_CMAKE_DIR}/components/${SOURCE_NAME}.bat.in"
             "${JUG_DIST_FINAL_DIR}.${SOURCE_NAME}.bat"
@@ -150,4 +151,46 @@ macro(custom_malloc TARGET)
         endif()
         target_link_libraries(${TARGET} INTERFACE mimalloc)
     endif()
+endmacro()
+
+macro(install_command_symlink TARGET_NAME LINK_NAME)
+    # Determine the file extension based on the platform
+    if(WIN32)
+        set(SRC_EXT ".exe")
+        set(DST_EXT ".exe")
+    else()
+        set(SRC_EXT "")
+        set(DST_EXT "")
+    endif()
+
+    # We use standard double quotes here so CMake can inject the arguments 
+    # before registering the code block for the installation phase.
+    install(CODE "
+        if(WIN32)
+            # Remove any pre-existing file/link to prevent mklink from failing
+            execute_process(
+                COMMAND cmd /c del /f /q ${LINK_NAME}${DST_EXT}
+                WORKING_DIRECTORY \"\${CMAKE_INSTALL_PREFIX}/bin\"
+            )
+            # Attempt to create a native Windows symbolic link
+            execute_process(
+                COMMAND cmd /c mklink ${LINK_NAME}${DST_EXT} ${TARGET_NAME}${SRC_EXT}
+                WORKING_DIRECTORY \"\${CMAKE_INSTALL_PREFIX}/bin\"
+                RESULT_VARIABLE _link_result
+            )
+            # Fallback to a hard copy if the developer lacks Windows symlink privileges
+            if(NOT _link_result EQUAL 0)
+                execute_process(
+                    COMMAND \${CMAKE_COMMAND} -E copy ${TARGET_NAME}${SRC_EXT} ${LINK_NAME}${DST_EXT}
+                    WORKING_DIRECTORY \"\${CMAKE_INSTALL_PREFIX}/bin\"
+                )
+            endif()
+        else()
+            # On Linux/macOS, standard Unix symlink works beautifully out of the box
+            execute_process(
+                COMMAND \${CMAKE_COMMAND} -E create_symlink ${TARGET_NAME} ${LINK_NAME}
+                WORKING_DIRECTORY \"\${CMAKE_INSTALL_PREFIX}/bin\"
+            )
+        endif()
+    ")
 endmacro()

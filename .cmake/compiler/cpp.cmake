@@ -7,6 +7,8 @@ set(CMAKE_CXX_EXTENSIONS OFF) # Recommended for modern C++
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
 
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS OFF)
+
 # Fix ANTLR4-related glitch on Windows
 if (MSVC)
     add_compile_definitions(NOMINMAX)

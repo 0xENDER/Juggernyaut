@@ -11,7 +11,6 @@ endif()
 if(lsp)
     message(STATUS "[DEPENDENCIES] lsp-framework library is present!")
 else()
-    set(LSP_INSTALL OFF CACHE BOOL "Disable LSP installation" FORCE)
     # Download lsp-framework
     message(STATUS "[DEPENDENCIES] Fetching lsp-framework...")
     set(JUG_DEP_LSP_FRAMEWORK_LIB_PATH ${JUG_DEPENDENCIES_DIR}/lsp-framework)
@@ -43,12 +42,4 @@ if(TARGET lsp)
 
     # Use custom malloc
     custom_malloc(lsp)
-endif()
-# Post-build cleanup
-if(DEFINED JUG_CLEANUP)
-    add_custom_target(LSPCleanup ALL
-                        COMMAND ${CMAKE_COMMAND}
-                               -E rm -f ./lspgen ./lspgen.exe
-                        WORKING_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
-    add_dependencies(LSPCleanup lsp)
 endif()

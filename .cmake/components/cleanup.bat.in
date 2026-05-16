@@ -1,10 +1,15 @@
 @echo off
 echo Cleaning up extra components...
 
-:: /lib
-rmdir /s /q "@CMAKE_ARCHIVE_OUTPUT_DIRECTORY@"
+:: dirs
+rmdir /s /q "@NATIVE_OUT_DIR@\share"
+rmdir /s /q "@NATIVE_OUT_DIR@\include"
 
-:: /tests
-rmdir /s /q "@JUG_DIST_FINAL_DIR@/tests"
+:: /bin/+
+rmdir /s /q "@NATIVE_OUT_DIR@\bin\cmake"
+rmdir /s /q "@NATIVE_OUT_DIR@\bin\pkgconfig"
+
+:: Static libs
+del /S /Q "@NATIVE_OUT_DIR@\*.lib"
 
 echo Cleanup complete!

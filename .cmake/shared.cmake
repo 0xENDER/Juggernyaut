@@ -2,16 +2,17 @@
 include(${JUG_CMAKE_DIR}/compiler/cpp.cmake)
 
 # CMake functions & macros
-include(${JUG_CMAKE_DIR}/utility.cmake)
+if (NOT DEFINED target_sources_search)
+    include(${JUG_CMAKE_DIR}/utility.cmake)
+endif()
 
 # Manage binary output
-include(${JUG_CMAKE_DIR}/build-output.cmake)
+if (NOT DEFINED JUG_BINARY_MODE)
+    include(${JUG_CMAKE_DIR}/build-output.cmake)
+endif()
 
 # Manage shared dependencies
 include(${JUG_CMAKE_DIR}/dependencies.cmake)
-
-# CMake files that are not related to the main building process
-include(${JUG_CMAKE_DIR}/other/legal.cmake)
 
 # Diagnostic codes
 include(${JUG_CMAKE_DIR}/common.cmake)

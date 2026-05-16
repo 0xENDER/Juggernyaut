@@ -66,7 +66,7 @@ jobs:
     - name: Configure CMake
       run: |
         cmake .. -DCMAKE_BUILD_TYPE=${{inputs.build_mode}} -DCMAKE_UNIX_GENERATOR_PLATFORM=${{inputs.build_platform}} \
-          -DJUG_CLEANUP=ON -DJUG_RELEASE_VERSION="${{inputs.release_version}}" -DJUG_BUILD_TESTS=${{inputs.run_tests}}
+          -DJUG_RELEASE_VERSION="${{inputs.release_version}}" -DJUG_BUILD_TESTS=${{inputs.run_tests}}
       working-directory: .build
 
     - name: Build
@@ -78,18 +78,18 @@ jobs:
       run: ctest -C ${{inputs.build_mode}} -V -j 3
       working-directory: .build
 
+    - name: Install (optional)
+      if: inputs.bundle_binaries
+      run: cmake --install . --config ${{inputs.build_mode}} --parallel 3 --verbose
+      working-directory: .build
+
     - name: Extract version (optional)
       if: inputs.bundle_binaries
       run: |
         set -e
-        VERSION=$(${{github.workspace}}/.dist/${{inputs.build_mode}}/${{inputs.build_platform_name}}/bin/jug --version \
+        VERSION=$(${{github.workspace}}/.dist/${{inputs.build_mode}}/${{inputs.build_platform_name}}/bin/jug-cmp --version \
           | head -n 1)
         echo "VERSION=$VERSION" >> $GITHUB_ENV
-
-    - name: Cleanup (optional)
-      if: inputs.bundle_binaries
-      run: ./${{inputs.build_platform_name}}.cleanup.sh
-      working-directory: .dist/${{inputs.build_mode}}
 
     - name: Perform CodeQL Analysis
       if: inputs.security_analysis
