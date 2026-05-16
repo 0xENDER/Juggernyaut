@@ -22,6 +22,7 @@ target_link_libraries(JuggernyautPackageManager
         llhttp          # The bundled HTTP parser
         xdiff           # The bundled diff engine
         zlib            # Compression (if bundled/used)
+        pcre            # Regular expressions lib
     )
 # Link system libraries on Windows
 if(WIN32)
