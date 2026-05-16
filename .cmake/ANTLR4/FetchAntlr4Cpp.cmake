@@ -48,9 +48,11 @@ endif()
 
 # Protect ANTLR4's shared target from Juggernyaut's global Windows/Optimization flags
 if(TARGET antlr4_shared)
-    # FIX: Ignore known warnings in VS2026
+    # FIX: Ignore known warnings
     if(MSVC)
         target_compile_options(antlr4_shared INTERFACE /wd4251 /wd4275)
+    elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(antlr4_shared PRIVATE -Wno-shadow)
     endif()
     # Fix linking issues
     get_target_property(_antlr_defs antlr4_shared INTERFACE_COMPILE_DEFINITIONS)
