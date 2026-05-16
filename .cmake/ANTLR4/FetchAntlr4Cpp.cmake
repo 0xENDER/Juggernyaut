@@ -27,6 +27,7 @@ if (NOT TARGET antlr4_shared)
             antlr4_runtime
             SOURCE_DIR ${JUG_DEP_ANTLR4_LIB_PATH}
             SOURCE_SUBDIR  runtime/Cpp
+            SYSTEM
         )
     else()
         FetchContent_Declare(
@@ -36,6 +37,7 @@ if (NOT TARGET antlr4_shared)
 
             SOURCE_DIR ${JUG_DEP_ANTLR4_LIB_PATH}
             SOURCE_SUBDIR  runtime/Cpp
+            SYSTEM
 
             PATCH_COMMAND "${CMAKE_COMMAND}" 
                 "-DPATCH_DIR=${JUG_CMAKE_DIR}/ANTLR4/patches"
@@ -46,22 +48,20 @@ if (NOT TARGET antlr4_shared)
     FetchContent_MakeAvailable(antlr4_runtime)
 endif()
 
+macro(fix_antlr4_target_warnings TARGET)
+    if(MSVC)
+        target_compile_options(${TARGET} INTERFACE /wd4251 /wd4275)
+    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        target_compile_options(${TARGET} PRIVATE -Wno-unused-result -Wno-shadow -Wno-sign-conversion)
+    endif()
+endmacro()
+
 # Protect ANTLR4's shared target from Juggernyaut's global Windows/Optimization flags
 if(TARGET antlr4_static)
-    # FIX: Ignore known warnings
-    if(MSVC)
-        target_compile_options(antlr4_static INTERFACE /wd4251 /wd4275)
-    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-        target_compile_options(antlr4_static PRIVATE -Wno-unused-result -Wno-shadow -Wno-sign-conversion)
-    endif()
+    fix_antlr4_target_warnings(antlr4_static)
 endif()
 if(TARGET antlr4_shared)
-    # FIX: Ignore known warnings
-    if(MSVC)
-        target_compile_options(antlr4_shared INTERFACE /wd4251 /wd4275)
-    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-        target_compile_options(antlr4_shared PRIVATE -Wno-unused-result -Wno-shadow -Wno-sign-conversion)
-    endif()
+    fix_antlr4_target_warnings(antlr4_shared)
     # Fix linking issues
     get_target_property(_antlr_defs antlr4_shared INTERFACE_COMPILE_DEFINITIONS)
     if(_antlr_defs)
