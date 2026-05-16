@@ -31,7 +31,7 @@ macro(add_test_target TARGET DIR)
     jug_common(${TARGET})
     target_link_libraries(${TARGET}
         PRIVATE
-        GTest::gtest_static # Or gtest_main
+        GTest::gtest # Or gtest_main
     )
     link_external_test_target(${TARGET} JuggernyautCommonLibrary)
     if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
