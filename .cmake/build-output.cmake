@@ -202,6 +202,7 @@ function(attach_manifest_data TARGET MANIFEST LINK_INFO)
     # Pass data to the target's C++ source files
     target_compile_definitions(${TARGET} PRIVATE
         "MAIN_TARGET_BINARY_VERSION=\"${IN_MAIN_BIN_VERSION_NAME}\""
+        "MAIN_BINARY_TYPE=\"${JUG_BINARY_MODE}\""
         "TARGET_BINARY_VERSION=\"${IN_BIN_VERSION_NAME}\""
     )
 endfunction()

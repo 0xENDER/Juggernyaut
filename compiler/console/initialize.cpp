@@ -33,11 +33,11 @@ namespace Console {
 
             /**
              *   ,-.       _,---._ __  / \
-             *  /  )    .-'       `./ /   \
-             * (  (   ,'            `/    /|  Juggernyaut v???
-             *  \  `-"             \'\   / |
-             *   `.              ,  \ \ /  |  (C) 2026 Ender-ing GitHub Organisation
-             *    /`.          ,'-`----Y   |
+             *  /  )    .-'       `./ /   \   Juggernyaut v??? - <arch>
+             * (  (   ,'            `/    /|  Build: <build_type> - <arch>
+             *  \  `-"             \'\   / |  Platform: <os_name> <os_version>
+             *   `.              ,  \ \ /  |
+             *    /`.          ,'-`----Y   |  (C) 2026 Ender-ing GitHub Organisation
              *   (            ;        |   '
              *   |  ,-.    ,-'         |  /
              *   |  | (   |      jug   | /    (Cat-chy Art by Hayley Jane Wakenshaw)
@@ -46,12 +46,16 @@ namespace Console {
             **/
             // Print initial console prompt
             std::cout << std::endl << '\n' << color("  ,-.       _,---._ __ ", Color::golden_rod)
-                << color(" / \\", Color::light_sea_green) << '\n';
-            std::cout << color(" /  )    .-'       `./", Color::golden_rod)
-                << color(" /   \\", Color::light_sea_green) << '\n';
-            std::cout << color("(  (   ,'            `", Color::golden_rod)
-                << color("/    /|  Juggernyaut ", Color::light_sea_green) << color("v", Color::blue_violet)
+                << color(" / \\    Juggernyaut ", Color::light_sea_green) << color("v", Color::blue_violet)
                 << color(Base::Info::version, Color::blue_violet) << '\n';
+            std::cout << color(" /  )    .-'       `./", Color::golden_rod)
+                << color(" /   \\   Build: ", Color::light_sea_green)
+                << color(Base::Info::build, Color::light_sea_green)
+                << color(" - ", Color::light_sea_green) << color(Base::Info::arch, Color::light_sea_green) << '\n';
+            std::cout << color("(  (   ,'            `", Color::golden_rod)
+                << color("/    /|  Platform: ", Color::light_sea_green)
+                << color(Base::Info::osName, Color::light_sea_green) << color(" ", Color::light_sea_green)
+                << color(Base::Info::osVersion, Color::light_sea_green) << '\n';
             std::cout << color(" \\  `-\"             \\'", Color::golden_rod)
                 << color("\\   / |", Color::light_sea_green) << '\n';
             std::cout << color("  `.              ,  \\", Color::golden_rod)
