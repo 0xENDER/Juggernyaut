@@ -5,6 +5,7 @@ add_executable(
 )
 
 # Link libraries
+jug_common(JuggernyautCompiler)
 add_dependencies(JuggernyautCompiler JuggernyautSessionLibrary JuggernyautConfigsLibrary)
 target_link_libraries(JuggernyautCompiler PUBLIC JuggernyautSessionLibrary JuggernyautConfigsLibrary)
 

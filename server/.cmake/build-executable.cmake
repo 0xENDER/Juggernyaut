@@ -11,6 +11,7 @@ target_sources_search(JuggernyautServer ${JUG_SERVER_SOURCE_DIR}/session/*.cpp F
 target_sources_search(JuggernyautServer ${JUG_SERVER_SOURCE_DIR}/capabilities/*.cpp TRUE)
 
 # Link libraries
+jug_common(JuggernyautServer)
 add_dependencies(JuggernyautServer JuggernyautSessionLibrary JuggernyautConfigsLibrary)
 target_link_libraries(JuggernyautServer PUBLIC JuggernyautSessionLibrary JuggernyautConfigsLibrary)
 

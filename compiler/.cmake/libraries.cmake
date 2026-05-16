@@ -10,6 +10,7 @@ attach_manifest_data(JugCompilerConsoleLibrary ${JUG_COMPILER_MANIFEST_FILE} FAL
 # Add compiler flags
 add_internal_target_cxx_flags(JugCompilerConsoleLibrary FALSE)
 # Link other libraries to the library
+jug_common(JugCompilerConsoleLibrary)
 add_dependencies(JugCompilerConsoleLibrary fmt::fmt)
 target_link_libraries(JugCompilerConsoleLibrary PUBLIC fmt::fmt)
 
@@ -21,6 +22,7 @@ attach_manifest_data(JugCompilerStoreLibrary ${JUG_COMPILER_MANIFEST_FILE} FALSE
 # Add compiler flags
 add_internal_target_cxx_flags(JugCompilerStoreLibrary FALSE)
 # Link other libraries to the library
+jug_common(JugCompilerStoreLibrary)
 add_dependencies(JugCompilerStoreLibrary JugCompilerConsoleLibrary JuggernyautDataLibrary)
 target_link_libraries(JugCompilerStoreLibrary PUBLIC JugCompilerConsoleLibrary JuggernyautDataLibrary)
 
@@ -32,6 +34,7 @@ attach_manifest_data(JugCompilerBaseLibrary ${JUG_COMPILER_MANIFEST_FILE} FALSE)
 # Add compiler flags
 add_internal_target_cxx_flags(JugCompilerBaseLibrary FALSE)
 # Link other libraries to the library
+jug_common(JugCompilerBaseLibrary)
 add_dependencies(JugCompilerBaseLibrary JugCompilerStoreLibrary)
 target_link_libraries(JugCompilerBaseLibrary PUBLIC JugCompilerStoreLibrary)
 

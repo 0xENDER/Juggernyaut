@@ -175,5 +175,5 @@ if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
             CMAKE_SYSTEM_PROCESSOR "${CMAKE_SYSTEM_PROCESSOR}"
         )
     endif()
-    link_libraries(mimalloc)
+    #link_libraries(mimalloc) # BAD!
 endif()

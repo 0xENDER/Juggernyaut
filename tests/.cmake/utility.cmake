@@ -28,6 +28,7 @@ macro(add_test_target TARGET DIR)
     )
 
     # Link against gtest and required libraries
+    jug_common(${TARGET})
     target_link_libraries(${TARGET}
         PRIVATE
         GTest::gtest # Or gtest_main

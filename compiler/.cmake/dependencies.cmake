@@ -37,4 +37,6 @@ else()
     if(MSVC)
         target_compile_options(fmt INTERFACE /analyze-)
     endif()
+
+    custom_malloc(fmt)
 endif()

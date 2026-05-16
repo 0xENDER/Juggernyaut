@@ -12,6 +12,7 @@ attach_manifest_data(JuggernyautDiagnosticsLibrary ${JUG_CORE_MANIFEST_FILE} TRU
 # Add compiler flags
 add_internal_target_cxx_flags(JuggernyautDiagnosticsLibrary FALSE)
 # Dependencies
+jug_common(JuggernyautDiagnosticsLibrary)
 add_dependencies(JuggernyautDiagnosticsLibrary antlr4_shared JugGlobalDiagnostics)
 target_link_libraries(JuggernyautDiagnosticsLibrary PUBLIC antlr4_shared JugGlobalDiagnostics)
 
@@ -25,6 +26,7 @@ attach_manifest_data(JuggernyautDataLibrary ${JUG_CORE_MANIFEST_FILE} TRUE)
 # Add compiler flags
 add_internal_target_cxx_flags(JuggernyautDataLibrary FALSE)
 # Dependencies
+jug_common(JuggernyautDataLibrary)
 add_dependencies(JuggernyautDataLibrary JugGlobalDiagnostics)
 target_link_libraries(JuggernyautDataLibrary PUBLIC JugGlobalDiagnostics)
 
@@ -41,6 +43,8 @@ attach_manifest_data(JuggernyautParserLibrary ${JUG_CORE_MANIFEST_FILE} TRUE)
 # Add compiler flags
 add_internal_target_cxx_flags(JuggernyautParserLibrary TRUE)
 # Dependencies
+jug_common(JuggernyautParserLibrary)
+custom_malloc(antlr4_shared)
 add_dependencies(JuggernyautParserLibrary antlr4_shared JuggernyautDiagnosticsLibrary JuggernyautDataLibrary)
 target_link_libraries(JuggernyautParserLibrary PUBLIC antlr4_shared JuggernyautDiagnosticsLibrary JuggernyautDataLibrary)
 # Libraries
@@ -56,6 +60,7 @@ attach_manifest_data(JuggernyautSessionLibrary ${JUG_CORE_MANIFEST_FILE} TRUE)
 # Add compiler flags
 add_internal_target_cxx_flags(JuggernyautSessionLibrary FALSE)
 # Dependencies
+jug_common(JuggernyautSessionLibrary)
 add_dependencies(JuggernyautSessionLibrary JuggernyautDiagnosticsLibrary JugGlobalDiagnostics JuggernyautDataLibrary JuggernyautParserLibrary)
 target_link_libraries(JuggernyautSessionLibrary PUBLIC JuggernyautDiagnosticsLibrary JugGlobalDiagnostics JuggernyautDataLibrary JuggernyautParserLibrary)
 
@@ -69,5 +74,6 @@ attach_manifest_data(JuggernyautManagerLibrary ${JUG_CORE_MANIFEST_FILE} TRUE)
 # Add compiler flags
 add_internal_target_cxx_flags(JuggernyautManagerLibrary FALSE)
 # Dependencies
+jug_common(JuggernyautManagerLibrary)
 add_dependencies(JuggernyautManagerLibrary JuggernyautDiagnosticsLibrary JugGlobalDiagnostics JuggernyautDataLibrary JuggernyautSessionLibrary)
 target_link_libraries(JuggernyautManagerLibrary PUBLIC JuggernyautDiagnosticsLibrary JugGlobalDiagnostics JuggernyautDataLibrary JuggernyautSessionLibrary)
