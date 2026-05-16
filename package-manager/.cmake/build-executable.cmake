@@ -13,7 +13,7 @@ jug_common(JuggernyautPackageManager)
 
 # Link external libraries
 # libgit2
-add_dependencies(JuggernyautPackageManager libgit2)
+add_dependencies(JuggernyautPackageManager libgit2 libgit2package)
 target_link_libraries(JuggernyautPackageManager PRIVATE libgit2package)
 copy_proper_shared_library(JuggernyautPackageManager $<TARGET_FILE_DIR:libgit2package> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
