@@ -58,8 +58,10 @@ elseif(UNIX AND NOT APPLE)
     # Linux
     # Find required POSIX packages
     find_package(Threads REQUIRED)
+
+    set(OPENSSL_USE_STATIC_LIBS TRUE)
     find_package(OpenSSL REQUIRED)
-    
+
     target_link_libraries(JuggernyautPackageManager PRIVATE
         Threads::Threads   # POSIX Threads (pthread)
         OpenSSL::SSL       # Secure Sockets
