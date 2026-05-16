@@ -10,6 +10,6 @@ rm -rf "@NATIVE_OUT_DIR@/bin/cmake"
 rm -rf "@NATIVE_OUT_DIR@/bin/pkgconfig"
 
 # Static libs
-find "@NATIVE_OUT_DIR@" -name "*.lib" -type f -delete
+find "@NATIVE_OUT_DIR@" -name "*.a" -type f -delete
 
 echo "Cleanup complete!"

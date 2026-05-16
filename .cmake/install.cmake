@@ -1,5 +1,12 @@
 message(STATUS "[INSTALL] Setting up target installs...")
 
+# General
+install(TARGETS JuggernyautCommonLibrary
+    EXPORT JuggernyautToolchain
+    RUNTIME DESTINATION bin    # Executables (.exe) AND Windows DLLs (.dll) go here
+    LIBRARY DESTINATION lib    # Linux (.so) and macOS (.dylib) shared libs go here
+)
+
 # Core
 install(TARGETS JuggernyautDiagnosticsLibrary JuggernyautDataLibrary
         JuggernyautParserLibrary JuggernyautSessionLibrary JuggernyautManagerLibrary
@@ -16,7 +23,7 @@ install(TARGETS JuggernyautConfigsLibrary
 )
 
 # External deps (without installs/excluded)
-install(TARGETS mimalloc antlr4_shared
+install(TARGETS antlr4_shared
     RUNTIME DESTINATION bin    # Executables (.exe) AND Windows DLLs (.dll) go here
     LIBRARY DESTINATION lib    # Linux (.so) and macOS (.dylib) shared libs go here
 )
