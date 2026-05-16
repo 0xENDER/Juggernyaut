@@ -15,6 +15,26 @@ jug_common(JuggernyautPackageManager)
 # libgit2
 add_dependencies(JuggernyautPackageManager libgit2)
 target_link_libraries(JuggernyautPackageManager PRIVATE libgit2)
+# Link internal libgit2 libraries
+target_link_libraries(JuggernyautPackageManager 
+    PRIVATE 
+        util            # libgit2's internal fs/utils (often required in v1.8+)
+        llhttp          # The bundled HTTP parser
+        xdiff           # The bundled diff engine
+        zlib            # Compression (if bundled/used)
+    )
+# Link system libraries on Windows
+if(WIN32)
+    target_link_libraries(JuggernyautPackageManager PRIVATE
+        ws2_32           # Winsock 2 (networking)
+        secur32          # Security functions (SSPI)
+        rpcrt4           # RPC runtime (UUID generation)
+        advapi32         # Windows API (registry, crypto)
+        winhttp          # WinHTTP
+        kernel32         # Kernel functions
+        crypt32          # Cryptography
+    )
+endif()
 
 # Handle dynamic libraries
 target_link_directories(JuggernyautPackageManager PRIVATE "$<TARGET_FILE_DIR:JuggernyautPackageManager>")
