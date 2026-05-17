@@ -23,7 +23,13 @@ install(TARGETS JuggernyautConfigsLibrary
 )
 
 # External deps (without installs/excluded)
-install(TARGETS mimalloc antlr4_shared
+if (TARGET mimalloc)
+    install(TARGETS mimalloc
+        RUNTIME DESTINATION bin    # Executables (.exe) AND Windows DLLs (.dll) go here
+        LIBRARY DESTINATION lib    # Linux (.so) and macOS (.dylib) shared libs go here
+    )
+endif()
+install(TARGETS antlr4_shared
     RUNTIME DESTINATION bin    # Executables (.exe) AND Windows DLLs (.dll) go here
     LIBRARY DESTINATION lib    # Linux (.so) and macOS (.dylib) shared libs go here
 )
