@@ -11,7 +11,6 @@ if((DEFINED GTEST_VERSION) AND (NOT TARGET googletest))
     if(EXISTS ${JUG_DEP_GTEST_LIB_PATH}/CMakeLists.txt)
         FetchContent_Declare(
             googletest
-            GIT_TAG v${GTEST_VERSION}
             SOURCE_DIR ${JUG_DEP_GTEST_LIB_PATH}
             EXCLUDE_FROM_ALL
         )
