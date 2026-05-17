@@ -101,3 +101,11 @@ else()
         endif()
     ")
 endif()
+
+# Wrapper
+add_executable(jug ${JUG_MAIN_DIR}/wrapper.cpp)
+
+install(TARGETS jug
+    EXPORT JuggernyautToolchain
+    RUNTIME DESTINATION bin
+)
