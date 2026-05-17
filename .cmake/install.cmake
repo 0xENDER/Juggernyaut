@@ -23,11 +23,26 @@ install(TARGETS JuggernyautConfigsLibrary
 )
 
 # External deps (without installs/excluded)
-if (TARGET mimalloc)
+if(TARGET mimalloc)
     install(TARGETS mimalloc
         RUNTIME DESTINATION bin    # Executables (.exe) AND Windows DLLs (.dll) go here
         LIBRARY DESTINATION lib    # Linux (.so) and macOS (.dylib) shared libs go here
     )
+    if(WIN32)
+        install(CODE "
+            file(GLOB MIMALLOC_REDIRECT_FILES \"${JUG_OUT_FINAL_DIR}/bin/mimalloc-redirect*.dll\")
+            
+            if(MIMALLOC_REDIRECT_FILES)
+                message(STATUS \"[INSTALL] Found runtime redirectors, copying...\")
+                file(INSTALL TYPE PROGRAM 
+                     FILES \${MIMALLOC_REDIRECT_FILES} 
+                     DESTINATION \"\${CMAKE_INSTALL_PREFIX}/bin\"
+                )
+            else()
+                message(FATAL_ERROR \"[INSTALL] No mimalloc-redirect DLLs found in ${JUG_OUT_FINAL_DIR}/bin at install time!\")
+            endif()
+        ")
+    endif()
 endif()
 install(TARGETS antlr4_shared
     RUNTIME DESTINATION bin    # Executables (.exe) AND Windows DLLs (.dll) go here
