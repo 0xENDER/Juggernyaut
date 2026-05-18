@@ -112,9 +112,6 @@ macro(set_modified_dist SUBFOLDER)
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE ${JUG_BINARY_DIR}/Release/${JUG_BINARY_PLATFORM}${APPEND}/${LIB_OUT_FOLDER_NAME})
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${JUG_BINARY_DIR}/Debug/${JUG_BINARY_PLATFORM}${APPEND}/lib)
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${JUG_BINARY_DIR}/Release/${JUG_BINARY_PLATFORM}${APPEND}/lib)
-
-    # RPath configs
-    set(CMAKE_BUILD_RPATH "${JUG_OUT_FINAL_DIR}/${LIB_OUT_FOLDER_NAME}")
 endmacro()
 set_modified_dist("")
 
@@ -216,3 +213,9 @@ function(attach_manifest_data TARGET MANIFEST LINK_INFO)
         "TARGET_BINARY_VERSION=\"${IN_BIN_VERSION_NAME}\""
     )
 endfunction()
+
+# Fix build RPATH issues
+if(UNIX AND NOT APPLE)
+    # Define the relative path from the executable (bin/) to the libraries (lib/)
+    set(CMAKE_BUILD_RPATH "$ORIGIN/../lib")
+endif()
