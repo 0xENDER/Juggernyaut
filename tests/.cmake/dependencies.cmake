@@ -8,6 +8,8 @@ set(INSTALL_GTEST OFF CACHE BOOL "Disable GTest installation" FORCE)
 if((DEFINED GTEST_VERSION) AND (NOT TARGET googletest))
     message(STATUS "[DEPENDENCIES] Fetching googletest...")
     set(JUG_DEP_GTEST_LIB_PATH ${JUG_DEPENDENCIES_DIR}/gtest)
+    # Prevent compiler settings override
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
     if(EXISTS ${JUG_DEP_GTEST_LIB_PATH}/CMakeLists.txt)
         FetchContent_Declare(
             googletest
