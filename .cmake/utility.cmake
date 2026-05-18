@@ -122,28 +122,6 @@ function(get_build_arch OUTPUT_VARIABLE)
     endif()
 endfunction()
 
-macro(generate_command SOURCE_NAME)
-    if(WIN32)
-        file(TO_NATIVE_PATH "${JUG_DIST_FINAL_DIR}" NATIVE_OUT_DIR) # Common
-        configure_file(
-            "${JUG_CMAKE_DIR}/components/${SOURCE_NAME}.bat.in"
-            "${JUG_DIST_FINAL_DIR}.${SOURCE_NAME}.bat"
-            @ONLY # Only replace @VAR@ style variables
-        )
-    else()
-        # Generates a .sh file for Linux/macOS users
-        configure_file(
-            "${JUG_CMAKE_DIR}/components/${SOURCE_NAME}.sh.in"
-            "${JUG_DIST_FINAL_DIR}.${SOURCE_NAME}.sh"
-            @ONLY
-            FILE_PERMISSIONS 
-                OWNER_READ OWNER_WRITE OWNER_EXECUTE
-                GROUP_READ GROUP_EXECUTE
-                WORLD_READ WORLD_EXECUTE
-        )
-    endif()
-endmacro()
-
 macro(custom_malloc TARGET)
     if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
         if (${TARGET} MATCHES "^Juggernyaut")

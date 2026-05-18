@@ -73,34 +73,29 @@ install(FILES ${JUG_LICENSE_FILE}
     DESTINATION .
 )
 
-# dev commands
-generate_command(cleanup)
-
+# Cleanup
 if(WIN32)
-    # Windows: Execute the .bat file
-    install(CODE "
-        message(STATUS \"[POST-INSTALL] Running Windows batch script...\")
-        execute_process(
-            COMMAND cmd.exe /c \"${JUG_DIST_FINAL_DIR}.cleanup.bat\"
-            RESULT_VARIABLE script_res
-        )
-        if(NOT script_res EQUAL 0)
-            message(WARNING \"Post-install script failed with code: \${script_res}\")
-        endif()
-    ")
+    set(INSTALL_STATIC_LIB_EXT lib)
 else()
-    # Unix/macOS: Execute the .sh file
-    install(CODE "
-        message(STATUS \"[POST-INSTALL] Running Unix shell script...\")
-        execute_process(
-            COMMAND bash \"${JUG_DIST_FINAL_DIR}.cleanup.sh\"
-            RESULT_VARIABLE script_res
-        )
-        if(NOT script_res EQUAL 0)
-            message(WARNING \"Post-install script failed with code: \${script_res}\")
-        endif()
-    ")
+    set(INSTALL_STATIC_LIB_EXT a)
 endif()
+install(CODE "
+    message(STATUS \"[POST-INSTALL] Cleaning up extra components...\")
+    
+    # Dirs
+    file(REMOVE_RECURSE \"${JUG_DIST_FINAL_DIR}/include\")
+    file(REMOVE_RECURSE \"${JUG_DIST_FINAL_DIR}/share\")
+    file(REMOVE_RECURSE \"${JUG_DIST_FINAL_DIR}/bin/cmake\")
+    file(REMOVE_RECURSE \"${JUG_DIST_FINAL_DIR}/bin/pkgconfig\")
+    
+    # Static libs
+    file(GLOB_RECURSE static_libs \"${JUG_DIST_FINAL_DIR}/*.${INSTALL_STATIC_LIB_EXT}\")
+    if(static_libs)
+        file(REMOVE \${static_libs})
+    endif()
+    
+    message(STATUS \"[POST-INSTALL] Cleanup complete!\")
+")
 
 # Wrapper
 add_executable(jug ${JUG_MAIN_DIR}/wrapper.cpp)
