@@ -26,7 +26,7 @@ An experimental general-purpose programming language with *no particular purpose
 - `/extensions`:
   Includes extensions for well-known code editors.
 - `/package-manager`:" (*empty*)
-  Includes language libraries package manager
+  Includes the language libraries package manager
 - `/server`:
   The language server for IDEs. (Follows the LSP)
 - `/tests`:
