@@ -16,8 +16,8 @@ endif()
 # Manage shared dependencies
 include(${JUG_CMAKE_DIR}/dependencies.cmake)
 
-# Diagnostic codes
-include(${JUG_CMAKE_DIR}/common.cmake)
+# Libraries
+include(${JUG_CMAKE_DIR}/libraries.cmake)
 
 # Diagnostic codes
 include(${JUG_CMAKE_DIR}/diagnostics.cmake)

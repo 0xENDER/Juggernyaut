@@ -1,13 +1,12 @@
-message(STATUS "[COMMON] Including global common library...")
+message(STATUS "[LIBRARIES] Including global libraries...")
 
 include(FetchContent)
 
 if(NOT TARGET JuggernyautCommonLibrary)
+    # (using the common library for detection)
     if(NOT DEFINED JUG_COMMON_INCLUDE_DIR)
-        add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../utility/common ${CMAKE_BINARY_DIR}/common)
+        add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../utility/libraries ${CMAKE_BINARY_DIR}/libraries)
     endif()
-    #link_libraries(JuggernyautCommonLibrary) # BAD!
-    #include_directories(${JUG_COMMON_INCLUDE_DIR})
 endif()
 
 macro(jug_common TARGET)

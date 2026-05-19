@@ -32,10 +32,10 @@ An experimental general-purpose programming language with *no particular purpose
 - `/tests`:
   Test files.
 - `/utility`:
-  - `common`:
-    The common library
   - `diag_codes`:
     Diagnostic code generator
+  - `libraries`:
+    Cross-project libraries
 
 ## Memory debugging
 
