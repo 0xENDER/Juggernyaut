@@ -54,12 +54,4 @@ macro(add_test_target TARGET DIR)
     if(MSVC)
         target_compile_options(${TARGET} PRIVATE /wd6326)
     endif()
-
-    # Handle local library linking
-    if(NOT WIN32)
-        set_target_properties(${TARGET} PROPERTIES 
-            BUILD_RPATH "$ORIGIN/../../bin"
-            INSTALL_RPATH "$ORIGIN/../../bin"
-        )
-    endif()
 endmacro()

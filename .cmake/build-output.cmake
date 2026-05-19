@@ -214,8 +214,9 @@ function(attach_manifest_data TARGET MANIFEST LINK_INFO)
     )
 endfunction()
 
-# Fix build RPATH issues
-if(UNIX AND NOT APPLE)
-    # Define the relative path from the executable (bin/) to the libraries (lib/)
-    set(CMAKE_BUILD_RPATH "$ORIGIN/../lib")
-endif()
+# Use the full RPATH for the build tree (for local runs)
+set(CMAKE_SKIP_BUILD_RPATH FALSE)
+# Don't apply the install RPATH until the install phase
+set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+# Add paths to RPATH linked external libs
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)

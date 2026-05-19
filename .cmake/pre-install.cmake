@@ -13,13 +13,10 @@ else()
 endif()
 
 # Fix RPATH issues
-if(UNIX AND NOT APPLE)
-    # Define the relative path from the executable (bin/) to the libraries (lib/)
-    set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
-
-    # Ensure that dependency libraries also use RPATH to find their own dependencies
-    # if they sit in the same folder.
-    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+if(APPLE)
+    set(CMAKE_INSTALL_RPATH "@executable_path/../lib")
+elseif(UNIX AND NOT APPLE)
+    set(CMAKE_INSTALL_RPATH "\$ORIGIN/../lib")
 endif()
 
 # External deps
