@@ -178,3 +178,38 @@ if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
     endif()
     #link_libraries(mimalloc) # BAD!
 endif()
+
+# {fmt}
+if(DEFINED FMT_LIB_VERSION)
+    option(USE_INSTALLED_FMT "Ignore or use installed FMT" OFF) # Default OFF - not using installed fmt
+    if(USE_INSTALLED_FMT)
+        find_package(fmt)
+    endif()
+    if(fmt)
+        message(STATUS "[DEPENDENCIES] {fmt} library is present!")
+    else()
+        set(FMT_INSTALL OFF CACHE BOOL "Disable fmt installation" FORCE)
+        # Download {fmt}
+        message(STATUS "[DEPENDENCIES] Fetching {fmt}...")
+        set(JUG_DEP_FMT_LIB_PATH ${JUG_DEPENDENCIES_DIR}/fmt)
+        if(EXISTS ${JUG_DEP_FMT_LIB_PATH}/CMakeLists.txt)
+            FetchContent_Declare(fmt
+                SOURCE_DIR ${JUG_DEP_FMT_LIB_PATH}
+                EXCLUDE_FROM_ALL)
+        else()
+            FetchContent_Declare(fmt
+                GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+                GIT_TAG ${FMT_LIB_VERSION}
+                SOURCE_DIR ${JUG_DEP_FMT_LIB_PATH}
+                EXCLUDE_FROM_ALL)
+        endif()
+    endif()
+    FetchContent_MakeAvailable(fmt)
+
+    # FIX: Ignore known warnings in VS2026
+    if(MSVC)
+        target_compile_options(fmt INTERFACE /analyze-)
+    endif()
+
+    custom_malloc(fmt)
+endif()
