@@ -3,12 +3,12 @@
  * Handle CLI report displays
 **/
 
-#include "report.hpp"
+#include "include/console/report.hpp"
 
 // Comms headers
-#include "console.hpp"
-#include "basic.hpp"
-#include "source.hpp"
+#include "include/console/console.hpp"
+#include "include/console/basic.hpp"
+#include "include/console/source.hpp"
 
 // Shortent the syntax for printing to the console
 #define INTERNAL_C_OUT(DATA, CHANNEL_VAR)                   \

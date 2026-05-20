@@ -6,6 +6,7 @@
 #pragma once
 
 #include "common/headers.hpp"
+#include "../../dynamic.hpp" // JUG_CAT_CONSOLE_API
 
 // Basic C++ headers
 #include <variant>
@@ -25,9 +26,9 @@ namespace Console {
     namespace ProcessReport {
         // It may become necessary to introduce static tracking variables to keep up with more complex error reports
         // to support LSP!
-        extern int programStatus;
+        extern JUG_CAT_CONSOLE_API int programStatus;
         // Keep track of the reporting status
-        extern bool didSendReport;
+        extern JUG_CAT_CONSOLE_API bool didSendReport;
     }
 
     // Report actions
@@ -55,44 +56,45 @@ namespace Console {
     // Report-specific status
     namespace IndividualReport {
         // Current reporting status!
-        extern bool isNew; // Check if this is a new report!
-        extern ReportType type;
-        extern std::string stage;
-        extern std::stringstream messageStream;
+        extern JUG_CAT_CONSOLE_API bool isNew; // Check if this is a new report!
+        extern JUG_CAT_CONSOLE_API ReportType type;
+        extern JUG_CAT_CONSOLE_API std::string stage;
+        extern JUG_CAT_CONSOLE_API std::stringstream messageStream;
 
-        extern bool isContinuation;
+        extern JUG_CAT_CONSOLE_API bool isContinuation;
 
         // Code-related report data
-        extern std::string path;
-        extern size_t startLine;
-        extern size_t startColumn;
-        extern size_t endLine;
-        extern size_t endColumn;
+        extern JUG_CAT_CONSOLE_API std::string path;
+        extern JUG_CAT_CONSOLE_API size_t startLine;
+        extern JUG_CAT_CONSOLE_API size_t startColumn;
+        extern JUG_CAT_CONSOLE_API size_t endLine;
+        extern JUG_CAT_CONSOLE_API size_t endColumn;
 
-        extern int code;
+        extern JUG_CAT_CONSOLE_API int code;
     }
 
     // Keep track of general report statistics
     namespace Statistics {
-        extern int normalReports;
-        extern int warningReports;
-        extern int criticalReports;
-        extern int fatalReports;
-        extern int actionReports;
-        extern int debugReports;
+        extern JUG_CAT_CONSOLE_API int normalReports;
+        extern JUG_CAT_CONSOLE_API int warningReports;
+        extern JUG_CAT_CONSOLE_API int criticalReports;
+        extern JUG_CAT_CONSOLE_API int fatalReports;
+        extern JUG_CAT_CONSOLE_API int actionReports;
+        extern JUG_CAT_CONSOLE_API int debugReports;
     }
 
     // Reporting
-    extern void report(const ReportInputs& args) ;
+    extern JUG_CAT_CONSOLE_API void report(const ReportInputs& args) ;
 
-    extern void runtimeTracking() ;
+    extern JUG_CAT_CONSOLE_API void runtimeTracking() ;
 
     // Initalise protocol
-    extern void initalize() ;
+    using InitializationData = Internal::InitializationData;
+    extern JUG_CAT_CONSOLE_API void initalize(const InitializationData &data) ;
 
     // For actions that require minimal finalisation!
-    extern bool minimalProtocolFinalization;
+    extern JUG_CAT_CONSOLE_API bool minimalProtocolFinalization;
 
     // Finalise protocol
-    extern void finalize(uint32_t activeSrcs = 0) ;
+    extern JUG_CAT_CONSOLE_API void finalize(uint32_t activeSrcs = 0) ;
 }

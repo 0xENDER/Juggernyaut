@@ -3,12 +3,10 @@
  * Handle CLI initialisation
 **/
 
-#include "initialize.hpp"
+#include "include/console/initialize.hpp"
 
-#include "../base/info.hpp"
-
-#include "basic.hpp"
-#include "optimization.hpp"
+#include "include/console/basic.hpp"
+#include "include/console/optimization.hpp"
 
 namespace Console {
     namespace Internal {
@@ -23,7 +21,7 @@ namespace Console {
         }
 
         // Handle CLI initialisation
-        void initialize() {
+        void initialize(const InitializationData &data, const std::string &extra = "(C) 2026 Ender-ing GitHub Organisation") {
             if (isInitialized) { // TMP
                 return;
             }
@@ -33,11 +31,11 @@ namespace Console {
 
             /**
              *   ,-.       _,---._ __  / \
-             *  /  )    .-'       `./ /   \   Juggernyaut v??? - <arch>
+             *  /  )    .-'       `./ /   \   <name> v??? - <version>
              * (  (   ,'            `/    /|  Build: <build_type> - <arch>
              *  \  `-"             \'\   / |  Platform: <os_name> <os_version>
              *   `.              ,  \ \ /  |
-             *    /`.          ,'-`----Y   |  (C) 2026 Ender-ing GitHub Organisation
+             *    /`.          ,'-`----Y   |  <extra>
              *   (            ;        |   '
              *   |  ,-.    ,-'         |  /
              *   |  | (   |      jug   | /    (Cat-chy Art by Hayley Jane Wakenshaw)
@@ -46,20 +44,21 @@ namespace Console {
             **/
             // Print initial console prompt
             std::cout << std::endl << '\n' << color("  ,-.       _,---._ __ ", Color::golden_rod)
-                << color(" / \\    Juggernyaut ", Color::light_sea_green) << color("v", Color::blue_violet)
-                << color(Base::Info::version, Color::blue_violet) << '\n';
+                << color(" / \\    ", Color::light_sea_green) << color(data.name, Color::light_sea_green)
+                << color(" v", Color::blue_violet)
+                << color(data.version, Color::blue_violet) << '\n';
             std::cout << color(" /  )    .-'       `./", Color::golden_rod)
                 << color(" /   \\   Build: ", Color::light_sea_green)
-                << color(Base::Info::build, Color::light_sea_green)
-                << color(" - ", Color::light_sea_green) << color(Base::Info::arch, Color::light_sea_green) << '\n';
+                << color(data.build, Color::light_sea_green)
+                << color(" - ", Color::light_sea_green) << color(data.arch, Color::light_sea_green) << '\n';
             std::cout << color("(  (   ,'            `", Color::golden_rod)
                 << color("/    /|  Platform: ", Color::light_sea_green)
-                << color(Base::Info::osName, Color::light_sea_green) << color(" ", Color::light_sea_green)
-                << color(Base::Info::osVersion, Color::light_sea_green) << '\n';
+                << color(data.osName, Color::light_sea_green) << color(" ", Color::light_sea_green)
+                << color(data.osVersion, Color::light_sea_green) << '\n';
             std::cout << color(" \\  `-\"             \\'", Color::golden_rod)
                 << color("\\   / |", Color::light_sea_green) << '\n';
             std::cout << color("  `.              ,  \\", Color::golden_rod)
-                << color(" \\ /  |  (C) 2026 Ender-ing GitHub Organisation", Color::light_sea_green)
+                << color(" \\ /  |  ", Color::light_sea_green) << color(extra, Color::light_sea_green)
                 << '\n';
             std::cout << color("   /`.          ,'", Color::golden_rod) << color("-", Color::light_sea_green)
                 << color("`", Color::golden_rod) << color("----Y   |", Color::light_sea_green) << '\n';

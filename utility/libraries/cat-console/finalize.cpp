@@ -3,16 +3,16 @@
  * Handle CLI initialisation
 **/
 
-#include "finalize.hpp"
+#include "include/console/finalize.hpp"
 
-#include "initialize.hpp"
+#include "include/console/initialize.hpp"
 
 // Basic C++ headers
 #include <iomanip>
 
-#include "console.hpp"
-#include "basic.hpp"
-#include "optimization.hpp"
+#include "include/console/console.hpp"
+#include "include/console/basic.hpp"
+#include "include/console/optimization.hpp"
 
 namespace Console {
     namespace Internal {

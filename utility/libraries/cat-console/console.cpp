@@ -3,7 +3,7 @@
  * Enable uniform reports for both consoles and IDEs
 **/
 
-#include "console.hpp"
+#include "include/console/console.hpp"
 
 namespace Console {
     // Handle error throw statement
@@ -213,9 +213,9 @@ namespace Console {
     };
 
     // Initalise protocol
-    void initalize() {
+    void initalize(const InitializationData &data) {
         // Initialise Internal mode
-        Internal::initialize(); //TMP
+        Internal::initialize(data); //TMP
     }
 
     // Keep track of finalisation

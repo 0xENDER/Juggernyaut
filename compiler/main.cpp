@@ -46,7 +46,13 @@ int main(int argc, const char *argv[]) {
     // (Basiclly allowing the default protocol to take effect)
     if (!Base::InitialConfigs::Technical::shouldSkipDefaultInitialization(argc, argv)) {
         // This is done to allow flags like --version to function normally
-        Console::initalize();
+        Console::initalize({
+            Base::Info::version,
+            Base::Info::arch,
+            Base::Info::build,
+            Base::Info::osName,
+            Base::Info::osVersion
+        });
     }
 
     // Update initial configurations
