@@ -74,7 +74,7 @@ jobs:
         sudo dpkg --add-architecture armhf
         sudo apt-get update -o Acquire::Retries=3
         sudo apt-get install gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
-        sudo apt-get install -y libc6:armhf libstdc++6:armhf libssl-dev:armhf
+        sudo apt-get install -y libc6:armhf libc6-dev:armhf libstdc++6:armhf libssl-dev:armhf
 
     - name: Make the ".build" directory
       run: mkdir ${{github.workspace}}/.build
