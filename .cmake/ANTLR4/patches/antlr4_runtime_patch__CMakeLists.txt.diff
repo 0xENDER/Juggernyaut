@@ -16,9 +16,13 @@
    endif()
  endif()
 # Use latest googletest version & fix macOS library linking problems
-@@ -73,1 +73,1 @@
+@@ -71,5 +71,5 @@
+   FetchContent_Declare(
+     googletest
 -    URL https://github.com/google/googletest/archive/e2239ee6043f73722e7aa812a459f54a28552929.zip
 +    URL https://github.com/google/googletest/archive/refs/tags/v1.16.0.zip
+   )
+ 
 @@ -102,5 +102,5 @@
  if(APPLE)
    if (TARGET antlr4_shared)
