@@ -179,8 +179,9 @@ if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
     #link_libraries(mimalloc) # BAD!
 endif()
 
-# {fmt}
-if(DEFINED FMT_LIB_VERSION)
+# {fmt} library
+if(DEFINED NEED_FMT_LIB)
+    set(FMT_LIB_VERSION 10.2.1)
     option(USE_INSTALLED_FMT "Ignore or use installed FMT" OFF) # Default OFF - not using installed fmt
     if(USE_INSTALLED_FMT)
         find_package(fmt)

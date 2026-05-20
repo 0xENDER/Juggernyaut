@@ -12,6 +12,7 @@ set(JUG_DEPENDENCIES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../.deps)
 set(JUG_CMAKE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../.cmake)
 
 # Directories
+set(JUG_UTILITY_CMAKE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/.cmake)
 set(JUG_UTILITY_LIBRARIES_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(JUG_UTILITY_LIBRARIES_CMAKE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/.cmake)
 set(JUG_UTILITY_MANIFEST_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../manifest.ini)
@@ -33,6 +34,7 @@ set(CMAKE_MODULE_PATH
 include(${JUG_CMAKE_DIR}/compiler/cpp.cmake)
 
 # Manage dependencies
+include(${JUG_UTILITY_CMAKE_DIR}/dependencies.cmake)
 include(${JUG_CMAKE_DIR}/dependencies.cmake)
 
 # Generate libraries
