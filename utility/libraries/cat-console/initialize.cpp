@@ -21,7 +21,7 @@ namespace Console {
         }
 
         // Handle CLI initialisation
-        void initialize(const InitializationData &data, const std::string &extra = "(C) 2026 Ender-ing GitHub Organisation") {
+        void initialize(const InitializationData &data, const std::string &extra) {
             if (isInitialized) { // TMP
                 return;
             }

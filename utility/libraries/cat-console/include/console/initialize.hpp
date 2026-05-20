@@ -30,6 +30,6 @@ namespace Console {
             const std::string osVersion;
         };
         // Handle CLI initialisation
-        extern JUG_CAT_CONSOLE_API void initialize(const InitializationData &data) ;
+        extern JUG_CAT_CONSOLE_API void initialize(const InitializationData &data, const std::string &extra = "(C) 2026 Ender-ing GitHub Organisation") ;
     }
 }

@@ -7,7 +7,7 @@
 
 #include "FileStore.hpp"
 
-#include "../console/console.hpp"
+#include "console/console.hpp"
 
 namespace Store {
     bool FileStore::_getRawFile(const std::string &uri, std::string &output) const {
