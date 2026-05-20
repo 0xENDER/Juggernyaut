@@ -1,7 +1,7 @@
 message(STATUS "[INSTALL] Setting up target installs...")
 
 # General
-install(TARGETS JuggernyautCommonLibrary
+install(TARGETS JuggernyautCommonLibrary JuggernyautCatConsoleLibrary
     EXPORT JuggernyautToolchain
     RUNTIME DESTINATION bin    # Executables (.exe) AND Windows DLLs (.dll) go here
     LIBRARY DESTINATION lib    # Linux (.so) and macOS (.dylib) shared libs go here
