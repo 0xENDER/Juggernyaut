@@ -66,7 +66,7 @@ jobs:
       run: |
         sudo dpkg --add-architecture i386
         sudo apt-get update -o Acquire::Retries=3
-        sudo apt-get install -y gcc-i386-linux-gnu g++-i386-linux-gnu libssl-dev:i386
+        sudo apt-get install -y gcc-i686-linux-gnu g++-i686-linux-gnu libc6-dev:i386 libssl-dev:i386
 
     - name: Install dependencies (ARM 32-bit)
       if: inputs.build_platform_name == 'arm32'
@@ -90,7 +90,8 @@ jobs:
       if: inputs.build_platform_name == 'x86_32'
       run: |
         cmake .. -DCMAKE_BUILD_TYPE=${{inputs.build_mode}} -DCMAKE_UNIX_GENERATOR_PLATFORM=${{inputs.build_platform}} \
-          -DCMAKE_C_COMPILER=i386-linux-gnu-gcc -DCMAKE_CXX_COMPILER=i386-linux-gnu-g++ -DCMAKE_SYSTEM_PROCESSOR=i386 \
+          -DCMAKE_C_COMPILER=i686-linux-gnu-gcc -DCMAKE_CXX_COMPILER=i686-linux-gnu-g++ -DCMAKE_SYSTEM_PROCESSOR=i686 \
+          -DCMAKE_SYSTEM_NAME=Linux \
           -DJUG_RELEASE_VERSION="${{inputs.release_version}}" -DJUG_BUILD_TESTS=${{inputs.run_tests}}
       working-directory: .build
 
@@ -99,7 +100,7 @@ jobs:
       run: |
         cmake .. -DCMAKE_BUILD_TYPE=${{inputs.build_mode}} -DCMAKE_UNIX_GENERATOR_PLATFORM=${{inputs.build_platform}} \
           -DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc -DCMAKE_CXX_COMPILER=arm-linux-gnueabihf-g++ \
-          -DCMAKE_SYSTEM_PROCESSOR=arm \
+          -DCMAKE_SYSTEM_PROCESSOR=arm -DCMAKE_SYSTEM_NAME=Linux \
           -DJUG_RELEASE_VERSION="${{inputs.release_version}}" -DJUG_BUILD_TESTS=${{inputs.run_tests}}
       working-directory: .build
 
