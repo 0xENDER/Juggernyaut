@@ -1,21 +1,16 @@
 --- a/runtime/Cpp/runtime/CMakeLists.txt
 +++ b/runtime/Cpp/runtime/CMakeLists.txt
-# Resolve CMake linking issues
-@@ -55,5 +55,5 @@
+@@ -55,8 +55,8 @@
  
    if (TARGET antlr4_shared)
 -    target_link_libraries(antlr4_shared Threads::Threads)
 +    target_link_libraries(antlr4_shared PRIVATE Threads::Threads)
    endif()
    if (TARGET antlr4_static)
-@@ -58,5 +58,5 @@
-   endif()
-   if (TARGET antlr4_static)
 -    target_link_libraries(antlr4_static Threads::Threads)
 +    target_link_libraries(antlr4_static PRIVATE Threads::Threads)
    endif()
  endif()
-# Use latest googletest version & fix macOS library linking problems
 @@ -71,5 +71,5 @@
    FetchContent_Declare(
      googletest
@@ -23,14 +18,11 @@
 +    URL https://github.com/google/googletest/archive/refs/tags/v1.16.0.zip
    )
  
-@@ -102,5 +102,5 @@
+@@ -102,8 +102,8 @@
  if(APPLE)
    if (TARGET antlr4_shared)
 -    target_link_libraries(antlr4_shared ${COREFOUNDATION_LIBRARY})
 +    target_link_libraries(antlr4_shared PRIVATE ${COREFOUNDATION_LIBRARY})
-   endif()
-   if (TARGET antlr4_static)
-@@ -105,5 +105,5 @@
    endif()
    if (TARGET antlr4_static)
 -    target_link_libraries(antlr4_static ${COREFOUNDATION_LIBRARY})
