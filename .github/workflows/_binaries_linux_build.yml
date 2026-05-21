@@ -72,7 +72,7 @@ jobs:
       run: |
         sudo dpkg --add-architecture i386
         sudo apt-get update -o Acquire::Retries=3
-        sudo apt-get install -y gcc-i686-linux-gnu g++-i686-linux-gnu zlib1g-dev:i386 libpcre3-dev:i386 libssl-dev:i386
+        sudo apt-get install -y gcc-i686-linux-gnu g++-i686-linux-gnu zlib1g-dev:i386 libc6-dev-i386 libssl-dev:i386
 
     - name: Install dependencies (ARM 32-bit)
       if: inputs.build_platform_name == 'arm32'
