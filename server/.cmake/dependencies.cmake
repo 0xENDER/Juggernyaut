@@ -16,7 +16,6 @@ else()
     set(JUG_DEP_LSP_FRAMEWORK_LIB_PATH ${JUG_DEPENDENCIES_DIR}/lsp-framework)
     if(EXISTS ${JUG_DEP_LSP_FRAMEWORK_LIB_PATH}/CMakeLists.txt)
         FetchContent_Declare(lsp
-            GIT_TAG ${LSP_FRAMEWORK_LIB_VERSION}
             SOURCE_DIR ${JUG_DEP_LSP_FRAMEWORK_LIB_PATH})
     else()
         FetchContent_Declare(lsp
