@@ -47,9 +47,10 @@ int main(int argc, const char *argv[]) {
     if (!Base::InitialConfigs::Technical::shouldSkipDefaultInitialization(argc, argv)) {
         // This is done to allow flags like --version to function normally
         Console::initalize({
+            "Juggernyaut Compiler",
             Base::Info::version,
-            Base::Info::arch,
             Base::Info::build,
+            Base::Info::arch,
             Base::Info::osName,
             Base::Info::osVersion
         });
