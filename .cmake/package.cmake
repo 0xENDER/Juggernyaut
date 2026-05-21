@@ -12,7 +12,7 @@ set(CPACK_PACKAGE_FILE_NAME "juggernyaut-${JUG_RELEASE_VERSION}-${JUG_GENERATOR_
 set(CPACK_GENERATOR "IFW")
 
 # IFW Branding & Theming
-set(CPACK_IFW_PACKAGE_TITLE "Juggernyaut Toolchain Setup")
+set(CPACK_IFW_PACKAGE_TITLE "Juggernyaut Toolchain")
 set(CPACK_IFW_PACKAGE_PUBLISHER "ender.ing")
 
 # The left-side tall image (Classic setup wizard style)
