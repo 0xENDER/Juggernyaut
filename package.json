@@ -12,6 +12,8 @@
         "lix-clean": "rm -f -r \".build\" && rm -f -r \".out\" && rm -f -r \".dist\"",
         "install": "cd .build && cmake --install . --config Release",
         "debug-install": "cd .build && cmake --install . --config Debug",
+        "package": "cd .dist && cpack --config ../.build/CPackConfig.cmake -C Release",
+        "debug-package": "cd .dist && cpack --config ../.build/CPackConfig.cmake -C Debug",
         "debug": "mkdir .build && npm run debug-build-cmake && npm run debug-build-binary",
         "debug-t": "mkdir .build && npm run debug-t-build-cmake && npm run debug-build-binary",
         "test-d": "cd .build && ctest -C Debug -V -j 3",

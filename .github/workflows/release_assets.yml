@@ -106,7 +106,7 @@ jobs:
             cd $artifact_dir
 
             # Check archive type
-            if [[ "$artifact_name" == *.vsix ]]; then
+            if [[ "$artifact_name" =~ \.(vsix|exe|deb|dmg)$ ]]; then
 
               # Upload a plain package file
               upload_asset "$artifact_name"

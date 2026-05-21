@@ -128,12 +128,13 @@ function(attach_manifest_data TARGET MANIFEST LINK_INFO)
     get_ini_value(${MANIFEST} "TARGET:${TARGET}" "VERSION" INI_VERSION)
     #get_ini_value(${MANIFEST} "TARGET:${TARGET}" "SOVERSION" INI_SOVERSION)
     if(INI_VERSION STREQUAL "NO_ARG_VAL")
-        set(INI_VERSION "0.0.0-cmake.000")
+        set(INI_VERSION "0.0.0-danger.000")
     endif()
 
     # Update target info
+    sanitize_version("${INI_VERSION}" PROPER_VERSION)
     set_target_properties(${TARGET} PROPERTIES # THIS DOESN'T WORK!
-        VERSION "${INI_VERSION}"
+        VERSION "${PROPER_VERSION}"
         #SOVERSION "${INI_SOVERSION}" # CMAKE LINKS TO THIS, BEFORE "VERSION"
         # Naming scheme
         OUTPUT_NAME "${TARGET}"
@@ -142,7 +143,7 @@ function(attach_manifest_data TARGET MANIFEST LINK_INFO)
     # Keep track of the main target value
     if(NOT DEFINED IN_MAIN_BIN_VERSION_NAME)
         # Save version info
-        set(IN_MAIN_BIN_VERSION_NAME "${INI_VERSION}")
+        set(IN_MAIN_BIN_VERSION_NAME "${PROPER_VERSION}")
         set(IN_MAIN_BIN_VERSION_NAME "${IN_MAIN_BIN_VERSION_NAME}" PARENT_SCOPE)
         string(REGEX MATCHALL "[0-9]+" version_list "${INI_VERSION}")
         list(GET version_list 0 IN_MAIN_BIN_MAJOR)
@@ -162,7 +163,7 @@ function(attach_manifest_data TARGET MANIFEST LINK_INFO)
     list(GET version_list 2 IN_BIN_PATCH)
     list(GET version_list 3 IN_BIN_EXTRA)
     get_ini_value(${MANIFEST} "TARGET:${TARGET}" "DESCRIPTION" IN_BIN_DESCRIPTION)
-    set(IN_BIN_VERSION_NAME ${INI_VERSION})
+    set(IN_BIN_VERSION_NAME ${PROPER_VERSION})
 
     # Get target type
     get_target_property(target_type ${TARGET} TYPE)
@@ -208,7 +209,7 @@ function(attach_manifest_data TARGET MANIFEST LINK_INFO)
 
     # Pass data to the target's C++ source files
     target_compile_definitions(${TARGET} PRIVATE
-        "MAIN_TARGET_BINARY_VERSION=\"${IN_MAIN_BIN_VERSION_NAME}\""
+        "MAIN_TARGET_BINARY_VERSION=\"${INI_VERSION}\""
         "MAIN_BINARY_TYPE=\"${JUG_BINARY_MODE}\""
         "TARGET_BINARY_VERSION=\"${IN_BIN_VERSION_NAME}\""
     )

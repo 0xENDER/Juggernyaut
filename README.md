@@ -144,3 +144,17 @@ and it doesn't mess with the structure of the repository, it'd be gladly accepte
 - [ ] Extensions
   > Goal: Enable easy use of the server and compiler in IDEs.
   - ...
+
+## Releases
+
+Releases can be triggered by creating a tag that starts with a `v`, and follows the versioning style:
+`{major}.{minor}.{patch}-{release_name}.{release_patch}`
+
+### Packaging
+
+> [!NOTE]
+> You need to [install the QT installer framework](https://download.qt.io/official_releases/qt-installer-framework/4.8.1/)
+> on your machine in order to package the final toolchain!
+
+Packaging is done through the cpack command.
+

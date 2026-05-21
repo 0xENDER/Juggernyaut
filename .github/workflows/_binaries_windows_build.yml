@@ -78,6 +78,15 @@ jobs:
         arch: ${{env.MSVC_ARCH}}
         sdk: 10.0.26100.0
 
+    - name: Install Qt Installer Framework (IFW)
+      if: inputs.bundle_binaries && (inputs.build_platform_name == 'x86_64' || inputs.build_platform_name == 'arm64')
+      uses: jurplel/install-qt-action@v4
+      with:
+        no-qt-binaries: true
+        # The syntax for tools is often <tool_name>,<version>,<architecture_identifier>
+        tools: 'tools_ifw,4.8.1,qt.tools.ifw.48'
+        set-env: false
+
     - name: Make the ".build" directory
       run: mkdir ${{github.workspace}}/.build
 
@@ -100,6 +109,11 @@ jobs:
       if: inputs.bundle_binaries
       run: cmake --install . --config ${{inputs.build_mode}} --parallel 3 --verbose
       working-directory: .build
+
+    - name: Package Native Installer (optional)
+      if: inputs.bundle_binaries && (inputs.build_platform_name == 'x86_64' || inputs.build_platform_name == 'arm64')
+      run: cpack --config ../.build/CPackConfig.cmake -C ${{inputs.build_mode}}
+      working-directory: .dist
 
     - name: Extract version (optional)
       if: inputs.bundle_binaries
@@ -125,3 +139,10 @@ jobs:
       with:
         name: Juggernyaut-${{inputs.build_mode}}-v${{env.VERSION}}-Windows-${{inputs.build_platform_name}}
         path: ${{github.workspace}}/.dist/${{inputs.build_mode}}/${{inputs.build_platform_name}}/
+
+    - name: Upload Installer Artifact (optional)
+      if: inputs.bundle_binaries && (inputs.build_platform_name == 'x86_64' || inputs.build_platform_name == 'arm64')
+      uses: actions/upload-artifact@v7
+      with:
+        name: Juggernyaut-Installer-${{inputs.build_platform_name}}
+        path: ${{github.workspace}}/.dist/juggernyaut*.exe

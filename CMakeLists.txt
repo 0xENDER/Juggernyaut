@@ -19,6 +19,11 @@ set(JUG_MAIN_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(JUG_DIST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/.dist)
 set(JUG_LICENSE_FILE ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE)
 
+# Set a default JUG_RELEASE_VERSION
+if(NOT DEFINED JUG_RELEASE_VERSION)
+    set(JUG_RELEASE_VERSION "0.0.0-danger.000")
+endif()
+
 include(${JUG_CMAKE_DIR}/messages.cmake)
 info("[START] Configuring Juggernyaut...")
 
@@ -42,6 +47,7 @@ add_subdirectory(server)
 add_subdirectory(package-manager)
 
 include(${JUG_CMAKE_DIR}/install.cmake)
+include(${JUG_CMAKE_DIR}/package.cmake)
 
 # Tests
 option(JUG_BUILD_TESTS "Build the test suite" OFF)
