@@ -34,7 +34,7 @@ if(WIN32)
 elseif(UNIX)
     if(${JUG_GENERATOR_PLATFORM} STREQUAL "x86")
         if(CMAKE_SYSTEM_NAME MATCHES "Linux")
-            #add_c_cpp_global_flag("-m32")
+            add_c_cpp_global_flag("-m32")
             #add_c_cpp_global_flag("-march=i686")
 
             # Include/find directories
