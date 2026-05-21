@@ -9,9 +9,53 @@
 #include <filesystem>
 #include <cstdlib>
 
+#ifdef _WIN32
+    #include <windows.h>
+#elif __linux__
+    #include <unistd.h>
+    #include <limits.h>
+#elif __APPLE__
+    #include <mach-o/dyld.h>
+    #include <limits.h>
+#endif
+
+std::filesystem::path getExecutableDirectory() {
+#ifdef _WIN32
+    char buffer[MAX_PATH];
+    GetModuleFileNameA(NULL, buffer, MAX_PATH);
+    return std::filesystem::path(buffer).parent_path();
+#elif __linux__
+    char buffer[PATH_MAX];
+    ssize_t count = readlink("/proc/self/exe", buffer, PATH_MAX);
+    if (count != -1) {
+        return std::filesystem::path(std::string(buffer, count)).parent_path();
+    }
+    return "";
+#elif __APPLE__
+    char raw_path[PATH_MAX];
+    uint32_t size = sizeof(raw_path);
+    if (_NSGetExecutablePath(raw_path, &size) == 0) {
+        char real_path[PATH_MAX];
+        // resolve symlinks and '..' to get the absolute canonical path
+        if (realpath(raw_path, real_path)) {
+            return std::filesystem::path(real_path).parent_path();
+        }
+    }
+    return "";
+#else
+    return ""; // Fallback for unsupported platforms
+#endif
+}
+
 // Cross-platform process spawning helper
 int spawn (const std::string& binary_name, int argc, char* argv[]) {
-    std::filesystem::path exe_dir = std::filesystem::path(argv[0]).parent_path();
+    std::filesystem::path exe_dir = getExecutableDirectory();
+
+    if (exe_dir.empty()) {
+        std::cerr << "Error: Could not determine executable location.\n";
+        return 1;
+    }
+
     std::filesystem::path target_exe = exe_dir / binary_name;
 
     #ifdef _WIN32
