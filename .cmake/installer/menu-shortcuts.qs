@@ -14,11 +14,12 @@ Component.prototype.createOperations = function() {
             "@StartMenuDir@\\Uninstall Juggernyaut Toolchain.lnk",
             "description=Modify or Uninstall Juggernyaut"
         );
-        component.addOperation(
+        // NOT WORKING:
+        /*component.addOperation(
             "CreateShortcut",
             "@TargetDir@\\jug-docs.html",
             "@StartMenuDir@\\Juggernyaut Documentation.lnk",
             "description=Browse the Online Juggernyaut Documentation"
-        );
+        );*/
     }
 }
