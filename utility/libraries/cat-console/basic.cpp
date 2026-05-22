@@ -6,10 +6,7 @@
 #include "include/console/basic.hpp"
 
 // {fmt}
-#include <fmt/color.h>
-#include <fmt/format.h>
-#include <fmt/std.h>
-
+#include "fmt.hpp"
 
 namespace Console {
     namespace Internal {
@@ -24,7 +21,7 @@ namespace Console {
             const uint32_t gray = static_cast<uint32_t>(fmt::color::gray);
         }
         std::string color(const std::string &text, const uint32_t color) {
-            return fmt::format(fmt::fg(static_cast<fmt::color>(color)), text);
+            return fmt::format(fmt::fg(static_cast<fmt::color>(color)), "{}", text);
         }
     }
 }
