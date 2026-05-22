@@ -15,6 +15,7 @@ set(CPACK_GENERATOR "IFW")
 set(CPACK_IFW_PACKAGE_TITLE "Juggernyaut Toolchain")
 set(CPACK_IFW_PACKAGE_PUBLISHER "ender.ing")
 
+set(CPACK_RESOURCE_FILE_LICENSE "${JUG_LICENSE_FILE}")
 set(CPACK_IFW_MAINTENANCE_TOOL_NAME "maintenancetool")
 
 # Theming
