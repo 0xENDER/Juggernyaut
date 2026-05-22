@@ -39,6 +39,9 @@ set(CPACK_COMPONENTS_ALL
     # QT script components
     QSPathSetup
 )
+if(WIN32)
+    list(APPEND CPACK_COMPONENTS_ALL QSMenuShortcuts)
+endif()
 
 # Separate components
 set(CPACK_COMPONENTS_GROUPING IGNORE)
@@ -64,7 +67,7 @@ cpack_add_component(CmpJuggernyautCompiler
 cpack_ifw_configure_component(CmpJuggernyautCompiler
     FORCED_INSTALLATION TRUE
     LICENSES 
-        "My Software License" "${CMAKE_CURRENT_SOURCE_DIR}/license.txt"
+        "Juggernyaut Toolchain License" "${JUG_LICENSE_FILE}"
 )
 cpack_add_component(CmpJuggernyautServer
     DISPLAY_NAME "Juggernyaut Language Server"
@@ -106,7 +109,6 @@ cpack_add_component(CmpSystemRuntimeLibs
     GROUP SystemConfigs
 )
 if(WIN32)
-    list(APPEND CPACK_COMPONENTS_ALL QSMenuShortcuts)
     cpack_add_component(QSMenuShortcuts
         DISPLAY_NAME "Add Juggernyaut Toolchain Start Menu shortcuts"
         DESCRIPTION "Adds Start Menu shortcuts. (e.g. uninstaller shortcut)"
