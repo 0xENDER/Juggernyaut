@@ -11,10 +11,15 @@
     #pragma warning(disable : 4834 6240 6326 6294)
 #elif defined(__GNUC__)
     #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wunused-result -Wlogical-op -Wunreachable-code"
+    #pragma GCC diagnostic ignored "-Wunused-result"
+    #pragma GCC diagnostic ignored "-Wlogical-op"
+    #pragma GCC diagnostic ignored "-Wunreachable-code"
 #elif defined(__clang__)
     #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wunused-result -Wconstant-logical-operand -Wtautological-compare -Wunreachable-code"
+    #pragma clang diagnostic ignored "-Wunused-result"
+    #pragma clang diagnostic ignored "-Wconstant-logical-operand"
+    #pragma clang diagnostic ignored "-Wtautological-compare"
+    #pragma clang diagnostic ignored "-Wunreachable-code"
 #endif
 
 #include <fmt/color.h>
