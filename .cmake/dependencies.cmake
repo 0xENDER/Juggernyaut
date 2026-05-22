@@ -181,7 +181,7 @@ endif()
 
 # {fmt} library
 if(DEFINED NEED_FMT_LIB)
-    set(FMT_LIB_VERSION 10.2.1)
+    set(FMT_LIB_VERSION 12.1.0)
     option(USE_INSTALLED_FMT "Ignore or use installed FMT" OFF) # Default OFF - not using installed fmt
     if(USE_INSTALLED_FMT)
         find_package(fmt)
