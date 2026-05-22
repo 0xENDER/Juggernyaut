@@ -15,13 +15,15 @@ set(CPACK_GENERATOR "IFW")
 set(CPACK_IFW_PACKAGE_TITLE "Juggernyaut Toolchain")
 set(CPACK_IFW_PACKAGE_PUBLISHER "ender.ing")
 
+set(CPACK_IFW_MAINTENANCE_TOOL_NAME "maintenancetool")
+
+# Theming
 # The left-side tall image (Classic setup wizard style)
 set(CPACK_IFW_PACKAGE_WATERMARK "${JUG_CMAKE_DIR}/installer/assets/ifw_watermark.png")
 # The top-right header logo
 set(CPACK_IFW_PACKAGE_LOGO "${JUG_CMAKE_DIR}/installer/assets/ifw_logo.png")
 # The small window icon
 set(CPACK_IFW_PACKAGE_WINDOW_ICON "${JUG_CMAKE_DIR}/installer/assets/jug_icon.png")
-
 
 set(CPACK_COMPONENTS_ALL 
     # Project components
@@ -100,3 +102,14 @@ cpack_add_component(CmpSystemRuntimeLibs
     DESCRIPTION "Adds system runtime components that are required by some toolchain binaries. (Unselect only if you know what you're doing!)"
     GROUP SystemConfigs
 )
+if(WIN32)
+    list(APPEND CPACK_COMPONENTS_ALL QSMenuShortcuts)
+    cpack_add_component(QSMenuShortcuts
+        DISPLAY_NAME "Add Juggernyaut Toolchain Start Menu shortcuts"
+        DESCRIPTION "Adds Start Menu shortcuts. (e.g. uninstaller shortcut)"
+        GROUP SystemConfigs
+    )
+    cpack_ifw_configure_component(QSMenuShortcuts
+        SCRIPT "${JUG_CMAKE_DIR}/installer/menu-shortcuts.qs"
+    )
+endif()
