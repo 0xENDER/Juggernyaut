@@ -15,8 +15,8 @@ set(CPACK_GENERATOR "IFW")
 set(CPACK_IFW_PACKAGE_TITLE "Juggernyaut Toolchain")
 set(CPACK_IFW_PACKAGE_PUBLISHER "ender.ing")
 
-set(CPACK_RESOURCE_FILE_LICENSE "${JUG_LICENSE_FILE}")
 set(CPACK_IFW_MAINTENANCE_TOOL_NAME "maintenancetool")
+set(CPACK_RESOURCE_FILE_LICENSE "${JUG_LICENSE_FILE}")
 
 # Theming
 # The left-side tall image (Classic setup wizard style)
@@ -61,9 +61,11 @@ cpack_add_component(CmpJuggernyautCompiler
     GROUP Toolchain
     REQUIRED TRUE
 )
-#cpack_ifw_configure_component(CmpJuggernyautCompiler
-#    FORCED_INSTALLATION TRUE
-#)
+cpack_ifw_configure_component(CmpJuggernyautCompiler
+    FORCED_INSTALLATION TRUE
+    LICENSES 
+        "My Software License" "${CMAKE_CURRENT_SOURCE_DIR}/license.txt"
+)
 cpack_add_component(CmpJuggernyautServer
     DISPLAY_NAME "Juggernyaut Language Server"
     DESCRIPTION "Adds the Juggernyaut Language Server, which is necessary for IDE integration."
