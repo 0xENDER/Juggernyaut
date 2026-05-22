@@ -89,8 +89,8 @@ install_command_symlink(JuggernyautCompiler CmpJuggernyautCompiler jug-cmp)
 install_command_symlink(JuggernyautServer CmpJuggernyautServer jug-lsp)
 install_command_symlink(JuggernyautPackageManager CmpJuggernyautPackageManager jug-pck)
 
-# License
-install(FILES ${JUG_LICENSE_FILE}
+# License & other
+install(FILES ${JUG_LICENSE_FILE} ${JUG_CMAKE_DIR}/extra/jug-docs.html
     DESTINATION .
     COMPONENT CmpJuggernyautCompiler
 )

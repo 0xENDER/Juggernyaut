@@ -1,6 +1,12 @@
 # Package Identity
 set(CPACK_PACKAGE_NAME "Juggernyaut Toolchain")
 set(CPACK_PACKAGE_VENDOR "Ender-ing")
+set(CPACK_IFW_PRODUCT_URL "https://ender.ing/docs/juggernyaut/")
+if (WIN32)
+    set(CPACK_IFW_PACKAGE_ICON "${JUG_CMAKE_DIR}/installer/assets/jug_icon.ico")
+elseif(APPLE)
+    set(CPACK_IFW_PACKAGE_ICON "${JUG_CMAKE_DIR}/installer/assets/jug_icon.icns")
+endif()
 
 sanitize_version("${JUG_RELEASE_VERSION}" PROPER_RELEASE_VERSION)
 set(CPACK_PACKAGE_VERSION "${PROPER_RELEASE_VERSION}")
@@ -10,6 +16,8 @@ set(CPACK_PACKAGE_FILE_NAME "juggernyaut-${JUG_RELEASE_VERSION}-${JUG_GENERATOR_
 
 # Use IFW (QT Installer framework)
 set(CPACK_GENERATOR "IFW")
+set(CPACK_IFW_FRAMEWORK_VERSION 4.8.1)
+# READ: https://cmake.org/cmake/help/latest/cpack_gen/ifw.html
 
 # IFW Branding & Theming
 set(CPACK_IFW_PACKAGE_TITLE "Juggernyaut Toolchain")
@@ -19,12 +27,34 @@ set(CPACK_IFW_MAINTENANCE_TOOL_NAME "maintenancetool")
 set(CPACK_RESOURCE_FILE_LICENSE "${JUG_LICENSE_FILE}")
 
 # Theming
+set(CPACK_IFW_PACKAGE_WIZARD_STYLE "Modern")
 # The left-side tall image (Classic setup wizard style)
 set(CPACK_IFW_PACKAGE_WATERMARK "${JUG_CMAKE_DIR}/installer/assets/ifw_watermark.png")
 # The top-right header logo
-set(CPACK_IFW_PACKAGE_LOGO "${JUG_CMAKE_DIR}/installer/assets/ifw_logo.png")
+set(CPACK_IFW_PACKAGE_LOGO "${JUG_CMAKE_DIR}/installer/assets/ifw_backdrop_logo.png")
 # The small window icon
 set(CPACK_IFW_PACKAGE_WINDOW_ICON "${JUG_CMAKE_DIR}/installer/assets/jug_icon.png")
+# Top bar banner
+set(CPACK_IFW_PACKAGE_BANNER "${JUG_CMAKE_DIR}/installer/assets/ifw_banner.png")
+# Colouring
+set(CPACK_IFW_PACKAGE_TITLE_COLOR "#FFF3E3")
+set(CPACK_IFW_PACKAGE_STYLE_SHEET "${JUG_CMAKE_DIR}/installer/assets/style.qss")
+
+# Wizard styling
+set(CPACK_IFW_PACKAGE_WIZARD_DEFAULT_WIDTH 800)
+set(CPACK_IFW_PACKAGE_WIZARD_DEFAULT_HEIGHT 600)
+set(CPACK_IFW_PACKAGE_WIZARD_SHOW_PAGE_LIST ON)
+# CPACK_IFW_PACKAGE_RESOURCES
+
+# Behaviour
+set(CPACK_IFW_PACKAGE_REMOVE_TARGET_DIR ON)
+set(CPACK_IFW_PACKAGE_MAINTENANCE_TOOL_NAME "maintenancetool")
+set(CPACK_IFW_PACKAGE_ALLOW_NON_ASCII_CHARACTERS OFF)
+set(CPACK_IFW_PACKAGE_ALLOW_SPACE_IN_PATH ON)
+set(CPACK_IFW_PACKAGE_DISABLE_COMMAND_LINE_INTERFACE OFF) # Allow CLI interactions
+#set(CPACK_IFW_PACKAGE_RUN_PROGRAM "@TargetDir@/bin/jug-pck")
+#set(CPACK_IFW_PACKAGE_RUN_PROGRAM_ARGUMENTS install std)
+#set(CPACK_IFW_PACKAGE_RUN_PROGRAM_DESCRIPTION "Install the standard Juggernyaut standard library.")
 
 set(CPACK_COMPONENTS_ALL 
     # Project components
@@ -118,3 +148,8 @@ if(WIN32)
         SCRIPT "${JUG_CMAKE_DIR}/installer/menu-shortcuts.qs"
     )
 endif()
+
+# Handle online fetching
+# cpack_ifw_add_repository()
+# cpack_ifw_update_repository()
+# cpack_configure_downloads()
