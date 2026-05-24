@@ -97,17 +97,17 @@ jobs:
       working-directory: .build
 
     - name: Build
-      run: cmake --build . --config ${{inputs.build_mode}} --parallel 3 --verbose
+      run: cmake --build . --config ${{inputs.build_mode}} --parallel 2 --verbose
       working-directory: .build
 
     - name: Run Tests (optional)
       if: inputs.run_tests
-      run: ctest -C ${{inputs.build_mode}} -V -j 3
+      run: ctest -C ${{inputs.build_mode}} -V -j 2
       working-directory: .build
 
     - name: Install (optional)
       if: inputs.bundle_binaries
-      run: cmake --install . --config ${{inputs.build_mode}} --parallel 3 --verbose
+      run: cmake --install . --config ${{inputs.build_mode}} --parallel 2 --verbose
       working-directory: .build
 
     - name: Package Native Installer (optional)
