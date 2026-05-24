@@ -105,7 +105,6 @@ jobs:
       run: |
         cmake .. -DCMAKE_BUILD_TYPE=${{inputs.build_mode}} -DCMAKE_UNIX_GENERATOR_PLATFORM=${{inputs.build_platform}} \
           -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DCMAKE_SYSTEM_PROCESSOR=i686 \
-          -DCMAKE_SYSTEM_NAME=Linux \
           -DJUG_RELEASE_VERSION="${{inputs.release_version}}" -DJUG_BUILD_TESTS=${{inputs.run_tests}}
       working-directory: .build
 
