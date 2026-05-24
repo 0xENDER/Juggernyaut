@@ -208,10 +208,10 @@ if(DEFINED NEED_FMT_LIB)
     FetchContent_MakeAvailable(fmt)
 
     # FIX: Ignore known warnings
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-        target_compile_options(fmt PRIVATE -Wno-unused-result -Wno-logical-op -Wno-unreachable-code)
-    elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         target_compile_options(fmt PRIVATE -Wno-unused-result -Wno-constant-logical-operand -Wno-tautological-compare -Wno-unreachable-code)
+    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        target_compile_options(fmt PRIVATE -Wno-unused-result -Wno-logical-op -Wno-unreachable-code)
     elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
         target_compile_options(fmt PRIVATE /analyze- /wd4834 /wd6240 /wd6326 /wd6294)
     endif()
