@@ -18,6 +18,7 @@ set(CPACK_PACKAGE_FILE_NAME "juggernyaut-${JUG_RELEASE_VERSION}-${JUG_GENERATOR_
 set(CPACK_GENERATOR "IFW")
 set(CPACK_IFW_FRAMEWORK_VERSION 4.8.1)
 # READ: https://cmake.org/cmake/help/latest/cpack_gen/ifw.html
+# READ: https://doc.qt.io/qtinstallerframework/ifw-reference.html
 
 # IFW Branding & Theming
 set(CPACK_IFW_PACKAGE_TITLE "Juggernyaut Toolchain")
@@ -87,6 +88,7 @@ include(CPackIFW)
 cpack_add_component_group(Toolchain
     DISPLAY_NAME "Toolchain Internals"
     DESCRIPTION "The core Juggernyaut executables and developer tools."
+    EXPANDED
 )
 cpack_add_component(CmpJuggernyautCompiler
     DISPLAY_NAME "Juggernyaut Compiler"
@@ -115,9 +117,6 @@ cpack_add_component(CmpJuggernyautUnified
     DESCRIPTION "Adds a unified 'jug' command that can call all other toolchain components."
     GROUP Toolchain
     DISABLED TRUE
-)
-cpack_ifw_configure_component(CmpJuggernyautUnified
-    DEPENDS Toolchain.CmpJuggernyautCompiler Toolchain.CmpJuggernyautServer Toolchain.CmpJuggernyautPackageManager
 )
 
 # System

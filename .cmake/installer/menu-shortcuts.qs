@@ -11,8 +11,8 @@ Component.prototype.createOperations = function() {
         component.addOperation(
             "CreateShortcut",
             "@TargetDir@\\maintenancetool.exe",
-            "@StartMenuDir@\\Uninstall Juggernyaut Toolchain.lnk",
-            "description=Modify or Uninstall Juggernyaut"
+            "@StartMenuDir@\\Juggernyaut Toolchain Uninstaller.lnk",
+            "description=Modify or Uninstall the Juggernyaut Toolchain"
         );
         // NOT WORKING:
         /*component.addOperation(
