@@ -144,6 +144,7 @@ jobs:
       working-directory: .build
 
     - name: Package Native Installer (optional)
+      if: inputs.bundle_binaries
       run: cpack --config ../.build/CPackConfig.cmake -C ${{inputs.build_mode}}
       working-directory: .dist
 
