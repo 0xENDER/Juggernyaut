@@ -75,7 +75,8 @@ jobs:
     - name: Configure CMake
       run: |
         cmake .. -DCMAKE_BUILD_TYPE=${{inputs.build_mode}} -DCMAKE_UNIX_GENERATOR_PLATFORM=${{inputs.build_platform}} \
-          -DJUG_RELEASE_VERSION="${{inputs.release_version}}" -DJUG_BUILD_TESTS=${{inputs.run_tests}}
+          -DJUG_RELEASE_VERSION="${{inputs.release_version}}" -DJUG_BUILD_TESTS=${{inputs.run_tests}} \
+          -DJUG_BUILD_PLATFORM_NAME=${{inputs.build_platform_name}}
       working-directory: .build
 
     - name: Build

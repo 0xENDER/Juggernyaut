@@ -97,7 +97,8 @@ jobs:
       if: inputs.build_platform_name != 'x86_32' && inputs.build_platform_name != 'arm32'
       run: |
         cmake .. -DCMAKE_BUILD_TYPE=${{inputs.build_mode}} -DCMAKE_UNIX_GENERATOR_PLATFORM=${{inputs.build_platform}} \
-          -DJUG_RELEASE_VERSION="${{inputs.release_version}}" -DJUG_BUILD_TESTS=${{inputs.run_tests}}
+          -DJUG_RELEASE_VERSION="${{inputs.release_version}}" -DJUG_BUILD_TESTS=${{inputs.run_tests}} \
+          -DJUG_BUILD_PLATFORM_NAME=${{inputs.build_platform_name}}
       working-directory: .build
 
     - name: Configure CMake (32-bit)
@@ -105,7 +106,8 @@ jobs:
       run: |
         cmake .. -DCMAKE_BUILD_TYPE=${{inputs.build_mode}} -DCMAKE_UNIX_GENERATOR_PLATFORM=${{inputs.build_platform}} \
           -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DCMAKE_SYSTEM_PROCESSOR=i686 \
-          -DJUG_RELEASE_VERSION="${{inputs.release_version}}" -DJUG_BUILD_TESTS=${{inputs.run_tests}}
+          -DJUG_RELEASE_VERSION="${{inputs.release_version}}" -DJUG_BUILD_TESTS=${{inputs.run_tests}} \
+          -DJUG_BUILD_PLATFORM_NAME=${{inputs.build_platform_name}}
       working-directory: .build
 
     - name: Configure CMake (ARM 32-bit)
@@ -123,7 +125,8 @@ jobs:
           -DOPENSSL_INCLUDE_DIR=/usr/include/arm-linux-gnueabihf \
           -DOPENSSL_CRYPTO_LIBRARY=/usr/lib/arm-linux-gnueabihf/libcrypto.so \
           -DOPENSSL_SSL_LIBRARY=/usr/lib/arm-linux-gnueabihf/libssl.so \
-          -DJUG_RELEASE_VERSION="${{inputs.release_version}}" -DJUG_BUILD_TESTS=${{inputs.run_tests}}
+          -DJUG_RELEASE_VERSION="${{inputs.release_version}}" -DJUG_BUILD_TESTS=${{inputs.run_tests}} \
+          -DJUG_BUILD_PLATFORM_NAME=${{inputs.build_platform_name}}
       working-directory: .build
 
     - name: Build

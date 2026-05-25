@@ -16,6 +16,9 @@ endif()
 
 # Detect the platform
 get_build_arch(JUG_GENERATOR_PLATFORM)
+if(NOT DEFINED JUG_BUILD_PLATFORM_NAME)
+    set(JUG_BUILD_PLATFORM_NAME ${JUG_GENERATOR_PLATFORM})
+endif()
 
 # Get the current build architecture
 project(ArchitectureSpecificBuild)
