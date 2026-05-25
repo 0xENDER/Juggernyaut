@@ -1,7 +1,12 @@
+set(GLOBAL_PACKAGE_EMAIL_ADDRESS "admin@ender.ing")
+set(GLOBAL_PACKAGE_DESCRIPTION "A complete Toolchain for the Juggernyaut general programming language.")
+set(GLOBAL_PACKAGE_DOCS "https://ender.ing/docs/juggernyaut/")
+set(GLOBAL_DISPLAY_PACKAGE_NAME "Juggernyaut Toolchain")
+
 # Package Identity
-set(CPACK_PACKAGE_NAME "Juggernyaut Toolchain")
+set(CPACK_PACKAGE_NAME ${GLOBAL_DISPLAY_PACKAGE_NAME})
 set(CPACK_PACKAGE_VENDOR "Ender-ing")
-set(CPACK_IFW_PRODUCT_URL "https://ender.ing/docs/juggernyaut/")
+set(CPACK_IFW_PRODUCT_URL ${GLOBAL_PACKAGE_DOCS})
 if (WIN32)
     set(CPACK_IFW_PACKAGE_ICON "${JUG_CMAKE_DIR}/installer/assets/jug_icon.ico")
 elseif(APPLE)
@@ -14,14 +19,59 @@ set(CPACK_PACKAGE_VERSION "${PROPER_RELEASE_VERSION}")
 set(CPACK_PACKAGE_INSTALL_DIRECTORY "Ender-ing/Juggernyaut")
 set(CPACK_PACKAGE_FILE_NAME "Juggernyaut-Installer-${JUG_RELEASE_VERSION}-${JUG_GENERATOR_PLATFORM}")
 
-# Use IFW (QT Installer framework)
+# Generators
 set(CPACK_GENERATOR "IFW")
+if(WIN32)
+    # Limit IFW to the available public binaries
+    if((NOT ${JUG_BINARY_PLATFORM} STREQUAL "arm64") AND (NOT ${JUG_BINARY_PLATFORM} STREQUAL "x86_64"))
+        message(FATAL_ERROR "Generating an installer for this platform is not supported!")
+    endif()
+elseif(APPLE)
+    # Limit IFW to the available public binaries
+    if((NOT ${JUG_BINARY_PLATFORM} STREQUAL "arm64") AND (NOT ${JUG_BINARY_PLATFORM} STREQUAL "x86_64"))
+        message(FATAL_ERROR "Generating an installer for this platform is not supported!")
+    endif()
+elseif(UNIX)
+    # Limit IFW to the available public binaries
+    if((${JUG_BINARY_PLATFORM} STREQUAL "arm64") OR (${JUG_BINARY_PLATFORM} STREQUAL "x86_64"))
+        list(APPEND CPACK_GENERATOR "DEB")
+    else()
+        set(CPACK_GENERATOR "DEB")
+    endif()
+
+    # Configs
+    set(CPACK_DEBIAN_PACKAGE_NAME "Juggernyaut-Toolchain")
+    set(CPACK_DEBIAN_PACKAGE_VERSION ${PROPER_RELEASE_VERSION})
+    set(CPACK_DEBIAN_PACKAGE_MAINTAINER ${GLOBAL_PACKAGE_EMAIL_ADDRESS})
+    set(DEB_ARCH ${CMAKE_SYSTEM_PROCESSOR})
+    if(DEB_ARCH STREQUAL "x86_64")
+        set(DEB_ARCH "amd64")
+    elseif(DEB_ARCH STREQUAL "aarch64")
+        set(DEB_ARCH "arm64")
+    endif()
+    set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE ${DEB_ARCH})
+    set(CPACK_DEBIAN_PACKAGE_DESCRIPTION ${GLOBAL_PACKAGE_DESCRIPTION})
+    set(CPACK_DEBIAN_PACKAGE_SECTION "utils")
+    
+    # Let CPack find dependencies automatically
+    set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+endif()
+list(FIND CPACK_GENERATOR "IFW" IFW_INDEX)
+
+list(FIND CPACK_GENERATOR "IFW" IFW_INDEX)
+if(IFW_INDEX GREATER -1)
+    set(JUG_USES_IFW ON)
+else()
+    set(JUG_USES_IFW OFF)
+endif()
+
+# Configure IFW (QT Installer framework)
 #set(CPACK_IFW_FRAMEWORK_VERSION 4.8.1)
 # READ: https://cmake.org/cmake/help/latest/cpack_gen/ifw.html
 # READ: https://doc.qt.io/qtinstallerframework/ifw-reference.html
 
 # IFW Branding & Theming
-set(CPACK_IFW_PACKAGE_TITLE "Juggernyaut Toolchain")
+set(CPACK_IFW_PACKAGE_TITLE ${GLOBAL_DISPLAY_PACKAGE_NAME})
 set(CPACK_IFW_PACKAGE_PUBLISHER "ender.ing")
 
 set(CPACK_RESOURCE_FILE_LICENSE "${JUG_LICENSE_FILE}")
@@ -66,21 +116,16 @@ set(CPACK_COMPONENTS_ALL
 
     # System components
     CmpSystemRuntimeLibs
-
-    # QT script components
-    QSPathSetup
 )
-if(WIN32)
-    list(APPEND CPACK_COMPONENTS_ALL QSMenuShortcuts)
+if(JUG_USES_IFW)
+    list(APPEND CPACK_COMPONENTS_ALL QSPathSetup)
+    if(WIN32)
+        list(APPEND CPACK_COMPONENTS_ALL QSMenuShortcuts)
+    endif()
 endif()
 
 # Separate components
 set(CPACK_COMPONENTS_GROUPING IGNORE)
-
-# Initialize CPack
-include(CPack)
-# Initialize CPackIFW (MUST come after include(CPack))
-include(CPackIFW)
 
 # Installation options
 
@@ -95,11 +140,6 @@ cpack_add_component(CmpJuggernyautCompiler
     DESCRIPTION "Adds the Juggernyaut Compiler that allows you to build your final binaries."
     GROUP Toolchain
     REQUIRED TRUE
-)
-cpack_ifw_configure_component(CmpJuggernyautCompiler
-    FORCED_INSTALLATION TRUE
-    LICENSES 
-        "Juggernyaut Toolchain License" "${JUG_LICENSE_FILE}"
 )
 cpack_add_component(CmpJuggernyautServer
     DISPLAY_NAME "Juggernyaut Language Server"
@@ -124,27 +164,23 @@ cpack_add_component_group(SystemConfigs
     DISPLAY_NAME "System Configurations"
     DESCRIPTION "Local system configurations that can help make your experience better."
 )
-cpack_add_component(QSPathSetup
-    DISPLAY_NAME "Add the Juggernyaut Toolchain bin to System PATH"
-    DESCRIPTION "Allows you to run toolchain commands (e.g. 'jug') from any terminal."
-    GROUP SystemConfigs
-)
-cpack_ifw_configure_component(QSPathSetup
-    SCRIPT "${JUG_CMAKE_DIR}/installer/path-setup.qs"
-)
+if(JUG_USES_IFW)
+    cpack_add_component(QSPathSetup
+        DISPLAY_NAME "Add ${GLOBAL_DISPLAY_PACKAGE_NAME} executables to System PATH"
+        DESCRIPTION "Allows you to run toolchain commands (e.g. 'jug') from any terminal."
+        GROUP SystemConfigs
+    )
+endif()
 cpack_add_component(CmpSystemRuntimeLibs
     DISPLAY_NAME "Required system runtime components"
     DESCRIPTION "Adds system runtime components that are required by some toolchain binaries. (Unselect only if you know what you're doing!)"
     GROUP SystemConfigs
 )
-if(WIN32)
+if(WIN32 AND JUG_USES_IFW)
     cpack_add_component(QSMenuShortcuts
-        DISPLAY_NAME "Add Juggernyaut Toolchain Start Menu shortcuts"
+        DISPLAY_NAME "Add ${GLOBAL_DISPLAY_PACKAGE_NAME} Start Menu shortcuts"
         DESCRIPTION "Adds Start Menu shortcuts. (e.g. uninstaller shortcut)"
         GROUP SystemConfigs
-    )
-    cpack_ifw_configure_component(QSMenuShortcuts
-        SCRIPT "${JUG_CMAKE_DIR}/installer/menu-shortcuts.qs"
     )
 endif()
 
@@ -152,3 +188,26 @@ endif()
 # cpack_ifw_add_repository()
 # cpack_ifw_update_repository()
 # cpack_configure_downloads()
+
+# Initialize CPack
+include(CPack)
+if(JUG_USES_IFW)
+    # Initialize CPackIFW (MUST come after include(CPack))
+    include(CPackIFW)
+endif()
+
+if(JUG_USES_IFW)
+    cpack_ifw_configure_component(CmpJuggernyautCompiler
+        FORCED_INSTALLATION TRUE
+        LICENSES 
+            "${GLOBAL_DISPLAY_PACKAGE_NAME} License" "${JUG_LICENSE_FILE}"
+    )
+    cpack_ifw_configure_component(QSPathSetup
+        SCRIPT "${JUG_CMAKE_DIR}/installer/path-setup.qs"
+    )
+    if(WIN32)
+        cpack_ifw_configure_component(QSMenuShortcuts
+            SCRIPT "${JUG_CMAKE_DIR}/installer/menu-shortcuts.qs"
+        )
+    endif()
+endif()
