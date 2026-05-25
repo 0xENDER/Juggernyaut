@@ -84,8 +84,9 @@ jobs:
     - name: Install dependencies dependency (ARM64)
       if: inputs.build_platform_name == 'arm64'
       run: |
-        sudo apt-get install -y libtiff-dev libwebp6
+        sudo apt-get install -y libtiff-dev libwebp7
         sudo ln -s /usr/lib/aarch64-linux-gnu/libtiff.so.6 /usr/lib/aarch64-linux-gnu/libtiff.so.5
+        sudo ln -s /usr/lib/aarch64-linux-gnu/libwebp.so.7 /usr/lib/aarch64-linux-gnu/libwebp.so.6
 
     - name: Install Qt Installer Framework (IFW)
       if: inputs.bundle_binaries && (inputs.build_platform_name == 'x86_64' || inputs.build_platform_name == 'arm64')
