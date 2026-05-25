@@ -66,7 +66,7 @@ jobs:
       with:
         no-qt-binaries: true
         # The syntax for tools is often <tool_name>,<version>,<architecture_identifier>
-        tools: 'tools_ifw,4.8.1'
+        tools: 'tools_ifw'
         set-env: false
 
     - name: Make the ".build" directory
