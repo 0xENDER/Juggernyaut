@@ -141,7 +141,6 @@ jobs:
       working-directory: .build
 
     - name: Package Native Installer (optional)
-      if: inputs.bundle_binaries && (inputs.build_platform_name == 'x86_64' || inputs.build_platform_name == 'arm64')
       run: cpack --config ../.build/CPackConfig.cmake -C ${{inputs.build_mode}}
       working-directory: .dist
 
@@ -165,8 +164,14 @@ jobs:
         name: Juggernyaut-${{inputs.build_mode}}-v${{env.VERSION}}-Linux-${{inputs.build_platform_name}}
         path: ${{github.workspace}}/.dist/${{inputs.build_mode}}/${{inputs.build_platform_name}}/
 
-    - name: Upload Installer Artifact (optional)
+    - name: Upload .run Installer Artifact (optional)
       if: inputs.bundle_binaries && (inputs.build_platform_name == 'x86_64' || inputs.build_platform_name == 'arm64')
+      uses: actions/upload-artifact@v7
+      with:
+        name: Juggernyaut-Installer-Linux-${{inputs.build_platform_name}}
+        path: ${{github.workspace}}/.dist/juggernyaut*.run
+
+    - name: Upload .deb Installer Artifact (optional)
       uses: actions/upload-artifact@v7
       with:
         name: Juggernyaut-Installer-Linux-${{inputs.build_platform_name}}
