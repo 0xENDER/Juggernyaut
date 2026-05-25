@@ -64,9 +64,9 @@ jobs:
         } elseif ($arch -eq "x86_32") {
           echo "MSVC_ARCH=x86" >> $env:GITHUB_ENV
         } elseif ($arch -eq "arm64") {
-          echo "MSVC_ARCH=x86_amd64" >> $env:GITHUB_ENV
+          echo "MSVC_ARCH=arm64" >> $env:GITHUB_ENV
         } elseif ($arch -eq "arm32") {
-          echo "MSVC_ARCH=x86_arm" >> $env:GITHUB_ENV
+          echo "MSVC_ARCH=arm" >> $env:GITHUB_ENV
         } else {
           Write-Error "Couldn't determine architecture version to use with MSVC!"
           exit 1
