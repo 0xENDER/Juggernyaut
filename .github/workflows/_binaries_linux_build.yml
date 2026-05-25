@@ -178,5 +178,5 @@ jobs:
     - name: Upload .deb Installer Artifact (optional)
       uses: actions/upload-artifact@v7
       with:
-        name: Juggernyaut-Installer-Linux-${{inputs.build_platform_name}}
+        name: Juggernyaut-Installer-Linux-${{inputs.build_platform_name}}-native
         path: ${{github.workspace}}/.dist/Juggernyaut-Installer-v${{env.VERSION}}-${{inputs.build_platform_name}}.deb
