@@ -82,6 +82,7 @@ jobs:
       if: inputs.bundle_binaries && (inputs.build_platform_name == 'x86_64' || inputs.build_platform_name == 'arm64')
       uses: jurplel/install-qt-action@v4
       with:
+        host: 'windows' # Use x64 bins
         no-qt-binaries: true
         # The syntax for tools is often <tool_name>,<version>,<architecture_identifier>
         tools: 'tools_ifw'
