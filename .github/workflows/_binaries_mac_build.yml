@@ -123,4 +123,4 @@ jobs:
       uses: actions/upload-artifact@v7
       with:
         name: Juggernyaut-Installer-macOS-${{inputs.build_platform_name}}
-        path: ${{github.workspace}}/.dist/juggernyaut*.dmg
+        path: ${{github.workspace}}/.dist/Juggernyaut-Installer-v${{env.VERSION}}-${{inputs.build_platform_name}}.dmg
