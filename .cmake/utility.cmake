@@ -132,42 +132,39 @@ macro(custom_malloc TARGET)
 endmacro()
 
 macro(install_command_symlink TARGET_NAME COMPONENT_NAME LINK_NAME)
-    # Determine the file extension based on the platform
     if(WIN32)
-        set(SRC_EXT ".exe")
-        set(DST_EXT ".exe")
+        install(CODE "
+            execute_process(
+                COMMAND cmd /c del /f /q \"${LINK_NAME}.exe\"
+                WORKING_DIRECTORY \"\${CMAKE_INSTALL_PREFIX}/bin\"
+            )
+            execute_process(
+                COMMAND cmd /c mklink \"${LINK_NAME}.exe\" \"${TARGET_NAME}.exe\"
+                WORKING_DIRECTORY \"\${CMAKE_INSTALL_PREFIX}/bin\"
+                RESULT_VARIABLE _link_result
+            )
+            if(NOT _link_result EQUAL 0)
+                message(FATAL_ERROR \"Couldn't generate the symbolic link '${LINK_NAME}.exe' for ${TARGET_NAME}.exe!\")
+            endif()
+        " COMPONENT ${COMPONENT_NAME})
     else()
-        set(SRC_EXT "")
-        set(DST_EXT "")
+        install(CODE "
+            set(DESTDIR_PREFIX \"\$ENV{DESTDIR}\")
+            set(FULL_INSTALL_DIR \"\${DESTDIR_PREFIX}\${CMAKE_INSTALL_PREFIX}/bin\")
+            execute_process(
+                COMMAND \${CMAKE_COMMAND} -E rm -f \"${LINK_NAME}\"
+                WORKING_DIRECTORY \"\${FULL_INSTALL_DIR}\"
+            )
+            execute_process(
+                COMMAND \${CMAKE_COMMAND} -E create_symlink \"${TARGET_NAME}\" \"${LINK_NAME}\"
+                WORKING_DIRECTORY \"\${FULL_INSTALL_DIR}\"
+                RESULT_VARIABLE _link_result
+            )
+            if(NOT _link_result EQUAL 0)
+                message(FATAL_ERROR \"Couldn't generate the symbolic link '${LINK_NAME}' for ${TARGET_NAME}!\")
+            endif()
+        " COMPONENT ${COMPONENT_NAME})
     endif()
-
-    # We use standard double quotes here so CMake can inject the arguments 
-    # before registering the code block for the installation phase.
-    install(CODE "
-        if(WIN32)
-            # Remove any pre-existing file/link to prevent mklink from failing
-            execute_process(
-                COMMAND cmd /c del /f /q ${LINK_NAME}${DST_EXT}
-                WORKING_DIRECTORY \"\${CMAKE_INSTALL_PREFIX}/bin\"
-            )
-            # Attempt to create a native Windows symbolic link
-            execute_process(
-                COMMAND cmd /c mklink ${LINK_NAME}${DST_EXT} ${TARGET_NAME}${SRC_EXT}
-                WORKING_DIRECTORY \"\${CMAKE_INSTALL_PREFIX}/bin\"
-                RESULT_VARIABLE _link_result
-            )
-        else()
-            # On Linux/macOS, standard Unix symlink works beautifully out of the box
-            execute_process(
-                COMMAND \${CMAKE_COMMAND} -E create_symlink ${TARGET_NAME} ${LINK_NAME}
-                WORKING_DIRECTORY \"\${CMAKE_INSTALL_PREFIX}/bin\"
-                RESULT_VARIABLE _link_result
-            )
-        endif()
-        if(NOT _link_result EQUAL 0)
-            message(FATAL_ERROR \"Couldn't generate the symbolic link '${LINK_NAME}' for ${TARGET_NAME}!\")
-        endif()
-    " COMPONENT ${COMPONENT_NAME})
 endmacro()
 
 function(sanitize_version RAW_VERSION OUTPUT_VAR)
