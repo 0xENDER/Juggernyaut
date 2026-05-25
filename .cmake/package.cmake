@@ -12,11 +12,11 @@ sanitize_version("${JUG_RELEASE_VERSION}" PROPER_RELEASE_VERSION)
 set(CPACK_PACKAGE_VERSION "${PROPER_RELEASE_VERSION}")
 
 set(CPACK_PACKAGE_INSTALL_DIRECTORY "Ender-ing/Juggernyaut")
-set(CPACK_PACKAGE_FILE_NAME "Juggernyaut-${JUG_RELEASE_VERSION}-${JUG_GENERATOR_PLATFORM}")
+set(CPACK_PACKAGE_FILE_NAME "Juggernyaut-Installer-${JUG_RELEASE_VERSION}-${JUG_GENERATOR_PLATFORM}")
 
 # Use IFW (QT Installer framework)
 set(CPACK_GENERATOR "IFW")
-set(CPACK_IFW_FRAMEWORK_VERSION 4.8.1)
+#set(CPACK_IFW_FRAMEWORK_VERSION 4.8.1)
 # READ: https://cmake.org/cmake/help/latest/cpack_gen/ifw.html
 # READ: https://doc.qt.io/qtinstallerframework/ifw-reference.html
 
