@@ -155,14 +155,6 @@ jobs:
       run: cpack --config ../.build/CPackConfig.cmake -C ${{inputs.build_mode}}
       working-directory: .dist
 
-    - name: Display CPack Log (debug)
-      if: always()
-      run: |
-        if [ -f "_CPack_Packages/Linux/IFW/IFWOutput.log" ]; then
-          cat _CPack_Packages/Linux/IFW/IFWOutput.log
-        fi
-      working-directory: .dist
-
     - name: Extract version (optional)
       if: inputs.bundle_binaries
       run: |
