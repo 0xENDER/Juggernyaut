@@ -4,7 +4,7 @@ on:
       windows_system:
         required: false
         type: string
-        default: windows-latest
+        default: windows-2025-vs2026
       build_platform:
         required: true
         type: string
