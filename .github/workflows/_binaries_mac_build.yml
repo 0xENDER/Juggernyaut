@@ -66,7 +66,7 @@ jobs:
       with:
         no-qt-binaries: true
         # The syntax for tools is often <tool_name>,<version>,<architecture_identifier>
-        tools: 'tools_ifw,4.8.1,qt.tools.ifw.48'
+        tools: 'tools_ifw,4.8.1'
         set-env: false
 
     - name: Make the ".build" directory
@@ -122,5 +122,5 @@ jobs:
       if: inputs.bundle_binaries && (inputs.build_platform_name == 'x86_64' || inputs.build_platform_name == 'arm64')
       uses: actions/upload-artifact@v7
       with:
-        name: Juggernyaut-Installer-${{inputs.build_platform_name}}
+        name: Juggernyaut-Installer-macOS-${{inputs.build_platform_name}}
         path: ${{github.workspace}}/.dist/juggernyaut*.dmg
