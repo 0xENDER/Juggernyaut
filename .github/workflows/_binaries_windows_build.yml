@@ -120,7 +120,6 @@ jobs:
       if: inputs.bundle_binaries
       run: |
         $version = (./jug-cmp --version).Trim()
-        for /f "delims=" %%a in ('jug-cmp') do set "version=%%a"
         if ($version) {
           echo "VERSION=$version" >> $env:GITHUB_ENV
         } else {
