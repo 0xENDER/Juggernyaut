@@ -29,4 +29,8 @@ else()
             SOURCE_DIR ${JUG_DEP_GIT2_LIB_PATH})
     endif()
     FetchContent_MakeAvailable(libgit2)
+
+    if(TARGET libgit2package)
+        ignore_external_target_warnings(libgit2package)
+    endif()
 endif()

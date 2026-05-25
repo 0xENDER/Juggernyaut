@@ -145,6 +145,13 @@ and it doesn't mess with the structure of the repository, it'd be gladly accepte
   > Goal: Enable easy use of the server and compiler in IDEs.
   - ...
 
+## CMake
+
+> [!IMPORTANT]
+> You may use the SYSTEM keyword only when linking external dependencies.
+>
+> All warnings caused by dependencies made within this repository must be resolved within the source code itself!
+
 ## Releases
 
 Releases can be triggered by creating a tag that starts with a `v`, and follows the versioning style:

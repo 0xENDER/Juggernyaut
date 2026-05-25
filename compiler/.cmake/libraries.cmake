@@ -23,8 +23,8 @@ attach_manifest_data(JugCompilerBaseLibrary ${JUG_COMPILER_MANIFEST_FILE} FALSE)
 add_internal_target_cxx_flags(JugCompilerBaseLibrary FALSE)
 # Link other libraries to the library
 jug_common(JugCompilerBaseLibrary)
-add_dependencies(JugCompilerBaseLibrary JugCompilerStoreLibrary)
-target_link_libraries(JugCompilerBaseLibrary PUBLIC JugCompilerStoreLibrary)
+add_dependencies(JugCompilerBaseLibrary JuggernyautCatConsoleLibrary JugCompilerStoreLibrary)
+target_link_libraries(JugCompilerBaseLibrary PUBLIC JuggernyautCatConsoleLibrary JugCompilerStoreLibrary)
 
 # Compiler libraries
 set(COMPILER_LIBRARIES

@@ -11,6 +11,6 @@ endif()
 
 macro(jug_common TARGET)
     add_dependencies(${TARGET} JuggernyautCommonLibrary)
-    target_link_libraries(${TARGET} PUBLIC JuggernyautCommonLibrary)
+    target_link_libraries(${TARGET} PRIVATE JuggernyautCommonLibrary)
     custom_malloc(${TARGET})
 endmacro()

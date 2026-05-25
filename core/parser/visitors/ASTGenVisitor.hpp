@@ -10,8 +10,7 @@
 
 // ANTLR4 imports
 #include "../antlr4.hpp"
-#include "JuggernyautParser.h"
-#include "JuggernyautParserVisitor.h"
+#include "../antlr4ParserWithVisitor.hpp"
 
 // Listeners
 #include "../listeners/ASTGenListener.hpp"

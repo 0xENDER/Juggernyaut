@@ -14,7 +14,7 @@ add_internal_target_cxx_flags(JuggernyautDiagnosticsLibrary FALSE)
 # Dependencies
 jug_common(JuggernyautDiagnosticsLibrary)
 add_dependencies(JuggernyautDiagnosticsLibrary antlr4_shared JugGlobalDiagnostics)
-target_link_libraries(JuggernyautDiagnosticsLibrary PUBLIC antlr4_shared JugGlobalDiagnostics)
+target_link_libraries(JuggernyautDiagnosticsLibrary PUBLIC JugGlobalDiagnostics antlr4_shared)
 
 # Create a library from /data
 add_library(JuggernyautDataLibrary SHARED)
@@ -44,9 +44,14 @@ attach_manifest_data(JuggernyautParserLibrary ${JUG_CORE_MANIFEST_FILE} TRUE)
 add_internal_target_cxx_flags(JuggernyautParserLibrary TRUE)
 # Dependencies
 jug_common(JuggernyautParserLibrary)
-custom_malloc(antlr4_shared)
 add_dependencies(JuggernyautParserLibrary antlr4_shared JuggernyautDiagnosticsLibrary JuggernyautDataLibrary)
-target_link_libraries(JuggernyautParserLibrary PUBLIC antlr4_shared JuggernyautDiagnosticsLibrary JuggernyautDataLibrary)
+target_link_libraries(JuggernyautParserLibrary PUBLIC JuggernyautDiagnosticsLibrary JuggernyautDataLibrary antlr4_shared)
+# Handle known issues
+if(MSVC)
+    # 4275: non-exported base class
+    # 4251: non-exported member variable
+    target_compile_options(JuggernyautParserLibrary PRIVATE /wd4275 /wd4251)
+endif()
 
 # Create a library from /session
 add_library(JuggernyautSessionLibrary SHARED)
@@ -59,8 +64,8 @@ attach_manifest_data(JuggernyautSessionLibrary ${JUG_CORE_MANIFEST_FILE} TRUE)
 add_internal_target_cxx_flags(JuggernyautSessionLibrary FALSE)
 # Dependencies
 jug_common(JuggernyautSessionLibrary)
-add_dependencies(JuggernyautSessionLibrary JuggernyautDiagnosticsLibrary JugGlobalDiagnostics JuggernyautDataLibrary JuggernyautParserLibrary)
-target_link_libraries(JuggernyautSessionLibrary PUBLIC JuggernyautDiagnosticsLibrary JugGlobalDiagnostics JuggernyautDataLibrary JuggernyautParserLibrary)
+add_dependencies(JuggernyautSessionLibrary JuggernyautDiagnosticsLibrary JuggernyautDataLibrary JuggernyautParserLibrary)
+target_link_libraries(JuggernyautSessionLibrary PUBLIC JuggernyautDiagnosticsLibrary JuggernyautDataLibrary JuggernyautParserLibrary)
 
 # Create a library from /manager
 add_library(JuggernyautManagerLibrary SHARED)
@@ -73,5 +78,5 @@ attach_manifest_data(JuggernyautManagerLibrary ${JUG_CORE_MANIFEST_FILE} TRUE)
 add_internal_target_cxx_flags(JuggernyautManagerLibrary FALSE)
 # Dependencies
 jug_common(JuggernyautManagerLibrary)
-add_dependencies(JuggernyautManagerLibrary JuggernyautDiagnosticsLibrary JugGlobalDiagnostics JuggernyautDataLibrary JuggernyautSessionLibrary)
-target_link_libraries(JuggernyautManagerLibrary PUBLIC JuggernyautDiagnosticsLibrary JugGlobalDiagnostics JuggernyautDataLibrary JuggernyautSessionLibrary)
+add_dependencies(JuggernyautManagerLibrary JuggernyautDiagnosticsLibrary JuggernyautDataLibrary JuggernyautSessionLibrary)
+target_link_libraries(JuggernyautManagerLibrary PUBLIC JuggernyautDiagnosticsLibrary JuggernyautDataLibrary JuggernyautSessionLibrary)

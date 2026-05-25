@@ -187,3 +187,22 @@ check_c_compiler_flag("-fsanitize=leak" CMAKE_CXX_SUPPORTS_FSANITIZE_LEAK)
 # Test for address and undefined sanitizer support combined.
 set(CMAKE_REQUIRED_FLAGS "-fsanitize=address,undefined")
 check_c_compiler_flag("-fsanitize=address,undefined" CMAKE_CXX_SUPPORTS_FSANITIZE_ADDRESS_UNDEFINED)
+
+if(MSVC)
+    add_compile_options(
+        /external:W0            # Warning level 0 for external headers
+        #/external:anglebrackets # Treat all < > includes as external # NOOOOOO!
+        /analyze:external-      # Disable static analysis for external headers!
+    )
+endif()
+macro(ignore_external_target_warnings TARGET)
+    if(MSVC)
+        # /w disables all compiler warnings
+        target_compile_options(${TARGET} PRIVATE /w)
+    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        # -w inhibits all warning messages
+        target_compile_options(${TARGET} PRIVATE -w)
+    endif()
+    # Supress all warnings
+    set_target_properties(${TARGET} PROPERTIES SYSTEM TRUE)
+endmacro()

@@ -20,7 +20,8 @@ add_library(JuggernyautCatConsoleLibrary SHARED)
 target_sources_search(JuggernyautCatConsoleLibrary ${JUG_UTILITY_LIBRARIES_DIR}/cat-console/*.cpp FALSE)
 # Dependencies
 add_dependencies(JuggernyautCatConsoleLibrary JuggernyautCommonLibrary fmt::fmt)
-target_link_libraries(JuggernyautCatConsoleLibrary PRIVATE JuggernyautCommonLibrary fmt::fmt)
+target_link_libraries(JuggernyautCatConsoleLibrary PRIVATE JuggernyautCommonLibrary)
+target_link_libraries(JuggernyautCatConsoleLibrary PRIVATE fmt::fmt)
 # Expose library exports
 target_compile_definitions(JuggernyautCatConsoleLibrary PRIVATE JUG_CAT_CONSOLE_LIBRARY_EXPORTS)
 # Attach manifest data

@@ -5,32 +5,21 @@
 
 #pragma once
 
-// --- Turn off warnings for {fmt} headers ---
+// Disable warnings
 #ifdef _MSC_VER
-    #pragma warning(push)
-    #pragma warning(disable : 4834 6240 6326 6294)
-#elif defined(__clang__)
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wunused-result"
-    #pragma clang diagnostic ignored "-Wconstant-logical-operand"
-    #pragma clang diagnostic ignored "-Wtautological-compare"
-    #pragma clang diagnostic ignored "-Wunreachable-code"
-#elif defined(__GNUC__)
+    #pragma warning(push, 0) // Sets warning level to 0 (off) for everything below
+#elif defined(__GNUC__) || defined(__clang__)
     #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wunused-result"
-    #pragma GCC diagnostic ignored "-Wlogical-op"
-    #pragma GCC diagnostic ignored "-Wunreachable-code"
+    #pragma GCC system_header // Tells GCC/Clang to treat everything below as a system header
 #endif
 
 #include <fmt/color.h>
 #include <fmt/format.h>
 #include <fmt/std.h>
 
-// --- Restore warnings back to normal for your code ---
+// Restore state
 #ifdef _MSC_VER
     #pragma warning(pop)
-#elif defined(__clang__)
-    #pragma clang diagnostic pop
-#elif defined(__GNUC__)
+#elif defined(__GNUC__) || defined(__clang__)
     #pragma GCC diagnostic pop
 #endif

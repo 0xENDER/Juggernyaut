@@ -1,11 +1,10 @@
 /**
  * @brief
- * Handle toml++ imports
+ * Fix ANTLR4 header inclusion
 **/
 
 #pragma once
 
-// Disable warnings
 #ifdef _MSC_VER
     #pragma warning(push, 0) // Sets warning level to 0 (off) for everything below
 #elif defined(__GNUC__) || defined(__clang__)
@@ -13,9 +12,9 @@
     #pragma GCC system_header // Tells GCC/Clang to treat everything below as a system header
 #endif
 
-// Imports
-#define TOML_EXCEPTIONS 0
-#include <toml++/toml.hpp>
+// Include the actual ANTLR header
+#include "JuggernyautParser.h"
+#include "JuggernyautParserVisitor.h"
 
 // Restore state
 #ifdef _MSC_VER
