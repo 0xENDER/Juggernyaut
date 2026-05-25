@@ -65,7 +65,7 @@ jobs:
       if: inputs.build_platform_name == 'x86_64' || inputs.build_platform_name == 'arm64'
       run: |
         # Install the native 64-bit libraries
-        sudo apt-get install -y zlib1g-dev libpcre3-dev libssl-dev libtiff5
+        sudo apt-get install -y zlib1g-dev libpcre3-dev libssl-dev
 
     - name: Install dependencies (32-bit)
       if: inputs.build_platform_name == 'x86_32'
@@ -80,6 +80,13 @@ jobs:
         sudo dpkg --add-architecture armhf
         sudo apt-get update -o Acquire::Retries=3
         sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf qemu-user-static zlib1g-dev:armhf libpcre3-dev:armhf libssl-dev:armhf
+
+    - name: Install libtiff5 dependency (ARM64)
+      if: inputs.build_platform_name == 'arm64'
+      run: |
+        wget http://ubuntu.com
+        sudo apt-get update && sudo apt-get install -y ./libtiff5_4.3.0-6ubuntu0.13_arm64.deb
+        rm libtiff5_4.3.0-6ubuntu0.13_arm64.deb
 
     - name: Install Qt Installer Framework (IFW)
       if: inputs.bundle_binaries && (inputs.build_platform_name == 'x86_64' || inputs.build_platform_name == 'arm64')
