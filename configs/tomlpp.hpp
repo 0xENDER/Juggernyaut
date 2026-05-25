@@ -15,6 +15,7 @@
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     #pragma GCC diagnostic ignored "-Wnull-dereference"
+    #pragma GCC diagnostic ignored "-Wdeprecated-literal-operator"
     #ifndef __apple_build_version__
         #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
     #endif
