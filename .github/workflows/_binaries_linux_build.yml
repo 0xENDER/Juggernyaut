@@ -81,12 +81,9 @@ jobs:
         sudo apt-get update -o Acquire::Retries=3
         sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf qemu-user-static zlib1g-dev:armhf libpcre3-dev:armhf libssl-dev:armhf
 
-    - name: Install libtiff5 dependency (ARM64)
+    - name: Install dependencies dependency (ARM64)
       if: inputs.build_platform_name == 'arm64'
-      run: |
-        wget http://ubuntu.com
-        sudo apt-get update && sudo apt-get install -y ./libtiff5_4.3.0-6ubuntu0.13_arm64.deb
-        rm libtiff5_4.3.0-6ubuntu0.13_arm64.deb
+      run: sudo apt-get install -y libtiff-dev
 
     - name: Install Qt Installer Framework (IFW)
       if: inputs.bundle_binaries && (inputs.build_platform_name == 'x86_64' || inputs.build_platform_name == 'arm64')
