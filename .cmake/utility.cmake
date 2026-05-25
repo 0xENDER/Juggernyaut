@@ -156,19 +156,16 @@ macro(install_command_symlink TARGET_NAME COMPONENT_NAME LINK_NAME)
                 WORKING_DIRECTORY \"\${CMAKE_INSTALL_PREFIX}/bin\"
                 RESULT_VARIABLE _link_result
             )
-            # Fallback to a hard copy if the developer lacks Windows symlink privileges
-            if(NOT _link_result EQUAL 0)
-                execute_process(
-                    COMMAND \${CMAKE_COMMAND} -E copy ${TARGET_NAME}${SRC_EXT} ${LINK_NAME}${DST_EXT}
-                    WORKING_DIRECTORY \"\${CMAKE_INSTALL_PREFIX}/bin\"
-                )
-            endif()
         else()
             # On Linux/macOS, standard Unix symlink works beautifully out of the box
             execute_process(
                 COMMAND \${CMAKE_COMMAND} -E create_symlink ${TARGET_NAME} ${LINK_NAME}
                 WORKING_DIRECTORY \"\${CMAKE_INSTALL_PREFIX}/bin\"
+                RESULT_VARIABLE _link_result
             )
+        endif()
+        if(NOT _link_result EQUAL 0)
+            message(FATAL_ERROR \"Couldn't generate the symbolic link '${LINK_NAME}' for ${TARGET_NAME}!\")
         endif()
     " COMPONENT ${COMPONENT_NAME})
 endmacro()
