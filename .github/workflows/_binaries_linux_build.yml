@@ -113,7 +113,7 @@ jobs:
       env:
         CFLAGS: "-mfloat-abi=hard"
         CXXFLAGS: "-mfloat-abi=hard"
-        PKG_CONFIG_EXECUTABLE: /usr/bin/arm-linux-gnueabihf-pkg-config
+        PKG_CONFIG: /usr/bin/arm-linux-gnueabihf-pkg-config
         PKG_CONFIG_LIBDIR: /usr/lib/arm-linux-gnueabihf/pkgconfig:/usr/share/pkgconfig
         PKG_CONFIG_SYSROOT_DIR: /
       run: |
