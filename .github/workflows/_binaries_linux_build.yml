@@ -113,6 +113,9 @@ jobs:
       env:
         CFLAGS: "-mfloat-abi=hard"
         CXXFLAGS: "-mfloat-abi=hard"
+        PKG_CONFIG_EXECUTABLE: /usr/bin/arm-linux-gnueabihf-pkg-config
+        PKG_CONFIG_LIBDIR: /usr/lib/arm-linux-gnueabihf/pkgconfig:/usr/share/pkgconfig
+        PKG_CONFIG_SYSROOT_DIR: /
       run: |
         cmake .. -DCMAKE_BUILD_TYPE=${{inputs.build_mode}} -DCMAKE_UNIX_GENERATOR_PLATFORM=${{inputs.build_platform}} \
           -DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc -DCMAKE_CXX_COMPILER=arm-linux-gnueabihf-g++ \
