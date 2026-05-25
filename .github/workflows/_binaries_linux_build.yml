@@ -150,7 +150,7 @@ jobs:
 
     - name: Display CPack Log (debug)
       if: always()
-      run: cat _CPack_Packages/Linux/IFW/IFWOutput.log
+      run: cat _CPack_Packages/Linux/IFW/IFWOutput.log || true
       working-directory: .dist
 
     - name: Extract version (optional)
