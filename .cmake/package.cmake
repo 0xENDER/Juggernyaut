@@ -24,12 +24,14 @@ set(CPACK_GENERATOR "IFW")
 if(WIN32)
     # Limit IFW to the available public binaries
     if((NOT ${JUG_BINARY_PLATFORM} STREQUAL "arm64") AND (NOT ${JUG_BINARY_PLATFORM} STREQUAL "x86_64"))
-        message(FATAL_ERROR "Generating an installer for this platform is not supported!")
+        message(WARNING "Generating an installer for this platform is not supported!")
+        set(CPACK_GENERATOR "")
     endif()
 elseif(APPLE)
     # Limit IFW to the available public binaries
     if((NOT ${JUG_BINARY_PLATFORM} STREQUAL "arm64") AND (NOT ${JUG_BINARY_PLATFORM} STREQUAL "x86_64"))
-        message(FATAL_ERROR "Generating an installer for this platform is not supported!")
+        message(WARNING "Generating an installer for this platform is not supported!")
+        set(CPACK_GENERATOR "")
     endif()
 elseif(UNIX)
     # Limit IFW to the available public binaries
