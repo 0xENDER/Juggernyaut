@@ -175,7 +175,7 @@ endmacro()
 
 function(sanitize_version RAW_VERSION OUTPUT_VAR)
     # Look for version patterns
-    if(RAW_VERSION MATCHES "^([0-9]+\\.[0-9]+\\.[0-9]+)-([A-Za-z]+)\\.([0-9][0-9][0-9])$")
+    if(RAW_VERSION MATCHES "^([0-9]+\\.[0-9]+\\.[0-9]+)-([A-Za-z_]*)\\.([0-9][0-9][0-9])$")
         set(SEMVER ${CMAKE_MATCH_1})
         set(REL_NAME ${CMAKE_MATCH_2})
         set(REL_PATCH ${CMAKE_MATCH_3})
