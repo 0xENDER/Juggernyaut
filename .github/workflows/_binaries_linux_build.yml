@@ -65,7 +65,7 @@ jobs:
       if: inputs.build_platform_name == 'x86_64' || inputs.build_platform_name == 'arm64'
       run: |
         # Install the native 64-bit libraries
-        sudo apt-get install -y zlib1g-dev libpcre3-dev libssl-dev
+        sudo apt-get install -y zlib1g-dev libpcre3-dev libssl-dev libtiff5
 
     - name: Install dependencies (32-bit)
       if: inputs.build_platform_name == 'x86_32'
