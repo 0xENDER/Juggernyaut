@@ -107,7 +107,9 @@ install(CODE "
     file(REMOVE_RECURSE \"\${CMAKE_INSTALL_PREFIX}/include\")
     file(REMOVE_RECURSE \"\${CMAKE_INSTALL_PREFIX}/share\")
     file(REMOVE_RECURSE \"\${CMAKE_INSTALL_PREFIX}/bin/cmake\")
+    file(REMOVE_RECURSE \"\${CMAKE_INSTALL_PREFIX}/lib/cmake\")
     file(REMOVE_RECURSE \"\${CMAKE_INSTALL_PREFIX}/bin/pkgconfig\")
+    file(REMOVE_RECURSE \"\${CMAKE_INSTALL_PREFIX}/lib/pkgconfig\")
     
     # Static libs
     file(GLOB_RECURSE static_libs \"\${CMAKE_INSTALL_PREFIX}/*.${INSTALL_STATIC_LIB_EXT}\")
