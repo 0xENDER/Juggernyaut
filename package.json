@@ -2,7 +2,7 @@
     "scripts": {
         "build-cmake-win-32": "cd .build && cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_GENERATOR_PLATFORM=Win32",
         "build-cmake-win-64": "cd .build && cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_GENERATOR_PLATFORM=x64",
-        "build-cmake-lix-32": "cd .build && cmake .. -DCMAKE_C_COMPILER=gcc-13 -DCMAKE_CXX_COMPILER=g++-13 -DCMAKE_BUILD_TYPE=Release -DCMAKE_UNIX_GENERATOR_PLATFORM=x86",
+        "build-cmake-lix-32": "cd .build && cmake .. -DCMAKE_C_COMPILER=gcc-13 -DCMAKE_CXX_COMPILER=g++-13 -DCMAKE_BUILD_TYPE=Release -DCMAKE_UNIX_GENERATOR_PLATFORM=x86 -DCMAKE_SYSTEM_PROCESSOR=i686",
         "build-cmake-lix-64": "cd .build && cmake .. -DCMAKE_C_COMPILER=gcc-13 -DCMAKE_CXX_COMPILER=g++-13 -DCMAKE_BUILD_TYPE=Release -DCMAKE_UNIX_GENERATOR_PLATFORM=x64",
         "build-binary": "cd .build && cmake --build . --config Release --parallel 4 --verbose",
         "debug-build-cmake": "cd .build && cmake .. -DCMAKE_C_COMPILER=gcc-13 -DCMAKE_CXX_COMPILER=g++-13 -DCMAKE_BUILD_TYPE=Debug",
@@ -18,6 +18,7 @@
         "debug-t": "mkdir .build && npm run debug-t-build-cmake && npm run debug-build-binary",
         "test-d": "cd .build && ctest -C Debug -V -j 3",
         "win64": "mkdir .build && npm run build-cmake-win-64 && npm run build-binary",
-        "lix64": "mkdir .build && npm run build-cmake-lix-64 && npm run build-binary"
+        "lix64": "mkdir .build && npm run build-cmake-lix-64 && npm run build-binary",
+        "lix32": "mkdir .build && npm run build-cmake-lix-32 && npm run build-binary"
     } 
 }
