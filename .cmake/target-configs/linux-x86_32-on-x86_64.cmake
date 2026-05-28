@@ -23,6 +23,9 @@ set(CMAKE_CXX_FLAGS "-m32" CACHE STRING "" FORCE)
 set(CMAKE_EXE_LINKER_FLAGS "-m32" CACHE STRING "" FORCE)
 set(CMAKE_SHARED_LINKER_FLAGS "-m32" CACHE STRING "" FORCE)
 
+# libgit2 Configs
+set(REGEX_BACKEND regcomp CACHE STRING "" FORCE)
+
 # OpenSSL configs (for libgit2)
 set(USE_HTTPS OpenSSL CACHE STRING "" FORCE)
 set(OPENSSL_INCLUDE_DIR "/usr/include;/usr/include/i386-linux-gnu" CACHE PATH "" FORCE)
