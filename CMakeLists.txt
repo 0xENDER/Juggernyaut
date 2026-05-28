@@ -2,19 +2,6 @@
 cmake_minimum_required(VERSION 4.2 FATAL_ERROR)
 project(juggernyaut_toolchain)
 
-# Load toolchain configs, if specified
-# (Used by GitHub Workflows)
-if(DEFINED JUG_TOOLCHAIN_CONFIGS)
-    set(JUG_CONFIGS_PATH "${CMAKE_CURRENT_LIST_DIR}/${JUG_TOOLCHAIN_CONFIGS}")
-    message(WARNING "[TOOLCHAIN] Applying configs: ${JUG_CONFIGS_PATH}")
-
-    if(EXISTS ${JUG_CONFIGS_PATH})
-        include(${JUG_CONFIGS_PATH})
-    else()
-        message(FATAL_ERROR "[TOOLCHAIN] Specified toolchain config file '${JUG_CONFIGS_PATH}' not found!")
-    endif()
-endif()
-
 # Tests
 option(JUG_BUILD_TESTS "Build the test suite" OFF)
 if(JUG_BUILD_TESTS)

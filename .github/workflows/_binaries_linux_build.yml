@@ -101,7 +101,7 @@ jobs:
       if: inputs.build_platform_name != 'x86_32' && inputs.build_platform_name != 'arm32'
       run: |
         cmake .. -DCMAKE_BUILD_TYPE=${{inputs.build_mode}} \
-          -DJUG_TOOLCHAIN_CONFIGS=".cmake/target-configs/linux-${{inputs.build_platform_name}}-on-${{inputs.build_platform_name}}.cmake" \
+          -DCMAKE_TOOLCHAIN_FILE="../.cmake/target-configs/linux-${{inputs.build_platform_name}}-on-${{inputs.build_platform_name}}.cmake" \
           -DJUG_RELEASE_VERSION="${{inputs.release_version}}" -DJUG_BUILD_TESTS=${{inputs.run_tests}}
       working-directory: .build
 
@@ -109,7 +109,7 @@ jobs:
       if: inputs.build_platform_name == 'x86_32'
       run: |
         cmake .. -DCMAKE_BUILD_TYPE=${{inputs.build_mode}} \
-          -DJUG_TOOLCHAIN_CONFIGS=".cmake/target-configs/linux-x86_32-on-x86_64.cmake" \
+          -DCMAKE_TOOLCHAIN_FILE="../.cmake/target-configs/linux-x86_32-on-x86_64.cmake" \
           -DJUG_RELEASE_VERSION="${{inputs.release_version}}" -DJUG_BUILD_TESTS=${{inputs.run_tests}}
       working-directory: .build
 
@@ -117,7 +117,7 @@ jobs:
       if: inputs.build_platform_name == 'arm32'
       run: |
         cmake .. -DCMAKE_BUILD_TYPE=${{inputs.build_mode}} \
-          -DJUG_TOOLCHAIN_CONFIGS=".cmake/target-configs/linux-arm32-on-arm64.cmake" \
+          -DCMAKE_TOOLCHAIN_FILE="../.cmake/target-configs/linux-arm32-on-arm64.cmake" \
           -DJUG_RELEASE_VERSION="${{inputs.release_version}}" -DJUG_BUILD_TESTS=${{inputs.run_tests}}
       working-directory: .build
 
