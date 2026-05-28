@@ -208,3 +208,12 @@ macro(ignore_external_target_warnings TARGET)
     # Supress all warnings
     set_target_properties(${TARGET} PROPERTIES SYSTEM TRUE)
 endmacro()
+
+# Include the module to check compiler flags
+include(CheckCXXCompilerFlag)
+
+# Ignore GCC version-related warnings
+check_cxx_compiler_flag("-Wno-psabi" HAS_WNO_PSABI)
+if(HAS_WNO_PSABI)
+    add_compile_options(-Wno-psabi)
+endif()
