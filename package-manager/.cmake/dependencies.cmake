@@ -3,7 +3,7 @@ message(STATUS "[DEPENDENCIES] Checking dependencies...")
 include(FetchContent)
 
 # libgit2
-set(GIT2_LIB_VERSION v1.9.3)
+set(GIT2_LIB_VERSION v1.9.4)
 if(libgit2)
     message(STATUS "[DEPENDENCIES] libgit2 library is present!")
 else()
