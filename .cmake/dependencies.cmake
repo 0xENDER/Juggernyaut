@@ -197,13 +197,15 @@ if(DEFINED NEED_FMT_LIB)
         if(EXISTS ${JUG_DEP_FMT_LIB_PATH}/CMakeLists.txt)
             FetchContent_Declare(fmt
                 SOURCE_DIR ${JUG_DEP_FMT_LIB_PATH}
-                EXCLUDE_FROM_ALL)
+                EXCLUDE_FROM_ALL
+                SYSTEM)
         else()
             FetchContent_Declare(fmt
                 GIT_REPOSITORY https://github.com/fmtlib/fmt.git
                 GIT_TAG ${FMT_LIB_VERSION}
                 SOURCE_DIR ${JUG_DEP_FMT_LIB_PATH}
-                EXCLUDE_FROM_ALL)
+                EXCLUDE_FROM_ALL
+                SYSTEM)
         endif()
     endif()
     FetchContent_MakeAvailable(fmt)
