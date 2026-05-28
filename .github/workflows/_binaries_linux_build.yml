@@ -117,7 +117,7 @@ jobs:
       if: inputs.build_platform_name == 'arm32'
       run: |
         cmake .. -DCMAKE_BUILD_TYPE=${{inputs.build_mode}} \
-          -DJUG_TOOLCHAIN_CONFIGS=".cmake/target-configs/linux-ARM32-on-ARM64.cmake" \
+          -DJUG_TOOLCHAIN_CONFIGS=".cmake/target-configs/linux-arm32-on-arm64.cmake" \
           -DJUG_RELEASE_VERSION="${{inputs.release_version}}" -DJUG_BUILD_TESTS=${{inputs.run_tests}}
       working-directory: .build
 
