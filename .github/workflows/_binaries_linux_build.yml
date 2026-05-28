@@ -69,7 +69,7 @@ jobs:
       run: |
         sudo dpkg --add-architecture i386
         sudo apt-get update -o Acquire::Retries=3
-        sudo apt-get install -y gcc-multilib g++-multilib libstdc++6-13-dbg:i386 libgcc-s1:i386 zlib1g-dev:i386 libssl-dev:i386
+        sudo apt-get install -y gcc-multilib g++-multilib libstdc++6-13-dbg:i386 libgcc-s1:i386 zlib1g-dev:i386 libpcre3-dev:i386 libssl-dev:i386
 
     - name: Install dependencies (ARM 32-bit)
       if: inputs.build_platform_name == 'arm32'
