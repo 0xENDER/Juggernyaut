@@ -1,3 +1,5 @@
+message(STATUS "[TOOLCHAIN] Applying configs: ${CMAKE_CURRENT_LIST_FILE}")
+
 # Internal configs
 set(CMAKE_UNIX_GENERATOR_PLATFORM x86)
 set(JUG_BUILD_PLATFORM_NAME x86_32)
