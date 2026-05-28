@@ -17,7 +17,7 @@ set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 # C/C++ compiler configs
 set(CMAKE_C_COMPILER arm-linux-gnueabihf-gcc)
 set(CMAKE_CXX_COMPILER arm-linux-gnueabihf-g++)
-set(CMAKE_CROSSCOMPILING_EMULATOR qemu-arm-static)
+set(CMAKE_CROSSCOMPILING_EMULATOR "qemu-arm-static" "-L" "/usr/arm-linux-gnueabihf")
 
 # C/C++ flags & linker flags
 set(CMAKE_C_FLAGS "-mfloat-abi=hard" CACHE STRING "" FORCE)
