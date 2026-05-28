@@ -1,12 +1,12 @@
 {
     "scripts": {
-        "build-cmake-win-32": "cd .build && cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_GENERATOR_PLATFORM=Win32",
-        "build-cmake-win-64": "cd .build && cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_GENERATOR_PLATFORM=x64",
-        "build-cmake-lix-32": "cd .build && cmake .. -DCMAKE_C_COMPILER=gcc-13 -DCMAKE_CXX_COMPILER=g++-13 -DCMAKE_BUILD_TYPE=Release -DCMAKE_UNIX_GENERATOR_PLATFORM=x86 -DCMAKE_SYSTEM_PROCESSOR=i686",
-        "build-cmake-lix-64": "cd .build && cmake .. -DCMAKE_C_COMPILER=gcc-13 -DCMAKE_CXX_COMPILER=g++-13 -DCMAKE_BUILD_TYPE=Release -DCMAKE_UNIX_GENERATOR_PLATFORM=x64",
+        "build-cmake-win-32": "cd .build && cmake .. -DCMAKE_BUILD_TYPE=Release -DJUG_TOOLCHAIN_CONFIGS=.cmake/target-configs/windows-x86_32-on-x86_64.cmake",
+        "build-cmake-win-64": "cd .build && cmake .. -DCMAKE_BUILD_TYPE=Release -DJUG_TOOLCHAIN_CONFIGS=.cmake/target-configs/windows-x86_64-on-x86_64.cmake",
+        "build-cmake-lix-32": "cd .build && cmake .. -DCMAKE_C_COMPILER=gcc-13 -DCMAKE_CXX_COMPILER=g++-13 -DCMAKE_BUILD_TYPE=Release -DJUG_TOOLCHAIN_CONFIGS=.cmake/target-configs/linux-x86_32-on-x86_64.cmake",
+        "build-cmake-lix-64": "cd .build && cmake .. -DCMAKE_C_COMPILER=gcc-13 -DCMAKE_CXX_COMPILER=g++-13 -DCMAKE_BUILD_TYPE=Release -DJUG_TOOLCHAIN_CONFIGS=.cmake/target-configs/linux-x86_64-on-x86_64.cmake",
         "build-binary": "cd .build && cmake --build . --config Release --parallel 4 --verbose",
-        "debug-build-cmake": "cd .build && cmake .. -DCMAKE_C_COMPILER=gcc-13 -DCMAKE_CXX_COMPILER=g++-13 -DCMAKE_BUILD_TYPE=Debug",
-        "debug-t-build-cmake": "cd .build && cmake .. -DCMAKE_C_COMPILER=gcc-13 -DCMAKE_CXX_COMPILER=g++-13 -DCMAKE_BUILD_TYPE=Debug -DJUG_BUILD_TESTS=ON",
+        "debug-build-cmake": "cd .build && cmake .. -DCMAKE_C_COMPILER=gcc-13 -DCMAKE_CXX_COMPILER=g++-13 -DCMAKE_BUILD_TYPE=Debug -DJUG_TOOLCHAIN_CONFIGS=.cmake/target-configs/linux-x86_64-on-x86_64.cmake",
+        "debug-t-build-cmake": "cd .build && cmake .. -DCMAKE_C_COMPILER=gcc-13 -DCMAKE_CXX_COMPILER=g++-13 -DCMAKE_BUILD_TYPE=Debug -DJUG_BUILD_TESTS=ON -DJUG_TOOLCHAIN_CONFIGS=.cmake/target-configs/linux-x86_64-on-x86_64.cmake",
         "debug-build-binary": "cd .build && cmake --build . --config Debug --parallel 4 --verbose",
         "win-clean": "rd /s /q \".build\" && rd /s /q \".out\" && rd /s /q \".dist\"",
         "lix-clean": "rm -f -r \".build\" && rm -f -r \".out\" && rm -f -r \".dist\"",

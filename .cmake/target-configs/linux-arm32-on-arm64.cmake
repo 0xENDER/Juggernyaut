@@ -1,0 +1,30 @@
+# Internal configs
+set(CMAKE_UNIX_GENERATOR_PLATFORM ARM)
+set(JUG_BUILD_PLATFORM_NAME arm32)
+
+# CMake configs
+set(CMAKE_SYSTEM_NAME Linux)
+set(CMAKE_SYSTEM_PROCESSOR arm)
+#set(CMAKE_LIBRARY_PATH ?)
+#set(CMAKE_INCLUDE_PATH ?)
+set(CMAKE_FIND_ROOT_PATH /usr/arm-linux-gnueabihf)
+set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+
+# C/C++ compiler configs
+set(CMAKE_C_COMPILER arm-linux-gnueabihf-gcc)
+set(CMAKE_CXX_COMPILER arm-linux-gnueabihf-g++)
+set(CMAKE_CROSSCOMPILING_EMULATOR qemu-arm-static)
+
+# C/C++ flags & linker flags
+set(CMAKE_C_FLAGS "-mfloat-abi=hard" CACHE STRING "" FORCE)
+set(CMAKE_CXX_FLAGS "-mfloat-abi=hard" CACHE STRING "" FORCE)
+set(CMAKE_EXE_LINKER_FLAGS "-mfloat-abi=hard" CACHE STRING "" FORCE)
+set(CMAKE_SHARED_LINKER_FLAGS "-mfloat-abi=hard" CACHE STRING "" FORCE)
+
+# OpenSSL configs (for libgit2)
+set(USE_HTTPS OpenSSL)
+set(OPENSSL_INCLUDE_DIR /usr/include/arm-linux-gnueabihf)
+set(OPENSSL_CRYPTO_LIBRARY /usr/lib/arm-linux-gnueabihf/libcrypto.so)
+set(OPENSSL_SSL_LIBRARY /usr/lib/arm-linux-gnueabihf/libssl.so)

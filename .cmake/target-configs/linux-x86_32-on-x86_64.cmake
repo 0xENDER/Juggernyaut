@@ -1,0 +1,26 @@
+# Internal configs
+set(CMAKE_UNIX_GENERATOR_PLATFORM x86)
+set(JUG_BUILD_PLATFORM_NAME x86_32)
+
+# CMake configs
+set(CMAKE_SYSTEM_NAME Linux)
+set(CMAKE_SYSTEM_PROCESSOR i686)
+#set(CMAKE_FIND_ROOT_PATH ?)
+#set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+#set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+#set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+
+# C/C++ compiler configs
+#set(CMAKE_C_COMPILER ?)
+#set(CMAKE_CXX_COMPILER ?)
+#set(CMAKE_CROSSCOMPILING_EMULATOR ?)
+
+# C/C++ flags & linker flags
+set(CMAKE_C_FLAGS "-m32" CACHE STRING "" FORCE)
+set(CMAKE_CXX_FLAGS "-m32" CACHE STRING "" FORCE)
+set(CMAKE_EXE_LINKER_FLAGS "-m32 -L/usr/lib32 -L/usr/lib/i386-linux-gnu" CACHE STRING "" FORCE)
+set(CMAKE_SHARED_LINKER_FLAGS "-m32 -L/usr/lib32 -L/usr/lib/i386-linux-gnu" CACHE STRING "" FORCE)
+
+# C++ include paths
+set(CMAKE_LIBRARY_PATH /usr/lib32 /usr/lib/i386-linux-gnu)
+set(CMAKE_INCLUDE_PATH /usr/include/i386-linux-gnu)
