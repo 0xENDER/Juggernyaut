@@ -5,7 +5,27 @@ set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION bin)
 set(CMAKE_INSTALL_SYSTEM_LIBRARY_DESTINATION lib)
 set(CMAKE_INSTALL_SYSTEM_RUNTIME_COMPONENT CmpSystemRuntimeLibs)
 set(CMAKE_INSTALL_SYSTEM_LIBRARY_COMPONENT CmpSystemRuntimeLibs)
+
+# Explicitly grab Debug and UCRT libraries
+if(JUG_BINARY_MODE STREQUAL "Debug")
+    set(CMAKE_INSTALL_DEBUG_LIBRARIES TRUE)
+endif()
+set(CMAKE_INSTALL_UCRT_LIBRARIES TRUE)
+
+# Filter out unknown extra files
+set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP TRUE)
 include(InstallRequiredSystemLibraries)
+if (WIN32)
+    if(NOT JUG_BINARY_PLATFORM MATCHES "x86_64")
+        list(FILTER CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS EXCLUDE REGEX "vcruntime140_1d?\\.dll$")
+    endif()
+endif()
+
+# Install system libs
+install(PROGRAMS ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+    DESTINATION ${CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION}
+    COMPONENT ${CMAKE_INSTALL_SYSTEM_RUNTIME_COMPONENT}
+)
 
 # General
 install(TARGETS JuggernyautCommonLibrary JuggernyautCatConsoleLibrary
@@ -135,7 +155,7 @@ if(JUG_MATCH_INSTALL_ARCH)
         message(STATUS \"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\")
         message(STATUS \"[POST-INSTALL] Starting Binary Architecture Scan...\")
         message(STATUS \"[POST-INSTALL] Target directory: \${CMAKE_INSTALL_PREFIX}\")
-        message(STATUS \"[POST-INSTALL] Expected Type: ${JUG_BUILD_PLATFORM_NAME}\")
+        message(STATUS \"[POST-INSTALL] Expected Type: ${JUG_BINARY_PLATFORM}\")
         message(STATUS \"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\")
 
         set(SCAN_DIRS 
@@ -173,7 +193,7 @@ if(JUG_MATCH_INSTALL_ARCH)
                 COMMAND \"${Python3_EXECUTABLE}\" 
                         \"${JUG_CMAKE_DIR}/external-scripts/arch_match.py\" 
                         \"\${BINARY_PATH}\" 
-                        \"${JUG_BUILD_PLATFORM_NAME}\"
+                        \"${JUG_BINARY_PLATFORM}\"
                 RESULT_VARIABLE AUDIT_RESULT
                 OUTPUT_VARIABLE AUDIT_OUTPUT
                 ERROR_VARIABLE AUDIT_ERROR
@@ -192,7 +212,7 @@ if(JUG_MATCH_INSTALL_ARCH)
         if(ARCH_MISMATCH_DETECTED)
             message(FATAL_ERROR \"[POST-INSTALL] Architecture mismatch discovered!\n\" \${ARCH_MISMATCHES})
         else()
-            message(STATUS \"[POST-INSTALL] All installed binaries match the '${JUG_BUILD_PLATFORM_NAME}' profile.\")
+            message(STATUS \"[POST-INSTALL] All installed binaries match the '${JUG_BINARY_PLATFORM}' profile.\")
         endif()
     " COMPONENT CmpJuggernyautCompiler)
 endif()
