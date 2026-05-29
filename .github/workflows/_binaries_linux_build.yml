@@ -168,6 +168,7 @@ jobs:
         path: ${{github.workspace}}/.dist/Juggernyaut-Installer-v${{env.VERSION}}-${{inputs.build_platform_name}}.run
 
     - name: Upload .deb Installer Artifact (optional)
+      if: inputs.bundle_binaries
       uses: actions/upload-artifact@v7
       with:
         name: Juggernyaut-Installer-Linux-${{inputs.build_platform_name}}-native
