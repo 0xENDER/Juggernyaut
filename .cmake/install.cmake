@@ -94,6 +94,15 @@ install(FILES ${JUG_LICENSE_FILE} ${JUG_CMAKE_DIR}/extra/jug-docs.html
     DESTINATION .
     COMPONENT CmpJuggernyautCompiler
 )
+
+# Wrapper
+add_executable(jug ${JUG_MAIN_DIR}/wrapper.cpp)
+install(TARGETS jug
+    EXPORT JuggernyautToolchain
+    RUNTIME DESTINATION bin COMPONENT CmpJuggernyautUnified
+    LIBRARY DESTINATION lib COMPONENT CmpJuggernyautUnified
+)
+
 # Cleanup
 if(WIN32)
     set(INSTALL_STATIC_LIB_EXT lib)
@@ -120,22 +129,13 @@ install(CODE "
     message(STATUS \"[POST-INSTALL] Cleanup complete!\")
 " COMPONENT CmpJuggernyautCompiler)
 
-# Wrapper
-add_executable(jug ${JUG_MAIN_DIR}/wrapper.cpp)
-
-install(TARGETS jug
-    EXPORT JuggernyautToolchain
-    RUNTIME DESTINATION bin COMPONENT CmpJuggernyautUnified
-    LIBRARY DESTINATION lib COMPONENT CmpJuggernyautUnified
-)
-
 # Verify arch on demand
 if(JUG_MATCH_INSTALL_ARCH)
     install(CODE "
         message(STATUS \"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\")
-        message(STATUS \"[INSTALL] Starting Binary Architecture Scan...\")
-        message(STATUS \"[INSTALL] Target directory: \${CMAKE_INSTALL_PREFIX}\")
-        message(STATUS \"[INSTALL] Expected Type:    ${CURRENT_TARGET_ARCH}\")
+        message(STATUS \"[POST-INSTALL] Starting Binary Architecture Scan...\")
+        message(STATUS \"[POST-INSTALL] Target directory: \${CMAKE_INSTALL_PREFIX}\")
+        message(STATUS \"[POST-INSTALL] Expected Type: ${JUG_BUILD_PLATFORM_NAME}\")
         message(STATUS \"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\")
 
         set(SCAN_DIRS 
@@ -166,7 +166,7 @@ if(JUG_MATCH_INSTALL_ARCH)
         # Validate arch
         set(ARCH_MISMATCH_DETECTED OFF)
         foreach(BINARY_PATH IN LISTS AUDIT_LIST)
-            message(STATUS \"[INSTALL] Verifying: \${BINARY_PATH}\")
+            message(STATUS \"[POST-INSTALL] Verifying: \${BINARY_PATH}\")
         
             execute_process(
                 COMMAND \"${Python3_EXECUTABLE}\" 
@@ -180,7 +180,7 @@ if(JUG_MATCH_INSTALL_ARCH)
         
             # Greedy mismatch identification 
             if(NOT AUDIT_RESULT EQUAL 0)
-                message(STATUS \"[INSTALL] Architecture mismatch:\")
+                message(STATUS \"[POST-INSTALL] Architecture mismatch:\")
                 message(STATUS \"\${AUDIT_OUTPUT}\")
                 message(STATUS \"\${AUDIT_ERROR}\")
                 set(ARCH_MISMATCH_DETECTED ON)
@@ -188,9 +188,9 @@ if(JUG_MATCH_INSTALL_ARCH)
         endforeach()
 
         if(ARCH_MISMATCH_DETECTED)
-            message(FATAL_ERROR \"[INSTALL] Architecture mismatch discovered!\")
+            message(FATAL_ERROR \"[POST-INSTALL] Architecture mismatch discovered!\")
         else()
-            message(STATUS \"[INSTALL] All installed binaries match the '${JUG_BUILD_PLATFORM_NAME}' profile.\")
+            message(STATUS \"[POST-INSTALL] All installed binaries match the '${JUG_BUILD_PLATFORM_NAME}' profile.\")
         endif()
     " COMPONENT CmpJuggernyautCompiler)
 endif()
