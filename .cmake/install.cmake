@@ -155,7 +155,7 @@ if(JUG_MATCH_INSTALL_ARCH)
             endif()
         endforeach()
 
-        # Filter out debug files
+        # Filter out other expected files
         set(AUDIT_LIST \"\")
         foreach(ITEM IN LISTS FOUND_ARTIFACTS)
             if(NOT ITEM MATCHES \"\\\\.(pdb|idb|ilk|dSYM|map)\$\")
