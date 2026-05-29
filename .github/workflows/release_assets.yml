@@ -39,7 +39,7 @@ jobs:
 
   # binaries binaries
   build-binaries-release-security:
-    name: Generate 'Release' binaries
+    name: Perform security analysis
     uses: ./.github/workflows/_binaries_dynamic_build.yml
     needs:
       - manage-release-version
