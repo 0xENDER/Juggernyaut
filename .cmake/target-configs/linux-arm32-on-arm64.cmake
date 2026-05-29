@@ -14,16 +14,26 @@ set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
+# CTest Configs
+set(CMAKE_TEST_ENVIRONMENT 
+    "LSAN_OPTIONS=fast_unwind_on_malloc=0"
+    "ASAN_OPTIONS=fast_unwind_on_malloc=0:detect_leaks=1"
+)
+
 # C/C++ compiler configs
 set(CMAKE_C_COMPILER arm-linux-gnueabihf-gcc)
 set(CMAKE_CXX_COMPILER arm-linux-gnueabihf-g++)
-set(CMAKE_CROSSCOMPILING_EMULATOR "qemu-arm-static" "-L" "/usr/arm-linux-gnueabihf")
+set(CMAKE_CROSSCOMPILING_EMULATOR "qemu-arm-static"
+    "-E" "LSAN_OPTIONS=fast_unwind_on_malloc=0"
+    "-E" "ASAN_OPTIONS=fast_unwind_on_malloc=0:detect_leaks=1"
+    "-L" "/usr/arm-linux-gnueabihf"
+)
 
 # C/C++ flags & linker flags
-set(CMAKE_C_FLAGS "-mfloat-abi=hard" CACHE STRING "" FORCE)
-set(CMAKE_CXX_FLAGS "-mfloat-abi=hard" CACHE STRING "" FORCE)
-set(CMAKE_EXE_LINKER_FLAGS "-mfloat-abi=hard" CACHE STRING "" FORCE)
-set(CMAKE_SHARED_LINKER_FLAGS "-mfloat-abi=hard" CACHE STRING "" FORCE)
+set(CMAKE_C_FLAGS "-mfloat-abi=hard -fsanitize=address -fno-omit-frame-pointer -g" CACHE STRING "" FORCE)
+set(CMAKE_CXX_FLAGS "-mfloat-abi=hard -fsanitize=address -fno-omit-frame-pointer -g" CACHE STRING "" FORCE)
+set(CMAKE_EXE_LINKER_FLAGS "-mfloat-abi=hard -fsanitize=address" CACHE STRING "" FORCE)
+set(CMAKE_SHARED_LINKER_FLAGS "-mfloat-abi=hard -fsanitize=address" CACHE STRING "" FORCE)
 
 # OpenSSL configs (for libgit2)
 set(USE_HTTPS OpenSSL CACHE STRING "" FORCE)
