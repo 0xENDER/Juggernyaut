@@ -21,7 +21,7 @@ set(CPACK_PACKAGE_VERSION "${PROPER_RELEASE_VERSION}")
 
 # Generators' Installer configs
 configure_file(
-    "${JUG_CMAKE_DIR}/installer/package-gen.cmake.in"
+    "${JUG_CMAKE_DIR}/installer/custom/package-gen.cmake.in"
     "${CMAKE_BINARY_DIR}/package-gen.cmake"
     @ONLY
 )
