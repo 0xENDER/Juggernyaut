@@ -22,6 +22,7 @@
         "debug-t-lix-64": "mkdir .build && npm run debug-t-build-cmake-lix-64 && npm run debug-build-binary",
         "test-d": "cd .build && ctest -C Debug -V -j 3",
         "win64": "mkdir .build && npm run build-cmake-win-64 && npm run build-binary",
+        "win32": "mkdir .build && npm run build-cmake-win-32 && npm run build-binary",
         "lix64": "mkdir .build && npm run build-cmake-lix-64 && npm run build-binary",
         "lix32": "mkdir .build && npm run build-cmake-lix-32 && npm run build-binary"
     } 
