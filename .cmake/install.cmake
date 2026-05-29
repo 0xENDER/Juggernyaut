@@ -128,3 +128,69 @@ install(TARGETS jug
     RUNTIME DESTINATION bin COMPONENT CmpJuggernyautUnified
     LIBRARY DESTINATION lib COMPONENT CmpJuggernyautUnified
 )
+
+# Verify arch on demand
+if(JUG_MATCH_INSTALL_ARCH)
+    install(CODE "
+        message(STATUS \"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\")
+        message(STATUS \"[INSTALL] Starting Binary Architecture Scan...\")
+        message(STATUS \"[INSTALL] Target directory: \${CMAKE_INSTALL_PREFIX}\")
+        message(STATUS \"[INSTALL] Expected Type:    ${CURRENT_TARGET_ARCH}\")
+        message(STATUS \"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\")
+
+        set(SCAN_DIRS 
+            \"\${CMAKE_INSTALL_PREFIX}/bin\"
+            \"\${CMAKE_INSTALL_PREFIX}/lib\"
+        )
+
+        set(FOUND_ARTIFACTS \"\")
+        foreach(SCAN_DIR IN LISTS SCAN_DIRS)
+            if(EXISTS \"\${SCAN_DIR}\")
+                # Pulls Windows (.exe, .dll), Linux (no extension, .so), and macOS (.dylib) formats
+                file(GLOB_RECURSE MATCHED_FILES 
+                    LIST_DIRECTORIES false
+                    \"\${SCAN_DIR}/*\"
+                )
+                list(APPEND FOUND_ARTIFACTS \${MATCHED_FILES})
+            endif()
+        endforeach()
+
+        # Filter out debug files
+        set(AUDIT_LIST \"\")
+        foreach(ITEM IN LISTS FOUND_ARTIFACTS)
+            if(NOT ITEM MATCHES \"\\\\.(pdb|idb|ilk|dSYM|map)\$\")
+                list(APPEND AUDIT_LIST \${ITEM})
+            endif()
+        endforeach()
+
+        # Validate arch
+        set(ARCH_MISMATCH_DETECTED OFF)
+        foreach(BINARY_PATH IN LISTS AUDIT_LIST)
+            message(STATUS \"[INSTALL] Verifying: \${BINARY_PATH}\")
+        
+            execute_process(
+                COMMAND \"${Python3_EXECUTABLE}\" 
+                        \"${JUG_CMAKE_DIR}/external-scripts/arch_match.py\" 
+                        \"\${BINARY_PATH}\" 
+                        \"${JUG_BUILD_PLATFORM_NAME}\"
+                RESULT_VARIABLE AUDIT_RESULT
+                OUTPUT_VARIABLE AUDIT_OUTPUT
+                ERROR_VARIABLE AUDIT_ERROR
+            )
+        
+            # Greedy mismatch identification 
+            if(NOT AUDIT_RESULT EQUAL 0)
+                message(STATUS \"[INSTALL] Architecture mismatch:\")
+                message(STATUS \"\${AUDIT_OUTPUT}\")
+                message(STATUS \"\${AUDIT_ERROR}\")
+                set(ARCH_MISMATCH_DETECTED ON)
+            endif()
+        endforeach()
+
+        if(ARCH_MISMATCH_DETECTED)
+            message(FATAL_ERROR \"[INSTALL] Architecture mismatch discovered!\")
+        else()
+            message(STATUS \"[INSTALL] All installed binaries match the '${JUG_BUILD_PLATFORM_NAME}' profile.\")
+        endif()
+    ")
+endif()

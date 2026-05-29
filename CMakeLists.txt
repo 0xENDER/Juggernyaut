@@ -2,6 +2,9 @@
 cmake_minimum_required(VERSION 4.2 FATAL_ERROR)
 project(juggernyaut_toolchain)
 
+# Install checks
+option(JUG_MATCH_INSTALL_ARCH "Run a test on install that checks the architecture of all installed binaries." OFF)
+
 # Tests
 option(JUG_BUILD_TESTS "Build the test suite" OFF)
 if(JUG_BUILD_TESTS)

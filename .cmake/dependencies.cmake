@@ -5,6 +5,9 @@ include(FetchContent)
 # VERSION CONTROL
 # Manage the versions for used dependencies
 
+# Python
+find_package(Python3 COMPONENTS Interpreter REQUIRED)
+
 # Powershell (on Windows)
 if(WIN32)
     find_program(POWERSHELL_EXECUTABLE powershell)
