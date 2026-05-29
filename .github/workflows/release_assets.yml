@@ -79,7 +79,7 @@ jobs:
           # Choose the proper release ID
           release_id_1="${{github.event.inputs.release_id}}"
           release_id_2="${{github.ref_name}}"
-          release_id_1_len=""${#release_id_1}
+          release_id_1_len=${#release_id_1}
           if [ $release_id_1_len -gt 5 ]; then
             release_id="$release_id_1"
           else

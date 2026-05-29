@@ -37,7 +37,7 @@ jobs:
       uses: actions/checkout@v6
 
     - name: Initialize CodeQL
-      if: ${{inputs.security_analysis && !startsWith(inputs.build_platform_name, 'arm')}}
+      if: inputs.security_analysis && !startsWith(inputs.build_platform_name, 'arm')
       uses: github/codeql-action/init@v4
       with:
         languages: 'c-cpp'
@@ -140,7 +140,7 @@ jobs:
       working-directory: ${{github.workspace}}/.dist/${{inputs.build_mode}}/${{inputs.build_platform_name}}/bin/
 
     - name: Perform CodeQL Analysis
-      if: ${{inputs.security_analysis && !startsWith(inputs.build_platform_name, 'arm')}}
+      if: inputs.security_analysis && !startsWith(inputs.build_platform_name, 'arm')
       uses: github/codeql-action/analyze@v4
       with:
         category: "/language:c-cpp"
