@@ -38,17 +38,31 @@ jobs:
       upload_artifact: true
 
   # binaries binaries
-  build-binaries-release:
+  build-binaries-release-security:
     name: Generate 'Release' binaries
     uses: ./.github/workflows/_binaries_dynamic_build.yml
     needs:
       - manage-release-version
     with:
       build_mode: Release
+      full_build: false
+      bundle_binaries: false
+      release_version: ${{needs.manage-release-version.outputs.version}}
+      security_analysis: true
+
+      # binaries binaries
+  build-binaries-release:
+    name: Generate 'Release' binaries
+    uses: ./.github/workflows/_binaries_dynamic_build.yml
+    needs:
+      - manage-release-version
+      - build-binaries-release-security
+    with:
+      build_mode: Release
       full_build: true
       bundle_binaries: true
       release_version: ${{needs.manage-release-version.outputs.version}}
-      security_analysis: true
+      security_analysis: false
 
   create-github-release:
     name: Create GitHub Release
@@ -75,6 +89,7 @@ jobs:
         run: |
           #!/bin/bash
           set -ex
+          shopt -s nullglob
 
           # Choose the proper release ID
           release_id_1="${{github.event.inputs.release_id}}"
