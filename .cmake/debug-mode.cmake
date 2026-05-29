@@ -1,5 +1,5 @@
 # Add debug-specific configurations to all targets
-if(${JUG_BINARY_MODE} STREQUAL "Debug")
+if(JUG_BINARY_MODE STREQUAL "Debug")
     message(STATUS "[BUILD] Adding debug compilation flags...")
     # (Windows) CrtDebug
     if(WIN32)
