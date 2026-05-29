@@ -15,7 +15,7 @@ set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
 # CTest Configs
-set(CMAKE_TEST_ENVIRONMENT 
+set(CMAKE_TEST_ENVIRONMENT
     "LSAN_OPTIONS=fast_unwind_on_malloc=0"
     "ASAN_OPTIONS=fast_unwind_on_malloc=0:detect_leaks=1"
 )
@@ -30,10 +30,10 @@ set(CMAKE_CROSSCOMPILING_EMULATOR "qemu-arm-static"
 )
 
 # C/C++ flags & linker flags
-set(CMAKE_C_FLAGS "-mfloat-abi=hard -fsanitize=address -fno-omit-frame-pointer -g" CACHE STRING "" FORCE)
-set(CMAKE_CXX_FLAGS "-mfloat-abi=hard -fsanitize=address -fno-omit-frame-pointer -g" CACHE STRING "" FORCE)
-set(CMAKE_EXE_LINKER_FLAGS "-mfloat-abi=hard -fsanitize=address" CACHE STRING "" FORCE)
-set(CMAKE_SHARED_LINKER_FLAGS "-mfloat-abi=hard -fsanitize=address" CACHE STRING "" FORCE)
+set(CMAKE_C_FLAGS "-mfloat-abi=hard" CACHE STRING "" FORCE)
+set(CMAKE_CXX_FLAGS "-mfloat-abi=hard" CACHE STRING "" FORCE)
+set(CMAKE_EXE_LINKER_FLAGS "-mfloat-abi=hard" CACHE STRING "" FORCE)
+set(CMAKE_SHARED_LINKER_FLAGS "-mfloat-abi=hard" CACHE STRING "" FORCE)
 
 # OpenSSL configs (for libgit2)
 set(USE_HTTPS OpenSSL CACHE STRING "" FORCE)
