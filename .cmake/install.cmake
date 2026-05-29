@@ -165,6 +165,7 @@ if(JUG_MATCH_INSTALL_ARCH)
 
         # Validate arch
         set(ARCH_MISMATCH_DETECTED OFF)
+        set(ARCH_MISMATCHES)
         foreach(BINARY_PATH IN LISTS AUDIT_LIST)
             message(STATUS \"[POST-INSTALL] Verifying: \${BINARY_PATH}\")
         
@@ -184,11 +185,12 @@ if(JUG_MATCH_INSTALL_ARCH)
                 message(STATUS \"\${AUDIT_OUTPUT}\")
                 message(STATUS \"\${AUDIT_ERROR}\")
                 set(ARCH_MISMATCH_DETECTED ON)
+                list(APPEND ARCH_MISMATCHES \"\n\${AUDIT_OUTPUT}\n\${AUDIT_ERROR}\")
             endif()
         endforeach()
 
         if(ARCH_MISMATCH_DETECTED)
-            message(FATAL_ERROR \"[POST-INSTALL] Architecture mismatch discovered!\")
+            message(FATAL_ERROR \"[POST-INSTALL] Architecture mismatch discovered!\n\" \${ARCH_MISMATCHES})
         else()
             message(STATUS \"[POST-INSTALL] All installed binaries match the '${JUG_BUILD_PLATFORM_NAME}' profile.\")
         endif()
