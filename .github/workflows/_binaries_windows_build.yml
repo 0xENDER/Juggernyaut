@@ -160,7 +160,7 @@ jobs:
         path: ${{github.workspace}}/.dist/Juggernyaut-Installer-v${{env.VERSION}}-${{inputs.build_platform_name}}.exe
 
     - name: Upload NSIS Installer Artifact (optional)
-      if: inputs.bundle_binaries && (inputs.build_platform_name == 'x86_64' || inputs.build_platform_name == 'arm64')
+      if: inputs.bundle_binaries
       uses: actions/upload-artifact@v7
       with:
         name: Juggernyaut-NSIS-Installer-Windows-${{inputs.build_platform_name}}
