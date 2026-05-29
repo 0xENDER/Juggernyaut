@@ -1,8 +1,14 @@
+import os
 import sys
 import struct
 
 def get_binary_arch(filepath):
-    with open(filepath, 'rb') as f:
+    if not os.path.isfile(filepath):
+        return "Not a File (Directory)"
+
+    real_filepath = os.path.realpath(filepath)
+
+    with open(real_filepath, 'rb') as f:
         magic = f.read(4)
         if not magic:
             return "Unknown"
