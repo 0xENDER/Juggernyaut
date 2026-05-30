@@ -166,6 +166,15 @@ set(CPACK_COMPONENTS_ALL
 
     # System components
     CmpSystemRuntimeLibs
+
+    # Debug symbols
+    CmpDebugJuggernyautCore
+    CmpDebugJuggernyautCompiler
+    CmpDebugJuggernyautServer
+    CmpDebugJuggernyautPackageManager
+    CmpDebugJuggernyautUnified
+    CmpDebugExternalCore
+    CmpDebugExternalPackageManager
 )
 if(JUG_USES_IFW)
     list(APPEND CPACK_COMPONENTS_ALL QSPathSetup)
@@ -233,6 +242,54 @@ if(WIN32 AND JUG_USES_IFW)
         GROUP SystemConfigs
     )
 endif()
+
+# Debug symbols
+cpack_add_component_group(DebugSymbs
+    DISPLAY_NAME "Debug Symbols"
+    DESCRIPTION "The debug symbols for non-system components."
+)
+cpack_add_component(CmpDebugJuggernyautCore
+    DISPLAY_NAME "Juggernyaut Core"
+    DESCRIPTION "Debug symbols for core Juggernyaut components."
+    GROUP DebugSymbs
+    DISABLED TRUE
+)
+cpack_add_component(CmpDebugJuggernyautCompiler
+    DISPLAY_NAME "Juggernyaut Compiler"
+    DESCRIPTION "Debug symbols for the Juggernyaut compiler."
+    GROUP DebugSymbs
+    DISABLED TRUE
+)
+cpack_add_component(CmpDebugJuggernyautServer
+    DISPLAY_NAME "Juggernyaut Server"
+    DESCRIPTION "Debug symbols for the Juggernyaut language server."
+    GROUP DebugSymbs
+    DISABLED TRUE
+)
+cpack_add_component(CmpDebugJuggernyautPackageManager
+    DISPLAY_NAME "Juggernyaut Package Manager"
+    DESCRIPTION "Debug symbols for the Juggernyaut package manager."
+    GROUP DebugSymbs
+    DISABLED TRUE
+)
+cpack_add_component(CmpDebugJuggernyautUnified
+    DISPLAY_NAME "Juggernyaut unified command"
+    DESCRIPTION "Debug symbols for the unified command."
+    GROUP DebugSymbs
+    DISABLED TRUE
+)
+cpack_add_component(CmpDebugExternalCore
+    DISPLAY_NAME "Juggernyaut Core (External)"
+    DESCRIPTION "Debug symbols for external core Juggernyaut components."
+    GROUP DebugSymbs
+    DISABLED TRUE
+)
+cpack_add_component(CmpDebugExternalPackageManager
+    DISPLAY_NAME "Juggernyaut Package Manager (External)"
+    DESCRIPTION "Debug symbols for external package manager components."
+    GROUP DebugSymbs
+    DISABLED TRUE
+)
 
 # Handle online fetching
 # cpack_ifw_add_repository()
