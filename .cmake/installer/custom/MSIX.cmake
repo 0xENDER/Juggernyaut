@@ -95,7 +95,7 @@ option(CPACK_MSIX_GENERATE_UPLOAD "Trigger MSIX '.appxupload' file generation" O
 
 # [PACKAGE COMMANDS]
 # CPACK_MSIX_APPLICATIONS (REQUIRED)
-if(DEFIND CPACK_MSIX_APPLICATIONS)
+if(DEFINED CPACK_MSIX_APPLICATIONS)
     set(MSIX_INTERNAL_APPLICATIONS "{ \"applications\": [${CPACK_MSIX_APPLICATIONS}] }")
 
     # Count apps
@@ -144,15 +144,19 @@ foreach(INDEX RANGE ${MSIX_INTERNAL_APPLICATIONS_LAST_INDEX})
 
         # Loop through the nested aliases array
         string(JSON ALIAS_COUNT LENGTH "${MSIX_INTERNAL_APPLICATIONS}" "applications" ${INDEX} "aliases")
-        math(EXPR MSIX_INTERNAL_ALIAS_LAST_INDEX "${ALIAS_COUNT} - 1")
 
-        foreach(ALIAS_INDEX RANGE ${MSIX_INTERNAL_ALIAS_LAST_INDEX})
-            string(JSON CURRENT_ALIAS GET "${MSIX_INTERNAL_APPLICATIONS}" "applications" ${INDEX} "aliases" ${ALIAS_INDEX})
-            message(STATUS "[CPACK MSIX] Adding '${CURRENT_ALIAS}' alias for '${CURRENT_TARGET}'...")
+        if(ALIAS_COUNT GREATER 0)
+            math(EXPR MSIX_INTERNAL_ALIAS_LAST_INDEX "${ALIAS_COUNT} - 1")
+            foreach(ALIAS_INDEX RANGE ${MSIX_INTERNAL_ALIAS_LAST_INDEX})
+                string(JSON CURRENT_ALIAS GET "${MSIX_INTERNAL_APPLICATIONS}" "applications" ${INDEX} "aliases" ${ALIAS_INDEX})
+                message(STATUS "[CPACK MSIX] Adding '${CURRENT_ALIAS}' alias for '${CURRENT_TARGET}'...")
 
-            set(MSIX_INTERNAL_MANIFEST_APPLICATIONS "${MSIX_INTERNAL_MANIFEST_APPLICATIONS}
-                <uap5:ExecutionAlias Alias=\"${CURRENT_ALIAS}.exe\" />\n")
-        endforeach()
+                set(MSIX_INTERNAL_MANIFEST_APPLICATIONS "${MSIX_INTERNAL_MANIFEST_APPLICATIONS}
+                    <uap5:ExecutionAlias Alias=\"${CURRENT_ALIAS}.exe\" />\n")
+            endforeach()
+        else()
+            message(STATUS "[CPACK MSIX] Target '${CURRENT_TARGET}' must have at least one alias!")
+        endif()
 
         set(MSIX_INTERNAL_MANIFEST_APPLICATIONS "${MSIX_INTERNAL_MANIFEST_APPLICATIONS}
                     </uap5:AppExecutionAlias>
@@ -165,17 +169,17 @@ foreach(INDEX RANGE ${MSIX_INTERNAL_APPLICATIONS_LAST_INDEX})
 endforeach()
 
 # Generate a list of files to install
-file(GLOB_RECURSE MSIX_INTERNAL_STAGED_FILES "${CPACK_TEMPORARY_DIRECTORY}/*")
-set(MSIX_INTERNAL_MANIFEST_FILES "")
-foreach(FILE ${MSIX_INTERNAL_STAGED_FILES})
-    # Strip the staging prefix to get the relative path
-    file(RELATIVE_PATH REL_PATH "${CPACK_TEMPORARY_DIRECTORY}" "${FILE}")
-    
-    # If it's a file, add it to the Manifest's <Files> section
-    if(NOT IS_DIRECTORY ${FILE})
-        set(MSIX_INTERNAL_MANIFEST_FILES "${MSIX_INTERNAL_MANIFEST_FILES}<File RelativePath=\"${REL_PATH}\" />\n    ")
-    endif()
-endforeach()
+#file(GLOB_RECURSE MSIX_INTERNAL_STAGED_FILES "${CPACK_TEMPORARY_DIRECTORY}/*")
+#set(MSIX_INTERNAL_MANIFEST_FILES "")
+#foreach(FILE ${MSIX_INTERNAL_STAGED_FILES})
+#    # Strip the staging prefix to get the relative path
+#    file(RELATIVE_PATH REL_PATH "${CPACK_TEMPORARY_DIRECTORY}" "${FILE}")
+#    
+#    # If it's a file, add it to the Manifest's <Files> section
+#    if(NOT IS_DIRECTORY ${FILE})
+#        set(MSIX_INTERNAL_MANIFEST_FILES "${MSIX_INTERNAL_MANIFEST_FILES}<File RelativePath=\"${REL_PATH}\" />\n    ")
+#    endif()
+#endforeach()
 
 # Generate a manifest
 configure_file(
@@ -186,12 +190,9 @@ configure_file(
 
 # Copy manfiest assets
 file(MAKE_DIRECTORY "${CPACK_TEMPORARY_DIRECTORY}/Assets")
-file(COPY "${CPACK_MSIX_PACKAGE_LOGO}" 
-     DESTINATION "${CPACK_TEMPORARY_DIRECTORY}/Assets/Logo.png")
-file(COPY "${CPACK_MSIX_PACKAGE_LOGO_44}" 
-     DESTINATION "${CPACK_TEMPORARY_DIRECTORY}/Assets/Logo-44.png")
-file(COPY "${CPACK_MSIX_PACKAGE_LOGO_150}" 
-     DESTINATION "${CPACK_TEMPORARY_DIRECTORY}/Assets/Logo-150.png")
+file(COPY_FILE "${CPACK_MSIX_PACKAGE_LOGO}" "${CPACK_TEMPORARY_DIRECTORY}/Assets/Logo.png")
+file(COPY_FILE "${CPACK_MSIX_PACKAGE_LOGO_44}" "${CPACK_TEMPORARY_DIRECTORY}/Assets/Logo-44.png")
+file(COPY_FILE "${CPACK_MSIX_PACKAGE_LOGO_150}" "${CPACK_TEMPORARY_DIRECTORY}/Assets/Logo-150.png")
 
 ####################################################
 ## PACKAGING
