@@ -43,11 +43,20 @@ if(WIN32)
     endif()
 
     ## MSIX
+
+    # Identity
     set(CPACK_MSIX_PACKAGE_IDENTITY_NAME "JuggernyautToolchain")
     set(CPACK_MSIX_PACKAGE_ARCHITECTURE ${JUG_BINARY_PLATFORM})
     set(CPACK_MSIX_PACKAGE_LOGO ${GLOBAL_PACKAGE_LOGO})
     set(CPACK_MSIX_PACKAGE_LOGO_44 "${JUG_CMAKE_DIR}/installer/assets/jug_icon_44.png")
     set(CPACK_MSIX_PACKAGE_LOGO_150 "${JUG_CMAKE_DIR}/installer/assets/jug_icon_150.png")
+
+    # Apps
+    include("${JUG_CMAKE_DIR}/installer/custom/MSIXTools.cmake")
+    cpack_msix_add_application_alias(JuggernyautCompiler "Juggernyaut Compiler" "Juggernyaut source compiler" jug-cmp)
+    cpack_msix_add_application_alias(JuggernyautServer "Juggernyaut Server" "Juggernyaut IDE language server"  jug-lsp)
+    cpack_msix_add_application_alias(JuggernyautPackageManager "Juggernyaut Package Manager" "Juggernyaut language package manager" jug-pck)
+    cpack_msix_add_application_alias(jug "Juggernyaut Toolchain" "Juggernyaut development toolchain" jug)
 
     ## NSIS
 
