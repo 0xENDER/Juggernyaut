@@ -188,6 +188,7 @@ endif()
 set(CPACK_COMPONENTS_GROUPING IGNORE)
 
 # Installation options
+include(CPackComponent)
 
 # Toolchain specifics
 cpack_add_component_group(Toolchain
@@ -319,3 +320,15 @@ if(JUG_USES_IFW)
         )
     endif()
 endif()
+
+# Order groups
+cpack_ifw_configure_component_group(Toolchain
+    SORTING_PRIORITY 100
+    EXPANDED
+)
+cpack_ifw_configure_component_group(SystemConfigs
+    SORTING_PRIORITY 50
+)
+cpack_ifw_configure_component_group(DebugSymbs
+    SORTING_PRIORITY 10
+)
