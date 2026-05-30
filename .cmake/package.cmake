@@ -319,16 +319,16 @@ if(JUG_USES_IFW)
             SCRIPT "${JUG_CMAKE_DIR}/installer/menu-shortcuts.qs"
         )
     endif()
-endif()
 
-# Order groups
-cpack_ifw_configure_component_group(Toolchain
-    SORTING_PRIORITY 100
-    EXPANDED
-)
-cpack_ifw_configure_component_group(SystemConfigs
-    SORTING_PRIORITY 50
-)
-cpack_ifw_configure_component_group(DebugSymbs
-    SORTING_PRIORITY 10
-)
+    # Order groups
+    cpack_ifw_configure_component_group(Toolchain
+        SORTING_PRIORITY 100
+        EXPANDED
+    )
+    cpack_ifw_configure_component_group(SystemConfigs
+        SORTING_PRIORITY 50
+    )
+    cpack_ifw_configure_component_group(DebugSymbs
+        SORTING_PRIORITY 10
+    )
+endif()
