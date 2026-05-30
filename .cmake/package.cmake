@@ -40,9 +40,14 @@ if(WIN32)
     if(NOT ${JUG_BINARY_PLATFORM} STREQUAL "arm32")
         list(APPEND CPACK_GENERATOR "External")
         set(CPACK_EXTERNAL_PACKAGE_SCRIPT "${JUG_CMAKE_DIR}/installer/custom/MSIX.cmake")
+        set(CPACK_EXTERNAL_ENABLE_STAGING ON)
+        set(CPACK_EXTERNAL_COMPONENT_INSTALL OFF)
     endif()
 
     ## MSIX
+
+    # Configs
+    set(CPACK_MSIX_RUNTIME_FOLDER_NAME ${CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION})
 
     # Identity
     set(CPACK_MSIX_PACKAGE_IDENTITY_NAME "JuggernyautToolchain")
