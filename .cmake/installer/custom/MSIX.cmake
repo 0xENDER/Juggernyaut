@@ -256,7 +256,7 @@ message(STATUS "[CPACK MSIX] Packaging MSIX with MakeAppx...")
 execute_process(
     COMMAND "${MAKEAPPX_EXECUTABLE}" pack 
             /d "${MSIX_STAGING_ROOT}" 
-            /p "${CPACK_TOPLEVEL_DIRECTORY}/${CPACK_MSIX_PACKAGE_FILE_NAME}.msix"
+            /p "${CPACK_PACKAGE_DIRECTORY}/${CPACK_MSIX_PACKAGE_FILE_NAME}.msix"
             /o # Overwrite if exists
     RESULT_VARIABLE MAKEAPPX_RESULT
     OUTPUT_VARIABLE MAKEAPPX_OUTPUT
@@ -271,30 +271,29 @@ if(CPACK_MSIX_GENERATE_UPLOAD)
     message(STATUS "[CPACK MSIX] Generating a '.appxupload' file...")
 
     # Check for debug symbols
-    file(GLOB MSIX_INTERNAL_PDB_FILES "${MSIX_INTERNAL_BIN}/*.pdb" CONFIGURE_DEPENDS)
-    list(LENGTH MSIX_INTERNAL_PDB_DETECTED MSIX_INTERNAL_PDB_COUNT)
-    set(MSIX_INTERNAL_PDB_DETECTED MSIX_INTERNAL_PDB_COUNT GREATER 0)
-    if(MSIX_INTERNAL_PDB_DETECTED)
+    file(GLOB MSIX_INTERNAL_PDB_FILES "${MSIX_INTERNAL_BIN}/*.pdb")
+    list(LENGTH MSIX_INTERNAL_PDB_FILES MSIX_INTERNAL_PDB_COUNT)
+    set(MSIX_INTERNAL_PDB_DETECTED OFF)
+    if(MSIX_INTERNAL_PDB_COUNT GREATER 0)
         message(STATUS "[CPACK MSIX] Debug symbols found. Generating a '.appxsym' file...")
+        set(MSIX_INTERNAL_PDB_DETECTED ON)
 
         # Zip the .pdb files into .appxsym
         execute_process(
-            COMMAND powershell.exe -Command
-            "Compress-Archive -Path '${MSIX_INTERNAL_BIN}/*.pdb' -DestinationPath '${CPACK_TOPLEVEL_DIRECTORY}/${CPACK_MSIX_PACKAGE_FILE_NAME}.debug.zip' -Force; Rename-Item -Path '${CPACK_TOPLEVEL_DIRECTORY}/${CPACK_MSIX_PACKAGE_FILE_NAME}.debug.zip' -NewName '${CPACK_MSIX_PACKAGE_FILE_NAME}.appxsym'"
+            COMMAND "${CMAKE_COMMAND}" -E tar "cf" "${CPACK_TOPLEVEL_DIRECTORY}/${CPACK_MSIX_PACKAGE_FILE_NAME}.appxsym" --format=zip ${MSIX_INTERNAL_PDB_FILES}
+            RESULT_VARIABLE PDB_ZIP_RESULT
         )
     endif()
 
     # Zip the contents into .appxupload
     if(MSIX_INTERNAL_PDB_DETECTED)
         execute_process(
-            COMMAND powershell.exe -Command
-            "Compress-Archive -Path '${CPACK_TOPLEVEL_DIRECTORY}/${CPACK_MSIX_PACKAGE_FILE_NAME}.msix', '${CPACK_TOPLEVEL_DIRECTORY}/${CPACK_MSIX_PACKAGE_FILE_NAME}.appxsym' -DestinationPath '${CPACK_TOPLEVEL_DIRECTORY}/${CPACK_MSIX_PACKAGE_FILE_NAME}.upload.zip' -Force; Rename-Item -Path '${CPACK_TOPLEVEL_DIRECTORY}/${CPACK_MSIX_PACKAGE_FILE_NAME}.upload.zip' -NewName '${CPACK_MSIX_PACKAGE_FILE_NAME}.appxupload'"
+            COMMAND "${CMAKE_COMMAND}" -E tar "cf" "${CPACK_PACKAGE_DIRECTORY}/${CPACK_MSIX_PACKAGE_FILE_NAME}.appxupload" --format=zip "${CPACK_PACKAGE_DIRECTORY}/${CPACK_MSIX_PACKAGE_FILE_NAME}.msix" "${CPACK_TOPLEVEL_DIRECTORY}/${CPACK_MSIX_PACKAGE_FILE_NAME}.appxsym"
         )
     else()
+        message(WARNING "[CPACK MSIX] Couldn't include debug symbols in '.appxupload'...")
         execute_process(
-            COMMAND powershell.exe -Command
-            "Compress-Archive -Path '${CPACK_TOPLEVEL_DIRECTORY}/${CPACK_MSIX_PACKAGE_FILE_NAME}.msix' -DestinationPath '${CPACK_TOPLEVEL_DIRECTORY}/${CPACK_MSIX_PACKAGE_FILE_NAME}.upload.zip' -Force; Rename-Item -Path '${CPACK_TOPLEVEL_DIRECTORY}/${CPACK_MSIX_PACKAGE_FILE_NAME}.upload.zip' -NewName '${CPACK_MSIX_PACKAGE_FILE_NAME}.appxupload'"
+            COMMAND "${CMAKE_COMMAND}" -E tar "cf" "${CPACK_PACKAGE_DIRECTORY}/${CPACK_MSIX_PACKAGE_FILE_NAME}.appxupload" --format=zip "${CPACK_PACKAGE_DIRECTORY}/${CPACK_MSIX_PACKAGE_FILE_NAME}.msix"
         )
-        message(WARNING "[CPACK MSIX] The generated '.appxupload' file doesn't include debug symbols...")
     endif()
 endif()
