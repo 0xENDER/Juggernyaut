@@ -14,13 +14,14 @@ cmake_minimum_required(VERSION 4.2 FATAL_ERROR)
 ##      - DESCRIPTION
 ##      - ALIASES (accessed through the command line)
 ####################################################
-macro(cpack_msix_add_application_alias TARGET DISPLAY_NAME DESCRIPTION)
+function(cpack_msix_add_application_alias TARGET DISPLAY_NAME DESCRIPTION)
+    set(CPACK_MSIX_APPLICATIONS_MOD)
     if((NOT DEFINED CPACK_MSIX_APPLICATIONS) OR (CPACK_MSIX_APPLICATIONS STREQUAL ""))
-        set(CPACK_MSIX_APPLICATIONS "{\n")
+        set(CPACK_MSIX_APPLICATIONS_MOD "{\n")
     else()
-        set(CPACK_MSIX_APPLICATIONS "${CPACK_MSIX_APPLICATIONS},{\n")
+        set(CPACK_MSIX_APPLICATIONS_MOD "${CPACK_MSIX_APPLICATIONS},{\n")
     endif()
-    set(CPACK_MSIX_APPLICATIONS "${CPACK_MSIX_APPLICATIONS}
+    set(CPACK_MSIX_APPLICATIONS_MOD "${CPACK_MSIX_APPLICATIONS_MOD}
     \\\"type\\\": \\\"ALIAS\\\",
     \\\"target\\\": \\\"${TARGET}\\\",
     \\\"name\\\": \\\"${DISPLAY_NAME}\\\",
@@ -34,5 +35,8 @@ macro(cpack_msix_add_application_alias TARGET DISPLAY_NAME DESCRIPTION)
             set(ALIAS_LIST "${ALIAS_LIST}, \\\"${ALIAS}\\\"")
         endif()
     endforeach()
-    set(CPACK_MSIX_APPLICATIONS "${CPACK_MSIX_APPLICATIONS}${ALIAS_LIST}]}")
-endmacro()
+    set(CPACK_MSIX_APPLICATIONS_MOD "${CPACK_MSIX_APPLICATIONS_MOD}${ALIAS_LIST}]}")
+
+    # Update CPACK_MSIX_APPLICATIONS
+    set(CPACK_MSIX_APPLICATIONS "${CPACK_MSIX_APPLICATIONS_MOD}" PARENT_SCOPE)
+endfunction()
