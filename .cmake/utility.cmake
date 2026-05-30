@@ -176,23 +176,23 @@ function(sanitize_version RAW_VERSION OUTPUT_VAR)
 
         string(TOLOWER "${REL_NAME}" REL_NAME)
         if(REL_NAME STREQUAL "alpha")
-            set(REL_CODE "1")
-        elseif(REL_NAME STREQUAL "beta")
             set(REL_CODE "2")
-        elseif(REL_NAME STREQUAL "nightly")
+        elseif(REL_NAME STREQUAL "beta")
             set(REL_CODE "3")
-        elseif(REL_NAME STREQUAL "candidate")
+        elseif(REL_NAME STREQUAL "nightly")
             set(REL_CODE "4")
-        elseif(REL_NAME STREQUAL "release")
+        elseif(REL_NAME STREQUAL "candidate")
             set(REL_CODE "5")
-        elseif(REL_NAME STREQUAL "hotfix")
+        elseif(REL_NAME STREQUAL "release")
             set(REL_CODE "6")
+        elseif(REL_NAME STREQUAL "hotfix")
+            set(REL_CODE "7")
         else()
-            set(REL_CODE "0") # Fallback for unknown release tags
+            set(REL_CODE "1") # Fallback for unknown release tags
         endif()
 
         # Construct version string
-        set(${OUTPUT_VAR} "${SEMVER}-${REL_CODE}.${REL_PATCH}" PARENT_SCOPE)
+        set(${OUTPUT_VAR} "${SEMVER}.${REL_CODE}${REL_PATCH}" PARENT_SCOPE)
 
     else()
         message(FATAL_ERROR "[VERSION SANITIZER] Release version string pattern isn't allowed!")
