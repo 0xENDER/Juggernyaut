@@ -38,9 +38,7 @@ if(WIN32)
         set(CPACK_GENERATOR "NSIS")
     endif()
     if(NOT ${JUG_BINARY_PLATFORM} STREQUAL "arm32")
-        list(APPEND CPACK_GENERATOR "External")
-        set(CPACK_EXTERNAL_PACKAGE_SCRIPT "${JUG_CMAKE_DIR}/installer/custom/MSIX.cmake")
-        set(CPACK_EXTERNAL_ENABLE_STAGING ON)
+        cpack_msix_preset()
     endif()
 
     ## MSIX
@@ -57,7 +55,6 @@ if(WIN32)
     set(CPACK_MSIX_PACKAGE_LOGO_150 "${JUG_CMAKE_DIR}/installer/assets/jug_icon_150.png")
 
     # Apps
-    include("${JUG_CMAKE_DIR}/installer/custom/MSIXTools.cmake")
     cpack_msix_add_application_alias(JuggernyautCompiler "Juggernyaut Compiler" "Juggernyaut source compiler" jug-cmp)
     cpack_msix_add_application_alias(JuggernyautServer "Juggernyaut Server" "Juggernyaut IDE language server"  jug-lsp)
     cpack_msix_add_application_alias(JuggernyautPackageManager "Juggernyaut Package Manager" "Juggernyaut language package manager" jug-pck)
