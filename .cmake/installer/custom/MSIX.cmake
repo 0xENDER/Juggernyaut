@@ -7,7 +7,6 @@ cmake_minimum_required(VERSION 4.2 FATAL_ERROR)
 # list(APPEND CPACK_GENERATOR "External")
 # set(CPACK_EXTERNAL_PACKAGE_SCRIPT ".../MSIX.cmake")
 # set(CPACK_EXTERNAL_ENABLE_STAGING ON)
-# set(CPACK_EXTERNAL_COMPONENT_INSTALL OFF)
 
 ####################################################
 ## SUPPORTED VARIABLES
@@ -119,11 +118,42 @@ else()
 endif()
 
 ####################################################
+## STAGING
+####################################################
+
+# Determine where CPack dumped the component folders
+if(EXISTS "${CPACK_TEMPORARY_DIRECTORY}/${CPACK_PACKAGE_FILE_NAME}")
+    set(MSIX_INTERNAL_STAGE_ROOT "${CPACK_TEMPORARY_DIRECTORY}/${CPACK_PACKAGE_FILE_NAME}")
+else()
+    set(MSIX_INTERNAL_STAGE_ROOT "${CPACK_TEMPORARY_DIRECTORY}")
+endif()
+
+# Create a clean staging directory
+set(MSIX_STAGING_ROOT "${CPACK_TOPLEVEL_DIRECTORY}/MSIX")
+file(REMOVE_RECURSE "${MSIX_STAGING_ROOT}") # Clean up from previous runs
+file(MAKE_DIRECTORY "${MSIX_STAGING_ROOT}")
+
+message(STATUS "[CPACK MSIX] Flattening component directories into ${MSIX_STAGING_ROOT}...")
+
+# 3. Loop through the component folders and merge their contents
+file(GLOB MSIX_COMPONENT_DIRS LIST_DIRECTORIES true "${MSIX_INTERNAL_STAGE_ROOT}/*")
+foreach(COMP_DIR IN LISTS MSIX_COMPONENT_DIRS)
+    if(IS_DIRECTORY "${COMP_DIR}")
+        # Get everything inside this component folder (e.g., the 'bin' folder)
+        file(GLOB COMP_CONTENTS "${COMP_DIR}/*")
+        if(COMP_CONTENTS)
+            # Copy it into our flattened root
+            file(COPY ${COMP_CONTENTS} DESTINATION "${MSIX_STAGING_ROOT}")
+        endif()
+    endif()
+endforeach()
+
+####################################################
 ## PACKAGING READYUP
 ####################################################
 
 # Get the binaries directory (usually /bin)
-set(MSIX_INTERNAL_BIN "${CPACK_TEMPORARY_DIRECTORY}/${CPACK_MSIX_RUNTIME_FOLDER_NAME}")
+set(MSIX_INTERNAL_BIN "${MSIX_STAGING_ROOT}/${CPACK_MSIX_RUNTIME_FOLDER_NAME}")
 
 # Get a list of manifest applications
 set(MSIX_INTERNAL_MANIFEST_APPLICATIONS "")
@@ -176,11 +206,11 @@ foreach(INDEX RANGE ${MSIX_INTERNAL_APPLICATIONS_LAST_INDEX})
 endforeach()
 
 # Generate a list of files to install
-#file(GLOB_RECURSE MSIX_INTERNAL_STAGED_FILES "${CPACK_TEMPORARY_DIRECTORY}/*")
+#file(GLOB_RECURSE MSIX_INTERNAL_STAGED_FILES "${MSIX_STAGING_ROOT}/*")
 #set(MSIX_INTERNAL_MANIFEST_FILES "")
 #foreach(FILE ${MSIX_INTERNAL_STAGED_FILES})
 #    # Strip the staging prefix to get the relative path
-#    file(RELATIVE_PATH REL_PATH "${CPACK_TEMPORARY_DIRECTORY}" "${FILE}")
+#    file(RELATIVE_PATH REL_PATH "${MSIX_STAGING_ROOT}" "${FILE}")
 #    
 #    # If it's a file, add it to the Manifest's <Files> section
 #    if(NOT IS_DIRECTORY ${FILE})
@@ -191,15 +221,15 @@ endforeach()
 # Generate a manifest
 configure_file(
     "${CMAKE_CURRENT_LIST_DIR}/AppxManifest.xml.in"
-    "${CPACK_TEMPORARY_DIRECTORY}/AppxManifest.xml"
+    "${MSIX_STAGING_ROOT}/AppxManifest.xml"
     @ONLY
 )
 
 # Copy manfiest assets
-file(MAKE_DIRECTORY "${CPACK_TEMPORARY_DIRECTORY}/Assets")
-file(COPY_FILE "${CPACK_MSIX_PACKAGE_LOGO}" "${CPACK_TEMPORARY_DIRECTORY}/Assets/Logo.png")
-file(COPY_FILE "${CPACK_MSIX_PACKAGE_LOGO_44}" "${CPACK_TEMPORARY_DIRECTORY}/Assets/Logo-44.png")
-file(COPY_FILE "${CPACK_MSIX_PACKAGE_LOGO_150}" "${CPACK_TEMPORARY_DIRECTORY}/Assets/Logo-150.png")
+file(MAKE_DIRECTORY "${MSIX_STAGING_ROOT}/Assets")
+file(COPY_FILE "${CPACK_MSIX_PACKAGE_LOGO}" "${MSIX_STAGING_ROOT}/Assets/Logo.png")
+file(COPY_FILE "${CPACK_MSIX_PACKAGE_LOGO_44}" "${MSIX_STAGING_ROOT}/Assets/Logo-44.png")
+file(COPY_FILE "${CPACK_MSIX_PACKAGE_LOGO_150}" "${MSIX_STAGING_ROOT}/Assets/Logo-150.png")
 
 ####################################################
 ## PACKAGING
@@ -225,7 +255,7 @@ find_program(MAKEAPPX_EXECUTABLE makeappx
 message(STATUS "[CPACK MSIX] Packaging MSIX with MakeAppx...")
 execute_process(
     COMMAND "${MAKEAPPX_EXECUTABLE}" pack 
-            /d "${CPACK_TEMPORARY_DIRECTORY}" 
+            /d "${MSIX_STAGING_ROOT}" 
             /p "${CPACK_TOPLEVEL_DIRECTORY}/${CPACK_MSIX_PACKAGE_FILE_NAME}.msix"
             /o # Overwrite if exists
     RESULT_VARIABLE MAKEAPPX_RESULT
