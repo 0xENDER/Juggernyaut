@@ -198,3 +198,43 @@ function(sanitize_version RAW_VERSION OUTPUT_VAR)
         message(FATAL_ERROR "[VERSION SANITIZER] Release version string pattern isn't allowed!")
     endif()
 endfunction()
+
+function(install_debug_symbols TARGET_NAME COMPONENT_NAME)
+    if(MSVC)
+        install(FILES $<TARGET_PDB_FILE:${TARGET_NAME}>
+            DESTINATION symbols
+            COMPONENT ${COMPONENT_NAME}
+            OPTIONAL
+        )
+    elseif(APPLE)
+        # MACOS: Native Split-DWARF equivalent (.dSYM Bundle)
+        # Apple Clang natively leaves DWARF data in .o files. 
+        # dsymutil links that map into a deployable .dSYM directory bundle.
+        
+        install(CODE "
+            message(STATUS \"Generating .dSYM bundle for ${TARGET_NAME}...\")
+            file(MAKE_DIRECTORY \"\${CMAKE_INSTALL_PREFIX}/symbols\")
+            
+            execute_process(COMMAND dsymutil \"$<TARGET_FILE:${TARGET_NAME}>\" 
+                            -o \"\${CMAKE_INSTALL_PREFIX}/symbols/$<TARGET_FILE_NAME:${TARGET_NAME}>.dSYM\")
+            " COMPONENT ${COMPONENT_NAME}
+        )
+
+        install(CODE "
+            message(STATUS \"Stripping macOS binary ${TARGET_NAME}...\")
+            execute_process(COMMAND strip -S \"\${CMAKE_INSTALL_PREFIX}/bin/$<TARGET_FILE_NAME:${TARGET_NAME}>\")
+            " COMPONENT ${COMPONENT_NAME}
+        )
+
+    elseif(UNIX AND NOT APPLE)
+        # LINUX: Fission (-gsplit-dwarf) WITHOUT merging
+        
+        # Gather all the scattered .dwo files directly from the target's build tree.
+        # CMake outputs object and .dwo files into the CMakeFiles/TargetName.dir/ folder.
+        install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${TARGET_NAME}.dir/"
+            DESTINATION symbols/${TARGET_NAME}_dwo
+            COMPONENT ${TARGET_NAME}
+            FILES_MATCHING PATTERN "*.dwo"
+        )
+    endif()
+endfunction()
