@@ -49,7 +49,6 @@ if(WIN32)
     set(CPACK_MSIX_DEBUG_PATH_OFFSET "symbols")
 
     # Identity
-    set(CPACK_MSIX_PACKAGE_IDENTITY_NAME "JuggernyautToolchain")
     set(CPACK_MSIX_PACKAGE_ARCHITECTURE ${JUG_BINARY_PLATFORM})
     set(CPACK_MSIX_PACKAGE_LOGO ${GLOBAL_PACKAGE_LOGO})
     set(CPACK_MSIX_PACKAGE_LOGO_44 "${JUG_CMAKE_DIR}/installer/assets/jug_icon_44.png")
