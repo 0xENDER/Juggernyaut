@@ -22,6 +22,7 @@ else()
         FetchContent_Declare(lsp
             GIT_REPOSITORY https://github.com/leon-bckl/lsp-framework.git
             GIT_TAG ${LSP_FRAMEWORK_LIB_VERSION}
+            GIT_SUBMODULES "" # Fix submodule fetch issues
             SOURCE_DIR ${JUG_DEP_LSP_FRAMEWORK_LIB_PATH}
             SYSTEM
 
