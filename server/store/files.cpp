@@ -15,7 +15,7 @@ namespace fs = std::filesystem;
 
 namespace Store {
     std::string normalizePath(const std::string &path) {
-        std::string sanitized = (std::string) lsp::DocumentUri::fromPath(path).path();
+        std::string sanitized = (std::string) lsp::DocumentUri::fileUriFromPath(path).path();
 
         // Handle Windows backslashes
         std::replace(sanitized.begin(), sanitized.end(), '\\', '/');

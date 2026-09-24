@@ -3,7 +3,7 @@ message(STATUS "[DEPENDENCIES] Checking dependencies...")
 include(FetchContent)
 
 # lsp-framework
-set(LSP_FRAMEWORK_LIB_VERSION 1.3.1)
+set(LSP_FRAMEWORK_LIB_VERSION 2.0.0)
 option(USE_INSTALLED_LSP_FRAMEWORK "Ignore or use installed lsp-framework" OFF) # Default OFF
 if(USE_INSTALLED_LSP_FRAMEWORK)
     find_package(lsp ${LSP_FRAMEWORK_LIB_VERSION} EXACT REQUIRED)
