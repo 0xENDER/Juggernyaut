@@ -8,6 +8,7 @@
 #include <exception>
 #include <iostream>
 #include <variant>
+#include <charconv>
 
 // Common headers
 #include "common/headers.hpp"
