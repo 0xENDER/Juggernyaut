@@ -37,7 +37,7 @@ namespace Capabilities {
         }
 
         endpoint.onInitialize(
-            [&endpoint, &session](auto&& params) -> lsp::InitializeResult {
+            [&session](auto&& params) -> lsp::InitializeResult {
                 //printMessage<lsp::requests::Initialize>(params);
                 logStdErr("Initialising the connection...");
 
