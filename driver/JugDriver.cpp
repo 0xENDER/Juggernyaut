@@ -63,6 +63,7 @@ namespace Driver {
         // Generate a dependency tree for an entry!
         void dependenciesLookup(Data::Host::VFS *vfs) {
             // ...
+            (void)vfs;
         }
 
         void JugDriver::run() {
