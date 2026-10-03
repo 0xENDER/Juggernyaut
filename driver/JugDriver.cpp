@@ -8,12 +8,6 @@
 namespace Driver {
     namespace JugDriver {
         // Entry points lookup
-        void entryLookup(DriverHooks &driverHooks, Data::Host::VFS *vfs, const std::vector<std::string> &input, std::vector<std::string> &dirs) {
-            // Notice that 'input' can include jug.toml files, *.jug files, or a directory path!
-            for (auto uri : input) {
-                entryCheck(driverHooks, vfs, uri, dirs);
-            }
-        }
         void entryCheck(DriverHooks &driverHooks, Data::Host::VFS *vfs, const std::string &uri, std::vector<std::string> &dirs) {
             if (!(vfs->exists(uri))) {
                 // Couldn't find the specified uri
@@ -57,6 +51,12 @@ namespace Driver {
 
                     driverHooks.onEntryError(std::move(err));
                 }
+            }
+        }
+        void entryLookup(DriverHooks &driverHooks, Data::Host::VFS *vfs, const std::vector<std::string> &input, std::vector<std::string> &dirs) {
+            // Notice that 'input' can include jug.toml files, *.jug files, or a directory path!
+            for (auto uri : input) {
+                entryCheck(driverHooks, vfs, uri, dirs);
             }
         }
 
