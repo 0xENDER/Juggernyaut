@@ -31,15 +31,12 @@ namespace Session {
 
         States states;
 
-        ManagerTools manager;
-
         return {
             std::move(sessionConfigs),
             std::move(sessionHooks),
             states,
             nullptr,
-            false,
-            std::move(manager)
+            false
         };
     }
 

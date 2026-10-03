@@ -176,16 +176,16 @@ namespace Data {
         }
 
         // External
-        const bool SourceStore::isExternalFetchSet() {
-            return this->resolveLibraryPath != nullptr;
-        }
-        const void* SourceStore::getExternalSymbols(Data::Manager::LibraryPath path) {
-            if (this->resolveLibraryPath != nullptr) {
-                return this->resolveLibraryPath(path);
-            }
-
-            return nullptr;
-        }
+        //const bool SourceStore::isExternalFetchSet() {
+        //    return this->resolveLibraryPath != nullptr;
+        //}
+        //const void* SourceStore::getExternalSymbols(Data::Manager::LibraryPath path) {
+        //    if (this->resolveLibraryPath != nullptr) {
+        //        return this->resolveLibraryPath(path);
+        //    }
+        //
+        //    return nullptr;
+        //}
 
         // Memory housekeeping
         static uint32_t currentRound = 0;

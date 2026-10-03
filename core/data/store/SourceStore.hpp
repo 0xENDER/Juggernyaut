@@ -11,8 +11,6 @@
 #include "types.hpp"
 #include "Source.hpp"
 
-#include "../manager/types.hpp"
-
 #ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable: 4251) // Suppress DLL interface warning for STL types
@@ -31,12 +29,10 @@ namespace Data {
                 std::vector<std::string> importDirs;
 
                 // External calls
-                Data::Manager::ResolveLibraryPath resolveLibraryPath = nullptr;
+                // resolveLibraryPath???;
             public:
                 SourceId lastID = 10; // 0-10 are used for internal purposes
                 SourceStore() = default;
-                SourceStore(Data::Manager::ResolveLibraryPath resolve)
-                    : resolveLibraryPath(resolve) {};
                 // Fix std::unique_ptr bug
                 SourceStore(const SourceStore&) = delete;
                 SourceStore& operator=(const SourceStore&) = delete;
@@ -76,8 +72,8 @@ namespace Data {
                 void addSource(const std::string &uri, bool isEntry) ;
 
                 // External
-                const bool isExternalFetchSet() ;
-                const void* getExternalSymbols(Data::Manager::LibraryPath path) ;
+                // const bool isExternalFetchSet() ;
+                // const void* getExternalSymbols(LibraryPath??? path) ;
 
                 // Memory housekeeping
                 virtual void deleteSource(std::unique_ptr<Source> &src, bool erase = true) ; // Allow override
