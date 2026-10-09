@@ -1,2 +1,9 @@
 1[TXT $PATH]:
 -couldn't access/find the file/directory: "$PATH"
+2[TXT $PATH]:
+-couldn't find a valid 'jug.toml' configuration file in "$PATH" or any parent directories.
+3[TXT $PATH]:
+-"$PATH" isn't considered a valid project configuration file. (try to reference either a 'jug.toml' file, or a directory that contains a 'jug.toml')
+4[TXT $PATH]:
+-"$PATH" isn't considered a valid source file. (try to reference a file with the extension '.jug')
+

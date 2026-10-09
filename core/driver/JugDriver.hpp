@@ -29,7 +29,6 @@ namespace Driver {
         };
 
         struct DriverConfigs {
-            std::vector<std::string> input; // jug.toml/*.jug files/directories
             const std::string librariesPath = ""; // Absolute path to the root libraries directory!
             Hooks hooks;
         };
@@ -45,10 +44,21 @@ namespace Driver {
                 UnitId lastID = 10;
 
                 JugDriver(HostConfigs hostConfigs, DriverConfigs driverConfigs) : host(hostConfigs), configs(driverConfigs) {};
-                JugDriver& operator=(const JugDriver&) = delete;
                 virtual ~JugDriver() = default;
 
+                // Explicitly delete copy constructor and assignment!
+                JugDriver(const JugDriver&) = delete;
+                JugDriver& operator=(const JugDriver&) = delete;
+                // Explicitly allow moving
+                JugDriver(JugDriver&&) noexcept = default;
+                JugDriver& operator=(JugDriver&&) noexcept = default;
+
                 void run() ;
+
+                void processPaths(std::vector<std::string> &paths) ;
+
+                void addProject(const std::string &path) ;
+                void addStrayFile(const std::string &path) ;
         };
     }
 }
