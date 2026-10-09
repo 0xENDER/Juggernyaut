@@ -50,7 +50,7 @@ namespace Parser {
         std::any ASTGenVisitor::visitImport_library(ANTLRParser::Import_libraryContext *context) {
             // auto tokens = context->IDENTIFIER();
 
-            if (this->store != nullptr && false) { // this->store->isExternalFetchSet()
+            if (this->store != nullptr) { // && this->store->isExternalFetchSet()
                 Diagnostics::Diagnostic diag = Diagnostics::getGenRuleDiagnostic(context);
 
                 // Update diagnostic data
