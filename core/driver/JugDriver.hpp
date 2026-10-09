@@ -17,6 +17,11 @@
 #include "Unit.hpp"
 #include "Hooks.hpp"
 
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4251) // Suppress DLL interface warning for STL types
+#endif
+
 namespace Driver {
     namespace JugDriver {
         struct HostConfigs {
@@ -47,3 +52,7 @@ namespace Driver {
         };
     }
 }
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
