@@ -21,8 +21,8 @@ An experimental general-purpose programming language with *no particular purpose
     Generates a parser AST and links processing contexts.
   - `session`
     Kick starts the entire workflow of the language's front-end within one project! (recommended for isolated language debugging)
-- `/driver`: (__*current focus!*__)
-  Kick starts concurrent sessions across multiple projects. (recommended for normal use)
+  - `driver`: (__*current focus!*__)
+    Kick starts concurrent sessions across multiple projects. (recommended for normal use)
 - `/extensions`:
   Includes extensions for well-known code editors.
 - `/package-manager`:" (*empty*)

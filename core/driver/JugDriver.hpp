@@ -9,10 +9,10 @@
 #include "dynamic.hpp" // JUG_DRIVER_API
 
 // Host/System
-#include "../core/data/host/VFS.hpp"
+#include "../data/host/VFS.hpp"
 
 // Sessions
-#include "../core/session/session.hpp"
+#include "../session/session.hpp"
 
 #include "Unit.hpp"
 #include "Hooks.hpp"

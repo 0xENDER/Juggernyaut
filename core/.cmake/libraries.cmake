@@ -66,3 +66,18 @@ add_internal_target_cxx_flags(JuggernyautSessionLibrary FALSE)
 jug_common(JuggernyautSessionLibrary)
 add_dependencies(JuggernyautSessionLibrary JuggernyautDiagnosticsLibrary JuggernyautDataLibrary JuggernyautParserLibrary)
 target_link_libraries(JuggernyautSessionLibrary PUBLIC JuggernyautDiagnosticsLibrary JuggernyautDataLibrary JuggernyautParserLibrary)
+
+# Create a library from /driver
+add_library(JuggernyautDriverLibrary SHARED)
+target_sources_search(JuggernyautDriverLibrary ${JUG_CORE_SOURCE_DIR}/driver/*.cpp TRUE)
+# Expose library exports
+target_compile_definitions(JuggernyautDriverLibrary PRIVATE JUG_DRIVER_LIBRARY_EXPORTS)
+# Attach manifest data
+attach_manifest_data(JuggernyautDriverLibrary ${JUG_CORE_MANIFEST_FILE} TRUE)
+# Add compiler flags
+add_internal_target_cxx_flags(JuggernyautDriverLibrary FALSE)
+# Dependencies
+jug_common(JuggernyautDriverLibrary)
+add_dependencies(JuggernyautDriverLibrary JuggernyautSessionLibrary JuggernyautDiagnosticsLibrary JuggernyautDataLibrary)
+target_link_libraries(JuggernyautDriverLibrary PUBLIC JuggernyautSessionLibrary JuggernyautDiagnosticsLibrary JuggernyautDataLibrary)
+target_include_directories(JuggernyautDriverLibrary SYSTEM PRIVATE ${TOMLPP_INCLUDE_DIR})

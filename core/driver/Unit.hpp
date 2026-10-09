@@ -9,7 +9,7 @@
 #include "dynamic.hpp" // JUG_DRIVER_API
 
 // Sessions
-#include "../core/session/session.hpp"
+#include "../session/session.hpp"
 
 namespace Driver {
     using UnitId = uint32_t;

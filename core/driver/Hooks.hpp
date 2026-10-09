@@ -8,8 +8,8 @@
 #include "common/headers.hpp"
 #include "dynamic.hpp" // JUG_DRIVER_API
 
-#include "../core/diagnostics/Diagnostic.hpp"
-#include "../core/data/store/types.hpp"
+#include "../diagnostics/Diagnostic.hpp"
+#include "../data/store/types.hpp"
 
 #include "Unit.hpp"
 
