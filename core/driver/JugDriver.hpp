@@ -50,8 +50,8 @@ namespace Driver {
                 JugDriver(const JugDriver&) = delete;
                 JugDriver& operator=(const JugDriver&) = delete;
                 // Explicitly allow moving
-                JugDriver(JugDriver&&) noexcept = default;
-                JugDriver& operator=(JugDriver&&) noexcept = default;
+                //JugDriver(JugDriver&&) noexcept = default;
+                //JugDriver& operator=(JugDriver&&) noexcept = default;
 
                 void run() ;
 
