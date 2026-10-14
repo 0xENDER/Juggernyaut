@@ -43,7 +43,7 @@ namespace Session {
     // Main pipeline trigger funciton
     void initiate(Session &session) {
         if (session.isRunning) {
-            throw std::runtime_error("Attempting to initiate an running session");
+            throw std::runtime_error("Attempting to initiate a running session");
         } else {
             session.isRunning = true;
         }
