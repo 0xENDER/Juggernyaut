@@ -6,4 +6,11 @@
 -"$PATH" isn't considered a valid project configuration file. (try to reference either a 'jug.toml' file, or a directory that contains a 'jug.toml')
 4[TXT $PATH]:
 -"$PATH" isn't considered a valid source file. (try to reference a file with the extension '.jug')
-
+5[TXT $MSG]:
+-data type mismatch: $MSG
+6[TXT $VAR, TXT $SECTION]:
+-Unknown variable '$VAR' in '$SECTION'! (The value is ignored)
+7[TXT $MSG]:
+-TOML parsing error: $MSG
+8[TXT $NAME]:
+-unknown section or top-level variable '$NAME'! (The value is ignored)

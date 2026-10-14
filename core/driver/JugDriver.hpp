@@ -35,10 +35,12 @@ namespace Driver {
 
         class JUG_DRIVER_API JugDriver {
             private:
-                std::unordered_map<UnitId, std::unique_ptr<Unit>> sessions;
-                std::vector<UnitId> entryPoints;
+                // Provided Configs
                 HostConfigs host;
                 DriverConfigs configs;
+                // Internal variables
+                std::unordered_map<UnitId, std::unique_ptr<Unit>> sessions;
+                std::vector<UnitId> entryPoints;
 
             public:
                 UnitId lastID = 10;

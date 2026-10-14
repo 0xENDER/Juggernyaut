@@ -5,6 +5,9 @@
 
 #include "JugDriver.hpp"
 
+// 'jug.toml'-related
+#include "configs.hpp"
+
 namespace Driver {
     namespace JugDriver {
         // Generate a dependency tree for an entry!
@@ -30,12 +33,13 @@ namespace Driver {
             }
         }
 
-        void dirConfigLookup(DriverHooks &driverHooks, Data::Host::VFS *vfs, const std::string &uri, const std::string &sourceUri) {
+        bool dirConfigLookup(DriverHooks &driverHooks, Data::Host::VFS *vfs, const std::string &uri, const std::string &sourceUri, std::string &outputUri) {
             const std::string configUri = vfs->join(uri, "jug.toml");
             const std::string parentDir = vfs->getParentDirectory(uri);
 
             if (vfs->exists(configUri)) {
-                // LOAD UP THE CONFIGS
+                outputUri = std::move(configUri);
+                return true;
             } else if (parentDir == uri) {
                 if (driverHooks.onEntryError != nullptr) {
                     Diagnostic err;
@@ -45,8 +49,9 @@ namespace Driver {
 
                     driverHooks.onEntryError(std::move(err));
                 }
+                return false;
             } else {
-                dirConfigLookup(driverHooks, vfs, parentDir, sourceUri);
+                return dirConfigLookup(driverHooks, vfs, parentDir, sourceUri, outputUri);
             }
         }
         void JugDriver::addProject(const std::string &path) {
@@ -66,8 +71,19 @@ namespace Driver {
                 }
             } else if (vfs->filename(path) == "jug.toml") {
                 // LOAD UP THE CONFIGS
+                Configs::UnitConfigs unitConfigs = Configs::fetchConfigs(vfs, driverHooks, path);
+                unitConfigs;
             } else if (vfs->isDirectory(path)) {
-                dirConfigLookup(driverHooks, vfs, path, path);
+                std::string configUri;
+                if(dirConfigLookup(driverHooks, vfs, path, path, configUri)) {
+                    // LOAD UP THE CONFIGS
+                    Configs::UnitConfigs unitConfigs = Configs::fetchConfigs(vfs, driverHooks, configUri);
+                    unitConfigs;
+                } else {
+                    // LOAD UP THE DEFAULT CONFIGS
+                    Configs::UnitConfigs unitConfigs;
+                    unitConfigs;
+                }
             } else if (driverHooks.onEntryError != nullptr) {
                 Diagnostic err;
                 err.severity = Diagnostics::Severity::Error;
@@ -94,8 +110,8 @@ namespace Driver {
                     driverHooks.onEntryError(std::move(err));
                 }
             } else if (vfs->endsWith(path, ".jug")) {
-                // TRY TO CHECK UNDER WHICH PSUDO-PROJECT THIS FILE FALLS!
-                // IF IT'S ALREADY PART OF A PROJECT, STOP THIS!
+                // ADD THE FILE!
+                // MUST CHECK FOR CONFIGS FIRST!
             } else if (driverHooks.onEntryError != nullptr) {
                 Diagnostic err;
                 err.severity = Diagnostics::Severity::Error;
