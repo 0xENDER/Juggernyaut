@@ -43,7 +43,7 @@ namespace Session {
     // Main pipeline trigger funciton
     void initiate(Session &session) {
         if (session.isRunning) {
-            throw std::runtime_error("Attempting to initiate a running session");
+            throw std::runtime_error("Attempting to initiate a running session!");
         } else {
             session.isRunning = true;
         }
@@ -52,7 +52,7 @@ namespace Session {
 
         // Check for musts
         if (session.store == nullptr) {
-            return;
+            throw std::runtime_error("Attempting to initiate a session without a store!");
         }
 
         // [STAGE] Lexer & Parser
