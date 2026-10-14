@@ -11,8 +11,8 @@
 namespace Data {
     namespace Driver {
         struct PackageConfigs {
-            std::string name = "PACKAGE-NAME";
-            std::string publisher = "PACKAGE-PUBLISHER";
+            std::string name = "PACKAGE_NAME";
+            std::string publisher = "PACKAGE_PUBLISHER";
             std::string version = "0.0.1";
             bool isDeprecated = false;
         };
@@ -27,7 +27,8 @@ namespace Data {
         };
         // Dependencies
         struct LocalDependency {
-            std::string path;
+            std::string name = "";
+            std::string path = "";
         };
         struct OnlineDependency {
             std::string name = "";

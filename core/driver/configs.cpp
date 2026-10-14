@@ -30,24 +30,60 @@ namespace Driver {
             }
         }
 
+        // Data validation
+        bool isValidDepName(const std::string &name) {
+            return false;
+        }
+        bool isValidPublisherName(const std::string &name) {
+            return false;
+        }
+        bool isValidStrictVersion(const std::string &ver) {
+            return false;
+        }
+        bool isValidDepVersion(const std::string &ver) {
+            return false;
+        }
+        bool isValidProjectPath(const std::string &path) {
+            return false;
+        }
+        bool isValidSourcePath(const std::string &path) {
+            return false;
+        }
+
+        // [Package]
         void processPackageSection(DriverHooks &driverHooks, const toml::table& tbl, UnitPackageConfigs &packageConfigs) {
             for (const auto& [key, val] : tbl) {
                 std::string_view k = key.str();
                 if (k == "name") {
                     if (auto v = val.value<std::string>()) {
                         packageConfigs.name = *v;
+                        if (!isValidDepName(packageConfigs.name)) {
+                            packageConfigs.name = "INVALID_PACKAGE_NAME";
+
+                            emitDiagnostic(driverHooks, val.source(), Diagnostics::Severity::Error, CODE_700010, 700010);
+                        }
                     } else {
                         emitDiagnostic(driverHooks, val.source(), Diagnostics::Severity::Error, CODE_700005("expected 'name' to be a string."), 700005);
                     }
                 } else if (k == "publisher") {
                     if (auto v = val.value<std::string>()) {
                         packageConfigs.publisher = *v;
+                        if (!isValidPublisherName(packageConfigs.publisher)) {
+                            packageConfigs.publisher = "";
+
+                            emitDiagnostic(driverHooks, val.source(), Diagnostics::Severity::Error, CODE_700011, 700011);
+                        }
                     } else {
                         emitDiagnostic(driverHooks, val.source(), Diagnostics::Severity::Error, CODE_700005("expected 'publisher' to be a string."), 700005);
                     }
                 } else if (k == "version") {
                     if (auto v = val.value<std::string>()) {
                         packageConfigs.version = *v;
+                        if (!isValidStrictVersion(packageConfigs.version)) {
+                            packageConfigs.version = "0.0.1";
+
+                            emitDiagnostic(driverHooks, val.source(), Diagnostics::Severity::Error, CODE_700012, 700012);
+                        }
                     } else {
                         emitDiagnostic(driverHooks, val.source(), Diagnostics::Severity::Error, CODE_700005("expected 'version' to be a string."), 700005);
                     }
@@ -65,46 +101,64 @@ namespace Driver {
             }
         }
 
+        // [build]
         void processBuildSection(DriverHooks &driverHooks, const toml::table& tbl, UnitBuildConfigs &buildConfigs) {
             for (const auto& [key, val] : tbl) {
                 std::string_view k = key.str();
                 if (k == "export") {
                     if (auto v = val.value<std::string>()) {
                         buildConfigs.exportPath = *v;
+                        if (!isValidSourcePath(buildConfigs.exportPath)) {
+                            buildConfigs.exportPath = "";
+
+                            emitDiagnostic(driverHooks, val.source(), Diagnostics::Severity::Error, CODE_700017, 700017);
+                        }
                     } else {
                         emitDiagnostic(driverHooks, val.source(), Diagnostics::Severity::Error, CODE_700005("expected 'export' to be a string."), 700005);
                     }
                 } else if (k == "input") {
                     if (auto str = val.value<std::string>()) {
-                        buildConfigs.inputPaths.push_back(*str);
+                        if (isValidSourcePath(*str)) {
+                            buildConfigs.inputPaths.push_back(*str);
+                        } else {
+                            emitDiagnostic(driverHooks, val.source(), Diagnostics::Severity::Error, CODE_700017, 700017);
+                        }
                     } else if (const auto* arr = val.as_array()) {
                         for (const auto& elem : *arr) {
-                            if (auto elem_str = elem.value<std::string>()) {
-                                buildConfigs.inputPaths.push_back(*elem_str);
+                            if (auto elemStr = elem.value<std::string>()) {
+                                if (isValidSourcePath(*elemStr)) {
+                                    buildConfigs.inputPaths.push_back(*elemStr);
+                                } else {
+                                    emitDiagnostic(driverHooks, elem.source(), Diagnostics::Severity::Error, CODE_700017, 700017);
+                                }
                             } else {
-                                emitDiagnostic(driverHooks, val.source(), Diagnostics::Severity::Error, CODE_700005("expected all 'input' array elements to be strings."), 700005);
+                                emitDiagnostic(driverHooks, elem.source(), Diagnostics::Severity::Error, CODE_700005("expected all 'input' array elements to be strings."), 700005);
                             }
                         }
                     } else {
                         emitDiagnostic(driverHooks, val.source(), Diagnostics::Severity::Error, CODE_700005("expected 'input' to be either a string, or an array of strings."), 700005);
                     }
                 } else if (k == "flags") {
-                    static const std::unordered_map<std::string_view, bool UnitBuildFlags::*> flagsMapping = {
-                        { "ignore-warnings", &UnitBuildFlags::ignoreWarnings },
-                        { "treat-warnings-as-errors", &UnitBuildFlags::treatWarningsAsErrors }
-                    };
-                    for (const auto& [fKey, fVal] : tbl) {
-                        std::string_view fk = fKey.str();
-                        auto it = flagsMapping.find(fk);
-                        if (it == flagsMapping.end()) {
-                            emitDiagnostic(driverHooks, fVal.source(), Diagnostics::Severity::Warning, CODE_700006(std::string(fk), "[build.flags]"), 700006);
-                            continue;
+                    if (const auto* flagsTbl = val.as_table()) {
+                        static const std::unordered_map<std::string_view, bool UnitBuildFlags::*> flagsMapping = {
+                            { "ignore-warnings", &UnitBuildFlags::ignoreWarnings },
+                            { "treat-warnings-as-errors", &UnitBuildFlags::treatWarningsAsErrors }
+                        };
+                        for (const auto& [fKey, fVal] : *flagsTbl) {
+                            std::string_view fk = fKey.str();
+                            auto it = flagsMapping.find(fk);
+                            if (it == flagsMapping.end()) {
+                                emitDiagnostic(driverHooks, fVal.source(), Diagnostics::Severity::Warning, CODE_700006(std::string(fk), "[build.flags]"), 700006);
+                                continue;
+                            }
+                            if (auto b = fVal.value<bool>()) {
+                                buildConfigs.flags.*(it->second) = *b; // Carry over the value
+                            } else {
+                                emitDiagnostic(driverHooks, fVal.source(), Diagnostics::Severity::Error, CODE_700005("expected '" + std::string(fk) + "' to be a boolean."), 700005);
+                            }
                         }
-                        if (auto b = fVal.value<bool>()) {
-                            buildConfigs.flags.*(it->second) = *b; // Carry over the value
-                        } else {
-                            emitDiagnostic(driverHooks, fVal.source(), Diagnostics::Severity::Error, CODE_700005("expected '" + std::string(fk) + "' to be a boolean."), 700005);
-                        }
+                    } else {
+                        emitDiagnostic(driverHooks, val.source(), Diagnostics::Severity::Error, CODE_700005("expected 'flags' to be a table."), 700005);
                     }
                 } else {
                     // UNKNOWN VARIABLE IN [build]
@@ -113,8 +167,108 @@ namespace Driver {
             }
         }
 
+        // [dependencies]
         void processDependenciesSection(DriverHooks &driverHooks, const toml::table& tbl, std::vector<UnitLocalDependency> &localDeps, std::vector<UnitOnlineDependency> &onlineDeps) {
-            // ...
+            for (const auto& [pkgKey, val] : tbl) {
+                const std::string &name = std::string(pkgKey.str());
+                if (auto ver = val.value<std::string>()) {
+                    UnitOnlineDependency dep;
+                    dep.name = name;
+                    dep.version = *ver;
+                    bool isValid = true;
+
+                    if (!isValidDepName(dep.name)) {
+                        isValid = false;
+
+                        emitDiagnostic(driverHooks, val.source(), Diagnostics::Severity::Error, CODE_700010, 700010);
+                    }
+                    if (!isValidDepVersion(dep.version)) {
+                        isValid = false;
+
+                        emitDiagnostic(driverHooks, val.source(), Diagnostics::Severity::Error, CODE_700013, 700013);
+                    }
+
+                    if (isValid) {
+                        onlineDeps.push_back(std::move(dep));
+                    }
+                } else if (const auto* depTable = val.as_table()) {
+                    std::string version = "",
+                        publisher = "",
+                        path = "";
+                    bool isValid = true;
+                    bool isPathSet = false,
+                        isVersionSet = false,
+                        isOnlineProbSet = false;
+
+                    if (!isValidDepName(name)) {
+                        isValid = false;
+
+                        emitDiagnostic(driverHooks, val.source(), Diagnostics::Severity::Error, CODE_700010, 700010);
+                    }
+
+                    for (const auto& [propKey, propVal] : *depTable) {
+                        std::string_view prop = propKey.str();
+                        auto str = propVal.value<std::string>().value_or("");
+                        if (prop == "version") {
+                            version = str;
+                            isVersionSet = true;
+                            isOnlineProbSet = true;
+
+                            if (!isValidDepVersion(version)) {
+                                isValid = false;
+
+                                emitDiagnostic(driverHooks, propVal.source(), Diagnostics::Severity::Error, CODE_700013, 700013);
+                            }
+                        } else if (prop == "publisher") {
+                            publisher = str;
+                            isOnlineProbSet = true;
+
+                            if (!isValidPublisherName(publisher)) {
+                                isValid = false;
+
+                                emitDiagnostic(driverHooks, propVal.source(), Diagnostics::Severity::Error, CODE_700011, 700011);
+                            }
+                        } else if (prop == "path") {
+                            path = str;
+                            isPathSet = true;
+                            
+                            if (!isValidProjectPath(path)) {
+                                isValid = false;
+
+                                emitDiagnostic(driverHooks, propVal.source(), Diagnostics::Severity::Error, CODE_700016, 700016);
+                            }
+                        } else {
+                            emitDiagnostic(driverHooks, propVal.source(), Diagnostics::Severity::Warning, CODE_700006(std::string(prop), name), 700006);
+                        }
+                    }
+
+                    if (!isValid) {
+                        continue;
+                    }
+
+                    // And we need to make sure that "path" is not used within online projects!
+                    if (isPathSet && isOnlineProbSet) {
+                        emitDiagnostic(driverHooks, val.source(), Diagnostics::Severity::Error, CODE_700014, 700014);
+                    } else if (isPathSet) {
+                        UnitLocalDependency dep;
+                        dep.name = name;
+                        dep.path = std::move(path);
+
+                        localDeps.push_back(std::move(dep));
+                    } else if (!isVersionSet) {
+                        emitDiagnostic(driverHooks, val.source(), Diagnostics::Severity::Error, CODE_700015, 700015);
+                    } else {
+                        UnitOnlineDependency dep;
+                        dep.name = name;
+                        dep.version = std::move(version);
+                        dep.publisher = std::move(publisher);
+
+                        onlineDeps.push_back(std::move(dep));
+                    }
+                } else {
+                    emitDiagnostic(driverHooks, val.source(), Diagnostics::Severity::Error, CODE_700005("expected '" + name + "' to be either a string, or a table."), 700005);
+                }
+            }
         }
 
         UnitConfigs fetchConfigs(Data::Host::VFS *vfs, DriverHooks &driverHooks, const std::string &path) {
@@ -149,13 +303,13 @@ namespace Driver {
                     } else {
                         emitDiagnostic(driverHooks, val.source(), Diagnostics::Severity::Error, CODE_700005("expected 'build' to be a section table."), 700005);
                     }
-                } /*else if (sectionName == "dependencies") {
+                } else if (sectionName == "dependencies") {
                     if (const auto* sub_tbl = val.as_table()) {
                         processDependenciesSection(driverHooks, *sub_tbl, configs.localDeps, configs.onlineDeps);
                     } else {
                         emitDiagnostic(driverHooks, val.source(), Diagnostics::Severity::Error, CODE_700005("expected 'dependencies' to be a section table."), 700005);
                     }
-                }*/ else {
+                } else {
                     // UNKNOWN TOP-LEVEL SECTION OR VARIABLE
                     emitDiagnostic(driverHooks, val.source(), Diagnostics::Severity::Warning, CODE_700008(std::string(sectionName)), 700008);
                 }
