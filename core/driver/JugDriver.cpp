@@ -72,17 +72,17 @@ namespace Driver {
             } else if (vfs->filename(path) == "jug.toml") {
                 // LOAD UP THE CONFIGS
                 Configs::UnitConfigs unitConfigs = Configs::fetchConfigs(vfs, driverHooks, path);
-                unitConfigs;
+                (void)unitConfigs;
             } else if (vfs->isDirectory(path)) {
                 std::string configUri;
                 if(dirConfigLookup(driverHooks, vfs, path, path, configUri)) {
                     // LOAD UP THE CONFIGS
                     Configs::UnitConfigs unitConfigs = Configs::fetchConfigs(vfs, driverHooks, configUri);
-                    unitConfigs;
+                    (void)unitConfigs;
                 } else {
                     // LOAD UP THE DEFAULT CONFIGS
                     Configs::UnitConfigs unitConfigs;
-                    unitConfigs;
+                    (void)unitConfigs;
                 }
             } else if (driverHooks.onEntryError != nullptr) {
                 Diagnostic err;
