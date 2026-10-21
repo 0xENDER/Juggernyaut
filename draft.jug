@@ -128,4 +128,119 @@ func myExcitingFunction(val arg_1:int, const arg_2:int) -> bool {
     return arg_1 == arg_2; // Always returns a 'true' boolean value!
 }
 
-// TO-DO: [while, do-while, for, interables and enhanced for iteration, async-await, threads, memory]
+// [While loop]
+while (true) {
+    // Things you write here will keep happening until the condition of the while
+    // loop turns in a 'false' boolean value!
+}
+do {
+    // ...
+} while (true); // The same as the first 'while' loop, except it executes the code block first,
+// then starts checking the condition!
+
+// [Logical operators]
+1 == 2; // 'equals'
+1 != 2; // 'does not equal'
+1 < 2; // 'less than'
+1 <= 2; // 'less/equal to'
+1 > 2; // 'greater than'
+1 >=2 ; // 'greater/equal to'
+!true; // 'not'
+true || false; // 'or'
+true & false; // 'and'
+(true || false) && true; // Of course, you can mix them all, as long as the value of the parentheses is a boolean!
+
+// [Increments and Decrements]
+let mySmallInt:int = 1;
+mySmallInt++; // Increments the value of 'mySmallInt' by 1!
+mySmallInt--; // Decrements the value of 'mySmallInt' by 1!
+mySmallInt++ == 1; // Evaluates to a 'true' boolean value!
+++mySmallInt == 2; // Evaluates to a 'false' boolean value!
+mySmallInt-- == 3; // Evaluates to a 'true' boolean value!
+--mySmallInt == 1; // Evaluates to a 'ture' boolean value!
+
+// [Other Functional operators]
+// '+', '-', '*', '/', '%', '&', '|', '^', '~', '<<', '>>', '**', '^^', '%%', '//', '~~'
+
+// [Note] that appending an '=' to the end of any of the functional operators
+// will result in the value of a variable to be changed to the output of the operation applied
+// to the variable's value and the right-hand-side value!
+mySmallInt += 100; // This is the same as "mySmallInt = mySmallInt + 100"
+
+// [Note] All built-in types would naturally their own defined functional operator actions.
+
+// [User-defined types]
+type MyType {
+    // Values attached to the type
+    let a:int = 1; // You can assign these values a default value!
+    const b:int = 2;
+    hide let c:int = 3; // Cannot be accessed by anyone, other than functions defined for this type!
+    prot let d:int = 4; // Can only be accessed by functions defined for this type AND types than extend this type!
+    stat let e:int = 5; // Can be accessed using the type's name! It's not specific to your variable!
+
+    // Functions can be attached to the type too!
+    func myAction() -> int {
+        // You can access the values of this type using the 'this' keyword!
+        this.a == 1; // Evaluates to a 'true' boolean value!
+        return 1;
+    }
+
+    // [Note] You can define a constructor function!
+    // It must always return a 'MyType' object, and it can take any number of arguments!
+    func MyType(const arg:int) -> MyType {
+        this.a = arg;
+    }
+
+    // [Note] The keywords 'hide', 'prot', and 'stat' work with functions too!
+
+    // [Note] Operators support can be added using custom reserved function names!
+    // Note that these functions must be static ('stat') when the operator is mean for use on two values!
+    // In addition, all of these functions should use references/constants!
+    func _operator__plusplus() -> MyType {
+        a++;
+        c++;
+        d++;
+        return this; // This returns the object itself!
+    }
+    stat func _operator__plus(const left:MyType, const right:MyType) -> MyType {
+        let result:MyType;
+        result.a = left.a + right.a;
+        result.c = left.c + right.c;
+        result.d = left.d + right.d;
+        return result;
+    }
+    
+}
+
+MyType.e == 5; // This evaluates to a 'true' boolean value!
+
+let myFancyVar:MyType; // Now, we have a fancy variable!
+let myOtherFancyVar:MyType = MyType(1);
+
+myFancyVar.a == myOtherFancyVar.a; // Evaluates to a 'false' boolean value!
+myFancyVar++; // This is the same as myFancyVar._operator__plusplus()
+myFancyVar + myOtherFancyVar; // This is the same as MyType._operator__plus(myFancyVar, myOtherFancyVar)
+
+myFancyVar.c == myFancyVar.d; // This will cause a compilation error!
+
+// [User-defined types and memory management]
+
+let someOtherFancyVar:MyType = myFancyVar; // [Note] This will move 'myFancyVar' to 'someOtherFancyVar'.
+// (Basiclly deleting 'myFancyVar' and giving its old value to 'someOtherFancyVar')
+// So, if you pass 'someOtherFancyVar' to a function as a variable ('val'), your original 'someOtherFancyVar' will be deleted!
+
+// If you wish to share a variable of this custom type between variables/functions whilst maintaining your original variable,
+// you must make your original value into a "box"!
+// a "box" is like a reference for user-defined types!
+let mySharedFancyVar:box<MyType> = box<MyType>(100);
+let theSameFancyVar:box<MyType> = mySharedFancyVar;
+// Both 'mySharedFancyVar' and 'theSameFancyVar' share the same value!
+mySharedFancyVar.a = 0;
+theSameFancyVar.a == 0; // Evaluates to a 'true' boolean value!
+
+// [Complex data and memory]
+// Note that when a complex data structure (like nested arrays or user-defined types) are copied,
+// they are always copied as a deep copy. Shallow copies are not to be allowed at all!
+
+
+// TO-DO: [for, interables and enhanced for iteration, async-await, threads, memory]
