@@ -1,0 +1,131 @@
+// DRAFT
+
+// [Notice]
+// The language should be designed with as little runtime overhead as possible.
+
+// [Modules System]
+// Each .jug file is considered a seperate unit!
+// (You may think of each file as its own module)
+
+// [Imports and Exports]
+
+import { Type, vari, func } from "path/to/file.jug"; // Local file import
+
+import "path/to/file.jug" as handle; // Local file import (SHOULD THIS BE ALLOWED?)
+// [ISSUE] Maybe allowing handle-imports is bad for compiler performance?
+
+import { Type, vari, func } from std.types; // Library import (looks for libs/std/types/import.jug)
+import std.types as handle;
+// Note that libraries are resolved by the [dependencies] section in the jug.toml configuration file!
+
+export value; // You may export components the moment they are defined by adding
+// the *out-most* prefix statement 'export' to its defintion, or by simply exporting
+// it using its name as such!
+
+// [Variables]
+
+let varName:int = 1;
+// "let" defines a variable!
+// "varName" is the name of the variable.
+// "int" is the type of this specific variable!
+// And assignment pretty much works the same as other languages.
+const constName:int = 2; // You may use the word "const" to indicate
+
+// [NOTE] Constants MUST be assigned a value on definition!
+
+// [Integers]
+let var_1:int = 0, // Matches the compilation target arch
+    var_2:int8 = 0,
+    var_3:int16 = 0,
+    var_4:int32 = 0,
+    var_5:int64 = 0,
+    var_6:int128 = 0,
+    // [Unsigned integers]
+    var_7:uint = 0, // Matches the compilation target arch
+    var_8:uint8 = 0,
+    var_9:uint16 = 0,
+    var_10:uint32 = 0,
+    var_11:uint64 = 0,
+    var_12:uint128 = 0,
+    // [Decimals]
+    var_13:float = 0.1,  // Matches the compilation target arch
+    var_14:float16 = 0.1,
+    var_15:float32 = 0.1,
+    var_16:float64 = 0.1,
+    var_17:float128 = 0.1,
+    // [Booleans]
+    var_18:bool = true, // or 'false'
+    // [Characters and strings]
+    var_19:char = 'A',
+    var_20:string = "Hello!"; // () [Issue] Should strings be managed directly
+    // by the compiler, or should it be a standard library type? (e.i. an object/class)
+
+// [Note] Notice that all built-in compiler type hold an "empty" value when not
+// assigned a proper value on defintion.
+let myEmptyVar:int;
+myEmptyVar == empty; // This would evalute as a 'true' boolean value!
+
+// [Note] Trying to do operations on an 'empty' value or trying
+// to pass said value to other scopes/threads will result in a compile-time error!
+
+// [Arrays]
+let myArray:[int, 5] = [0, 1, 2, 3, 4]; // A fixed array of 5 integers!
+let myArray:[int, 3, 2] = [[0, 1], [2, 3], [4, 5]]; // A fixed array of that acts like a 5x4 matrix!
+// [Issue] Should users be allowed to define n-dimentional matrices using arrays directly within the syntax?
+
+// [Tuples]
+let myTuple:(int, bool) = (0, false); // A fixed tuple that can hold different values!
+
+// [Lists]
+let myList:[int]; // A dynamic array of integers than can be extended. (Similar to a vector in C++)
+
+// [Functions]
+func myFunction(val arg_1:int, const arg_2:int) { // A function that takes in a variable integer and a constant integer!
+    // Do some stuff here with 'arg_1' and 'arg_2'!
+    // Don't worry, these are treated as seperate variables!
+    // Your original variables won't be affected by any changes made to the arguments!
+    // ...
+    // You can exit a function early by using the return statement!
+    return;
+    // ...
+    // Anything here won't run!
+}
+
+// [Note] A function taking in a constant integer doesn't nessesary mean that
+// you need to feed it an actual value defined using the 'const' keyword!
+// This is merely a promise made the function that it won't modify the input value!
+
+func myNewFunction(val arg:int) -> bool { // You must specifiy the type of returned values (if returned)
+    return arg == 1; // Returns a boolean value!
+}
+
+// [Note] Of course, if a return type is specified, a function MUST return a valid corresponding value!
+
+// [Explicit referencing]
+val myImportantVar = 0;
+func myOtherFunction(ref arg:int) {
+    // Any changes made to arg here will change the original value!
+    arg = 1;
+}
+myImportantVar == 1; // This evalues to a boolean 'true' value!
+
+// [Note] Only non-constant values can be referenced
+
+// [Memory]
+// Each defined component is managed staticly at compile time.
+// As such somee rules are nessesary in order to make sure racing conditons
+// and memory faults never occur!
+
+// [Implicit referencing]
+func myBoringFunc(val arg:int) -> int {
+    return arg;  // [Note] Since the argument was never modified, no copies are made
+    // of your original variable!
+    // You can think of 'arg' as a reference that was never edited!
+}
+func myExcitingFunction(val arg_1:int, const arg_2:int) -> bool {
+    arg_1 = arg_2; // Since 'arg_1' was modified, this means a new variable was created in memory!
+    // [Note] Since 'arg_2' is a const, it's always going to be treated like a reference!
+    return arg_1 == arg_2; // Always returns a 'true' boolean value!
+}
+
+// TO-DO: [while, do-while, for, interables and enhanced for iteration, async-await, threads, memory]
