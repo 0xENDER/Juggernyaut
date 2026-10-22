@@ -408,4 +408,4 @@ let handle:future<bool> = thread(async () -> bool {
 
 future.join(handle); // You can use the same 'future.join' function!
 
-// TO-DO: [templates, static type checking]
+// TO-DO: [external binds, compile-time @actions, templates, static type checking]
