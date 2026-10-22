@@ -261,6 +261,9 @@ myFancyVar.c == myFancyVar.d; // This will cause a compilation error!
 type MyEnhancedType extends MyType {
     // [Note] You can always add new defintions here,
     // but you can never remove inherited ones!
+    // [Issue] Allowing class inheritance will introduce lots of overhead.
+    // A potential fix is to treat extended classes as completely different classes.
+    // A reframe of this design choice is necessary!
 
     func MyEnhancedType(ref self:MyEnhancedType, const arg:int) -> MyEnhancedType {
         // Note that the constructor of MyType is called beforehand!
@@ -293,6 +296,11 @@ theSameFancyVar.a == 0; // Evaluates to a 'true' boolean value!
 // [Complex data and memory]
 // Note that when a complex data structure (like nested arrays or user-defined types) are copied,
 // they are always copied as a deep copy. Shallow copies are not to be allowed at all!
+// [Issue] This may cause users to write code that consumes lots of memory by accident!
+// A potential fix would be requiring the use of a .copy() function
+// and forbidding directly passing a complex structure to a function
+// without the use of .copy()
+// This is quite clunky, a better solution might be needed...
 
 // [for loops and iterable]
 
