@@ -74,6 +74,9 @@ let myArray:[[int, 2], 3] = [[0, 1], [2, 3], [4, 5]]; // A fixed array of that a
 // [Tuples]
 let myTuple:(int, bool) = (0, false); // A fixed tuple that can hold different values!
 
+// [Note] You can use tuples to assign values simultaneously!
+let (a:int, b:bool) = (1, false);
+
 // [Lists]
 let myList:[int]; // A dynamic array of integers than can be extended. (Similar to a vector in C++)
 
