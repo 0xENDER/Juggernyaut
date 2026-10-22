@@ -295,8 +295,11 @@ theSameFancyVar.a == 0; // Evaluates to a 'true' boolean value!
 
 // [Complex data and memory]
 // Note that when a complex data structure (like nested arrays or user-defined types) are copied,
-// they are always copied as a deep copy. Shallow copies are not to be allowed at all!
-// [Issue] This may cause users to write code that consumes lots of memory by accident!
+// they are always copied as a deep copy. Shallow copies are not to be allowed at all!  (All said structures shall have a .copy() function!)
+// As such, when a complex data structure is passed by value (not a reference)
+// to other components (such as variables or functions), they are always moved
+// by default, and the old component loses its value!
+
 // A potential fix would be requiring the use of a .copy() function
 // and forbidding directly passing a complex structure to a function
 // without the use of .copy()
