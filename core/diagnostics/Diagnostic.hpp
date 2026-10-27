@@ -13,14 +13,24 @@
 // Generated codes (.diag files)
 #include "DiagCodes.hpp"
 
+// Relative origin types
+#include "../data/host/VFS.hpp"
+#include "../data/store/types.hpp" // REMOVE LATER!
+
 namespace Diagnostics {
     // Line/column data
     struct Position {
-        uint32_t line;
-        uint32_t character;
+        uint32_t line = 0;
+        uint32_t character = 0;
 
         bool operator==(const Position&) const = default;
     };
+    // The origin's type
+    enum Origin {
+	    Component = 1, // The system, external tools, etc.
+    	File = 2 // VFS files
+    };
+    using FileId = Data::Host::FileId;
     // The exact position within the final source
     struct Range {
         Position start;
@@ -48,11 +58,18 @@ namespace Diagnostics {
     };*/
     // A report
     struct Diagnostic {
+        // (Deprecated)
         Data::Store::SourceId sourceId = 0; // Keep as '0' for non-jug files
+
+        // Source info
+        Origin origin = Origin::Component;
+        FileId fileId = 0;
         Range range;
-        std::string message;
+
+        // Content
+        std::string message = "";
         int code = 1;
-        Severity severity;
+        Severity severity = Severity::Hint;
         // std::vector<Trace> stack;
         // std::vector<RelatedInformation> related;
     };
