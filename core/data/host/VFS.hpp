@@ -14,13 +14,16 @@ namespace Data {
             public:
                 VFS() {};
                 virtual ~VFS() = default;
-                virtual std::string readFile(const std::string& path) = 0;
+
+                // Basic functionality
+                virtual bool readFile(const std::string& path, const std::string& output) = 0;
                 virtual bool exists(const std::string& path) = 0;
+                virtual bool isDirectory(const std::string& path) = 0;
+                virtual const std::string canonical(const std::string& path) = 0; // Returns the canonical full path of a file
                 virtual const std::string cwd() = 0;
 
-                virtual bool isDirectory(const std::string& path) = 0;
-
-                const std::string getParentDirectory(const std::string& path) ; // e.g. c:\path\to\file.txt -> c:\path\to, c:\path\to -> c:\path
+                // Extended functionality
+                const std::string getParentDirectory(const std::string& path) ; // e.g. c:\path\to\file.txt -> c:\path\to, c:\path\to -> c:\path,
                 const std::string join(const std::string &path, const std::string &append) ;
                 bool endsWith(const std::string &path, const std::string &end) ;
                 const std::string filename(const std::string &path) ;
