@@ -8,6 +8,9 @@
 #include "common/headers.hpp"
 #include "../dynamic.hpp" // JUG_DATA_API
 
+// Host
+#include "../host/VFS.hpp"
+
 #include "types.hpp"
 #include "Source.hpp"
 
@@ -18,10 +21,14 @@
 
 namespace Data {
     namespace Store {
+        using VFS = Data::Host::VFS;
         typedef std::function<void(const SourceId)> EntryCall;
+
+        // Only for .jug source files!
         class JUG_DATA_API SourceStore {
             protected:
                 std::unordered_map<std::string, SourceId> index; // Uri-based tracking
+
             private:
                 std::unordered_map<SourceId, std::unique_ptr<Source>> sources; // ID-based tracking
                 std::vector<SourceId> entryPoints;
@@ -38,7 +45,7 @@ namespace Data {
                 SourceStore& operator=(const SourceStore&) = delete;
                 virtual ~SourceStore() = default;
 
-                // Unique implementations
+                // Unique implementations (Deprecated - replace by VFS)
                 virtual bool _getRawFile(const std::string &uri, std::string &output) const = 0;
                 virtual bool _isFileAccessible(const std::string &uri) const = 0;
                 virtual bool _isDirValid(const std::string &path) const = 0;
@@ -47,7 +54,7 @@ namespace Data {
                 virtual std::string _getCanonical(const std::string &uri) const = 0;
                 virtual std::string _joinPaths(const std::string &base, const std::string &path) const = 0;
 
-                // Import paths
+                // Import paths (depreciated)
                 void addImportDir(const std::string &path) ;
                 void resetImportDirs() ;
 

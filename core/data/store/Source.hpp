@@ -35,6 +35,8 @@ namespace Data {
             DiagnosticsSection parser;
         };
 
+        // TO-DO: Decouple parser logic from <Source>
+        // (A <Source> should only contain basic environment-agnostic info!)
         class JUG_DATA_API Source {
             public:
             private:

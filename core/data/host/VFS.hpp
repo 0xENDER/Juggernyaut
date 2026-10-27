@@ -8,8 +8,12 @@
 #include "common/headers.hpp"
 #include "../dynamic.hpp" // JUG_DATA_API
 
+// TO-DO: Implement an in-memory file cache
+
 namespace Data {
     namespace Host {
+        using FileId = uint32_t;
+
         class JUG_DATA_API VFS {
             public:
                 VFS() {};
