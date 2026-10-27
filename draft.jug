@@ -76,6 +76,9 @@ let myTuple:(int, bool) = (0, false); // A fixed tuple that can hold different v
 
 // [Note] You can use tuples to assign values simultaneously!
 let (a:int, b:bool) = (1, false);
+let c:int, d:int;
+// ...
+(c, d) = (d, c) // This switches the values of both variables!
 
 // [Lists]
 let myList:[int]; // A dynamic array of integers than can be extended. (Similar to a vector in C++)
