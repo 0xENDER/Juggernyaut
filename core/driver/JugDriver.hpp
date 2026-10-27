@@ -25,6 +25,8 @@
 #pragma warning(disable: 4251) // Suppress DLL interface warning for STL types
 #endif
 
+// TO-DO: Replace unnecessary unordered maps with vectors!
+
 namespace Driver {
     namespace JugDriver {
         using SetupId = Environment::EnvironmentId;
