@@ -6,7 +6,7 @@
 #include "JugDriver.hpp"
 
 // 'jug.toml'-related
-#include "configs.hpp"
+#include "environment.hpp"
 
 namespace Driver {
     namespace JugDriver {
@@ -71,18 +71,18 @@ namespace Driver {
                 }
             } else if (vfs->filename(path) == "jug.toml") {
                 // LOAD UP THE CONFIGS
-                Configs::UnitConfigs unitConfigs = Configs::fetchConfigs(vfs, driverHooks, path);
-                (void)unitConfigs;
+                Environment::Environment env = Environment::fetchEnvironment(vfs, driverHooks, path);
+                (void)env;
             } else if (vfs->isDirectory(path)) {
                 std::string configUri;
                 if(dirConfigLookup(driverHooks, vfs, path, path, configUri)) {
                     // LOAD UP THE CONFIGS
-                    Configs::UnitConfigs unitConfigs = Configs::fetchConfigs(vfs, driverHooks, configUri);
-                    (void)unitConfigs;
+                    Environment::Environment env = Environment::fetchEnvironment(vfs, driverHooks, configUri);
+                    (void)env;
                 } else {
                     // LOAD UP THE DEFAULT CONFIGS
-                    Configs::UnitConfigs unitConfigs;
-                    (void)unitConfigs;
+                    Environment::Environment env;
+                    (void)env;
                 }
             } else if (driverHooks.onEntryError != nullptr) {
                 Diagnostic err;

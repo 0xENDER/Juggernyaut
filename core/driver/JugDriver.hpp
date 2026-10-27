@@ -11,6 +11,9 @@
 // Host/System
 #include "../data/host/VFS.hpp"
 
+// Environment data
+#include "environment.hpp"
+
 // Sessions
 #include "../session/session.hpp"
 
@@ -24,6 +27,9 @@
 
 namespace Driver {
     namespace JugDriver {
+        using SetupId = Environment::EnvironmentId;
+        using Setup = Environment::Environment;
+
         struct HostConfigs {
             Data::Host::VFS *vfs = nullptr; // Virtual File System
         };
@@ -39,6 +45,7 @@ namespace Driver {
                 HostConfigs host;
                 DriverConfigs configs;
                 // Internal variables
+                std::unordered_map<SetupId, std::unique_ptr<Setup>> setups;
                 std::unordered_map<UnitId, std::unique_ptr<Unit>> sessions;
                 std::vector<UnitId> entryPoints;
 

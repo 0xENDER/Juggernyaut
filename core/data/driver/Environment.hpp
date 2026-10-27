@@ -1,6 +1,6 @@
 /**
  * @brief 
- * Driver Unit Configurations
+ * Driver Unit Configurations/Environment
 **/
 
 #pragma once
@@ -35,8 +35,10 @@ namespace Data {
             std::string publisher = "";
             std::string version = "";
         };
-        // 'UnitConfigs' is derived from the 'jug.toml' configuration files!
-        struct UnitConfigs {
+        // 'Environment' is derived from the 'jug.toml' configuration files!
+        using EnvironmentId = uint32_t;
+        struct Environment {
+            const std::string source = ""; // jug.toml
             PackageConfigs package;
             BuildConfigs build;
             std::vector<LocalDependency> localDeps;

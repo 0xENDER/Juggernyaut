@@ -3,16 +3,17 @@
  * Handle .toml configs
 **/
 
-#include "configs.hpp"
+#include "environment.hpp"
 
 // toml++
 #include "tomlpp.hpp"
 
 namespace Driver {
-    namespace Configs {
+    namespace Environment {
         void emitDiagnostic(DriverHooks &driverHooks, const toml::source_region& src, Diagnostics::Severity severity, const std::string &message, int code) {
             if (driverHooks.onEntryError != nullptr) {
                 Diagnostic diag;
+                // TO-DO: update source ID info
                 diag.severity = severity;
                 diag.message = message;
                 diag.code = code;
@@ -51,7 +52,7 @@ namespace Driver {
         }
 
         // [Package]
-        void processPackageSection(DriverHooks &driverHooks, const toml::table& tbl, UnitPackageConfigs &packageConfigs) {
+        void processPackageSection(DriverHooks &driverHooks, const toml::table& tbl, PackageConfigs &packageConfigs) {
             for (const auto& [key, val] : tbl) {
                 std::string_view k = key.str();
                 if (k == "name") {
@@ -102,7 +103,7 @@ namespace Driver {
         }
 
         // [build]
-        void processBuildSection(DriverHooks &driverHooks, const toml::table& tbl, UnitBuildConfigs &buildConfigs) {
+        void processBuildSection(DriverHooks &driverHooks, const toml::table& tbl, BuildConfigs &buildConfigs) {
             for (const auto& [key, val] : tbl) {
                 std::string_view k = key.str();
                 if (k == "export") {
@@ -140,9 +141,9 @@ namespace Driver {
                     }
                 } else if (k == "flags") {
                     if (const auto* flagsTbl = val.as_table()) {
-                        static const std::unordered_map<std::string_view, bool UnitBuildFlags::*> flagsMapping = {
-                            { "ignore-warnings", &UnitBuildFlags::ignoreWarnings },
-                            { "treat-warnings-as-errors", &UnitBuildFlags::treatWarningsAsErrors }
+                        static const std::unordered_map<std::string_view, bool BuildFlags::*> flagsMapping = {
+                            { "ignore-warnings", &BuildFlags::ignoreWarnings },
+                            { "treat-warnings-as-errors", &BuildFlags::treatWarningsAsErrors }
                         };
                         for (const auto& [fKey, fVal] : *flagsTbl) {
                             std::string_view fk = fKey.str();
@@ -168,11 +169,11 @@ namespace Driver {
         }
 
         // [dependencies]
-        void processDependenciesSection(DriverHooks &driverHooks, const toml::table& tbl, std::vector<UnitLocalDependency> &localDeps, std::vector<UnitOnlineDependency> &onlineDeps) {
+        void processDependenciesSection(DriverHooks &driverHooks, const toml::table& tbl, std::vector<LocalDependency> &localDeps, std::vector<OnlineDependency> &onlineDeps) {
             for (const auto& [pkgKey, val] : tbl) {
                 const std::string &name = std::string(pkgKey.str());
                 if (auto ver = val.value<std::string>()) {
-                    UnitOnlineDependency dep;
+                    OnlineDependency dep;
                     dep.name = name;
                     dep.version = *ver;
                     bool isValid = true;
@@ -250,7 +251,7 @@ namespace Driver {
                     if (isPathSet && isOnlineProbSet) {
                         emitDiagnostic(driverHooks, val.source(), Diagnostics::Severity::Error, CODE_700014, 700014);
                     } else if (isPathSet) {
-                        UnitLocalDependency dep;
+                        LocalDependency dep;
                         dep.name = name;
                         dep.path = std::move(path);
 
@@ -258,7 +259,7 @@ namespace Driver {
                     } else if (!isVersionSet) {
                         emitDiagnostic(driverHooks, val.source(), Diagnostics::Severity::Error, CODE_700015, 700015);
                     } else {
-                        UnitOnlineDependency dep;
+                        OnlineDependency dep;
                         dep.name = name;
                         dep.version = std::move(version);
                         dep.publisher = std::move(publisher);
@@ -271,11 +272,17 @@ namespace Driver {
             }
         }
 
-        UnitConfigs fetchConfigs(Data::Host::VFS *vfs, DriverHooks &driverHooks, const std::string &path) {
-            UnitConfigs configs;
+        Environment fetchEnvironment(Data::Host::VFS *vfs, DriverHooks &driverHooks, const std::string &path) {
+            Environment env;
+
+            // Get raw content
+            std::string rawContent;
+            if (!(vfs->readFile(path, rawContent))) {
+                // TMP
+                rawContent = "";
+            }
 
             // Process TOML data
-            const std::string &rawContent = vfs->readFile(path);
             toml::parse_result result = toml::parse(rawContent);
             if (!result) {
                 const toml::parse_error& err = result.error();
@@ -283,7 +290,7 @@ namespace Driver {
 
                 emitDiagnostic(driverHooks, err.source(), Diagnostics::Severity::Error, CODE_700007(description), 700007);
 
-                return configs;
+                return env;
             }
 
             toml::table table = std::move(result).table();
@@ -293,19 +300,19 @@ namespace Driver {
                 std::string_view sectionName = key.str();
                 if (sectionName == "package") {
                     if (const auto* sub_tbl = val.as_table()) {
-                        processPackageSection(driverHooks, *sub_tbl, configs.package);
+                        processPackageSection(driverHooks, *sub_tbl, env.package);
                     } else {
                         emitDiagnostic(driverHooks, val.source(), Diagnostics::Severity::Error, CODE_700005("expected 'package' to be a section table."), 700005);
                     }
                 } else if (sectionName == "build") {
                     if (const auto* sub_tbl = val.as_table()) {
-                        processBuildSection(driverHooks, *sub_tbl, configs.build);
+                        processBuildSection(driverHooks, *sub_tbl, env.build);
                     } else {
                         emitDiagnostic(driverHooks, val.source(), Diagnostics::Severity::Error, CODE_700005("expected 'build' to be a section table."), 700005);
                     }
                 } else if (sectionName == "dependencies") {
                     if (const auto* sub_tbl = val.as_table()) {
-                        processDependenciesSection(driverHooks, *sub_tbl, configs.localDeps, configs.onlineDeps);
+                        processDependenciesSection(driverHooks, *sub_tbl, env.localDeps, env.onlineDeps);
                     } else {
                         emitDiagnostic(driverHooks, val.source(), Diagnostics::Severity::Error, CODE_700005("expected 'dependencies' to be a section table."), 700005);
                     }
@@ -315,7 +322,7 @@ namespace Driver {
                 }
             }
 
-            return configs;
+            return env;
         }
     }
 }
