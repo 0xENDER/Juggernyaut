@@ -47,7 +47,7 @@ namespace Driver {
                 HostConfigs host;
                 DriverConfigs configs;
                 // Internal variables
-                std::unordered_map<SetupId, std::unique_ptr<Setup>> setups;
+                std::unordered_map<SetupId, std::unique_ptr<Setup>> setups; // TO-DO: Implement setups loadup logic!
                 std::unordered_map<UnitId, std::unique_ptr<Unit>> sessions;
                 // TO-DO: Phase out SourceStore in favour of a global VFS
                 std::vector<UnitId> entryPoints;
