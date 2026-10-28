@@ -14,6 +14,7 @@ namespace Data {
     namespace Host {
         using FileId = uint32_t;
         using FileVersion = uint32_t;
+        using Timestamp = uint64_t;
 
         struct File {
             FileId id = 0;
@@ -22,6 +23,7 @@ namespace Data {
             FileVersion version = 0;
             // bool isLoaded = false;
             bool isValid = false;
+            Timestamp lastModified = 0; // Needed for disk-caching in the future!
         };
         using FilePtr = std::unique_ptr<File>;
 
@@ -30,6 +32,9 @@ namespace Data {
                 std::unordered_map<std::string, FileId> index; // Canonical  URI-based tracking
                 std::vector<FilePtr> cache; // ID-based cache
                 const static uint8_t FILE_ID_OFFSET = 10; // A default file-id offset
+
+                // Configs
+                bool trackModificationTime = false;
             protected:
                 // Local system binds
                 virtual bool _readFile(const std::string& path, std::string& output) = 0;
@@ -37,11 +42,13 @@ namespace Data {
                 // virtual bool _isDirectory(const std::string& path) = 0;
                 virtual const std::string _canonical(const std::string& path) = 0; // Returns the canonical full path of a file
                 // virtual const std::string _cwd() = 0;
+                virtual const Timestamp _lastModified(const std::string& path) = 0;
 
                 // Technical
                 File* addEmptyFile(const std::string& canonical) ;
             public:
                 VFS() {};
+                VFS(bool fileTimestamps) : trackModificationTime(fileTimestamps) {};
                 virtual ~VFS() = default;
 
                 // External Management functions (Should not be called within the front-end!)

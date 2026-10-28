@@ -16,6 +16,11 @@ namespace Data {
             FilePtr file = std::make_unique<File>();
             file->canonical = canonical;
 
+            // Update modification time
+            if (this->trackModificationTime) {
+                file->lastModified = this->_lastModified(canonical);
+            }
+
             // Save the file
             FileId fileId = this->cache.size() + this->FILE_ID_OFFSET;
             file->id = fileId;
@@ -39,6 +44,11 @@ namespace Data {
                 auto fileId = it->second;
 
                 file = this->cache[fileId - this->FILE_ID_OFFSET].get();
+
+                // Update modification time
+                if (this->trackModificationTime) {
+                    file->lastModified = this->_lastModified(canonicalUri);
+                }
             } else {
                 file  = this->addEmptyFile(canonicalUri);
             }
@@ -61,6 +71,11 @@ namespace Data {
                 auto fileId = it->second;
 
                 file = this->cache[fileId - this->FILE_ID_OFFSET].get();
+
+                // Update modification time
+                if (this->trackModificationTime) {
+                    file->lastModified = this->_lastModified(canonicalUri);
+                }
             } else {
                 file = this->addEmptyFile(canonicalUri);
             }
