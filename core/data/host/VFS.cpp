@@ -112,12 +112,18 @@ namespace Data {
             }
         }
         const File* VFS::readFile(const FileId& id) {
-            FileId index = id - this->FILE_ID_OFFSET;
-            if (id >= this->FILE_ID_OFFSET &&  index < this->cache.size()) {
-                return this->cache[index].get();
+            FileId indx = id - this->FILE_ID_OFFSET;
+            if (id >= this->FILE_ID_OFFSET &&  indx < this->cache.size()) {
+                return this->cache[indx].get();
             } else {
                 return nullptr;
             }
+        }
+        bool VFS::exists(const std::string& path) {
+            return this->_exists(path);
+        }
+        bool VFS::isDirectory(const std::string& path) {
+            return this->_isDirectory(path);
         }
 
         // Extended functionality

@@ -38,8 +38,8 @@ namespace Data {
             protected:
                 // Local system binds
                 virtual bool _readFile(const std::string& path, std::string& output) = 0;
-                // virtual bool _exists(const std::string& path) = 0;
-                // virtual bool _isDirectory(const std::string& path) = 0;
+                virtual bool _exists(const std::string& path) = 0;
+                virtual bool _isDirectory(const std::string& path) = 0;
                 virtual const std::string _canonical(const std::string& path) = 0; // Returns the canonical full path of a file
                 // virtual const std::string _cwd() = 0;
                 virtual const Timestamp _lastModified(const std::string& path) = 0;
@@ -59,8 +59,8 @@ namespace Data {
                 // Basic functionality
                 const File* readFile(const FileId& id) ;
                 const File* readFile(const std::string& path) ;
-                // bool exists(const std::string& path) ;
-                // bool isDirectory(const std::string& path) ;
+                bool exists(const std::string& path) ;
+                bool isDirectory(const std::string& path) ;
                 //  const std::string canonical(const std::string& path) ; // Returns the canonical full path of a file
 
                 // Extended functionality

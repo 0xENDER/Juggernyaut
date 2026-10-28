@@ -26,7 +26,10 @@ namespace Driver {
         using LocalDependency = Data::Driver::LocalDependency;
         using OnlineDependency = Data::Driver::OnlineDependency;
 
-        // Load configs from a 'jug.toml' file
-        Environment fetchEnvironment(Data::Host::VFS *vfs, DriverHooks &driverHooks, const std::string &path) ;
+        using File = Data::Host::File;
+        using VFS = Data::Host::VFS;
+
+        // Load configs from a 'jug.toml' file (Assuming the file is accessible!)
+        Environment fetchEnvironment(VFS *vfs, DriverHooks &driverHooks, const std::string &path) ;
     }
 }

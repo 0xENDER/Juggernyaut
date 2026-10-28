@@ -272,18 +272,14 @@ namespace Driver {
             }
         }
 
-        Environment fetchEnvironment(Data::Host::VFS *vfs, DriverHooks &driverHooks, const std::string &path) {
+        Environment fetchEnvironment(VFS *vfs, DriverHooks &driverHooks, const std::string &path) {
             Environment env;
 
             // Get raw content
-            std::string rawContent;
-            if (!(vfs->readFile(path, rawContent))) {
-                // TMP
-                rawContent = "";
-            }
+            const File* file = vfs->readFile(path);
 
             // Process TOML data
-            toml::parse_result result = toml::parse(rawContent);
+            toml::parse_result result = toml::parse(file->content);
             if (!result) {
                 const toml::parse_error& err = result.error();
                 std::string description = std::string(err.description());
