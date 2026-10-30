@@ -54,6 +54,9 @@ namespace Driver {
 
                 bool isBusy = false;
 
+                // Lifetime Management (Internal)
+                void refreshSetups() ; // Checks jug.toml files for updates
+                // void refreshDependencyGraph() ; // Updates dependency graph for parallel processing
             public:
                 UnitId lastID = 10;
 
@@ -69,9 +72,8 @@ namespace Driver {
                 //JugDriver& operator=(JugDriver&&) noexcept = default;
 
                 // Lifetime Management (Always cause the driver to become busy!)
-                void refreshSetups() ; // Checks jug.toml files for updates
-                // void refreshDependencyGraph() ; // Updates dependency graph for parallel processing
-                // void run() ; // Kick starts the dependency graph 
+                // VFS is switched to "Safe Mode" when the function runs!
+                bool run() ; // Returns true if the driver got triggered!
 
                 // Adding projects/stary files
                 void processPaths(std::vector<std::string> &paths) ;

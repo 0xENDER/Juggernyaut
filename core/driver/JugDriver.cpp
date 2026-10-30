@@ -10,20 +10,45 @@
 
 namespace Driver {
     namespace JugDriver {
-        // Lifetime Management
+        // Lifetime Management (Internal)
         void JugDriver::refreshSetups() {
-            this->isBusy = true;
-
             // Reference needed objects
             DriverHooks &driverHooks = this->configs.hooks.driver;
 
             for (std::unique_ptr<Setup>& setup : std::views::values(this->setups)) {
-                if (setup->file->version > setup->version) {
+                if (setup->file != nullptr && setup->file->version > setup->version) {
                     Environment::refreshEnvironment(setup.get(), driverHooks);
                 }
             }
+        }
+        /*void JugDriver::refreshDependencyGraph() {
+            // ...
+        }*/
 
+        // Lifetime Management (Always cause the driver to become busy!)
+        // VFS is switched to "Safe Mode" when the function runs!
+        bool JugDriver::run() {
+            if (this->isBusy) {
+                return false;
+            }
+            // Enter VFS Safe Mode
+            this->isBusy = true;
+            this->host.vfs->setSafeMode(true);
+
+            // Make sure jug.toml configs are up-to-date
+            this->refreshSetups();
+
+            // (Re)construct the dependency graph
+            // this->refreshDependencyGraph();
+
+            // Initiate parallel independent session runs!
+            // ...
+
+            // Exit VFS Safe Mode
             this->isBusy = false;
+            this->host.vfs->setSafeMode(false);
+
+            return true;
         }
 
         // Adding projects/stary files
