@@ -42,10 +42,11 @@ namespace Driver {
         };
 
         class JUG_DRIVER_API JugDriver {
-            private:
+            public:
                 // Provided Configs
                 HostConfigs host;
                 DriverConfigs configs;
+            private:
                 // Internal variables
                 std::unordered_map<SetupId, std::unique_ptr<Setup>> setups; // TO-DO: Implement setups loadup logic!
                 std::unordered_map<UnitId, std::unique_ptr<Unit>> sessions;
@@ -62,8 +63,6 @@ namespace Driver {
                 void refreshSetups() ; // Checks jug.toml files for updates
                 // void refreshDependencyGraph() ; // Updates dependency graph for parallel processing
             public:
-                UnitId lastID = 10;
-
                 // NOTE: When the driver is busy(), never change the state of the inputed variables or their children!
                 JugDriver(HostConfigs hostConfigs, DriverConfigs driverConfigs) : host(hostConfigs), configs(driverConfigs) {};
                 virtual ~JugDriver() = default;
