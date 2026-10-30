@@ -12,7 +12,7 @@
 #include "console/console.hpp"
 
 // Compiler Store
-#include "store/FileStore.hpp"
+#include "store/Documents.hpp"
 
 // Front-End Driver
 #include "../core/driver/JugDriver.hpp"
