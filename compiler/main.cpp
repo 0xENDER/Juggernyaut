@@ -14,11 +14,8 @@
 // Compiler Store
 #include "store/FileStore.hpp"
 
-// Session
-#include "../core/session/session.hpp"
-
-// Configs
-#include "../configs/configs.hpp"
+// Front-End Driver
+#include "../core/driver/JugDriver.hpp"
 
 // Base
 #include "base/config.hpp"
@@ -79,10 +76,12 @@ int main(int argc, const char *argv[]) {
         return Console::ProcessReport::programStatus;
     }
 
-    // Setup session
-    Session::Session session = Session::getSessionDefaults();
-    Store::FileStore store = Store::FileStore();
-    session.store = &store;
+    // Set up the driver
+    auto docs = std::unique_ptr<Store::Documents>();
+    Driver::JugDriver::HostConfigs host;
+    host.vfs = docs.get();
+    Driver::JugDriver::DriverConfigs configs;
+    Driver::JugDriver::JugDriver driver(host, configs);
 
     // Stats
     uint32_t sourceVisits = 0;
@@ -90,56 +89,22 @@ int main(int argc, const char *argv[]) {
     // Load external configs
     if (!Base::InitialConfigs::Input::config.empty()) {
         std::vector<Diagnostics::Diagnostic> diags;
-        if (!Configs::modifySession(session, Base::InitialConfigs::Input::config, diags, false)) {
-            REPORT(Console::START_REPORT, Console::CRITICAL_REPORT, "couldn't process configuration file!",
-                Console::END_REPORT);
-        } else {
-            sourceVisits++;
-        }
-
-        for (const auto &diag : diags) {
-            // Get the position
-            Console::IndividualReport::path = Base::InitialConfigs::Input::config;
-            Console::IndividualReport::startLine = diag.range.start.line;
-            Console::IndividualReport::startColumn = diag.range.start.character;
-            Console::IndividualReport::endLine = diag.range.end.line;
-            Console::IndividualReport::endColumn = diag.range.end.character;
-
-            Console::IndividualReport::code = diag.code;
-
-            // Update stage data
-            int stageId = static_cast<int>(std::floor(diag.code / 100000));
-            if (stageId == 5) {
-                Console::IndividualReport::stage = "Configs";
-            } else {
-                Console::IndividualReport::stage = "?Unknown Stage?";
-            }
-            REPORT(Console::START_REPORT, getReportType(diag.severity), diag.message, Console::END_REPORT);
-        }
-
-        diags.clear();
-        diags.shrink_to_fit();
+        driver.addProject(Base::InitialConfigs::Input::config);
+        sourceVisits++; // ...?
     }
 
     // Add import directories
     for (const auto &dir : Base::InitialConfigs::Input::importDirs) {
-        store.addImportDir(dir);
+        // store.addImportDir(dir);
     }
 
     // Add input files
-    std::string currentPath;
     for (const auto &path : Base::InitialConfigs::Input::entryPaths) {
-        if (store.resolvePath(path, currentPath)) {
-            store.addSource(currentPath, true);
-        } else {
-            REPORT(Console::START_REPORT, Console::CRITICAL_REPORT, "couldn't resolve input path: ", store._getCanonical(path), Console::END_REPORT);
-        }
+        driver.addStrayFile(path);
     }
-    currentPath.clear();
-    currentPath.shrink_to_fit();
 
     // Debug action
-    if (Base::InitialConfigs::Debug::Parser::activateAntlrSyntaxTest) {
+    /*if (Base::InitialConfigs::Debug::Parser::activateAntlrSyntaxTest) {
         session.hooks.parser.onANTLRTokenDetected = [](const uint8_t &stage, const std::string &tokenText) {
             if (stage == 2) {
                 REPORT(tokenText, "\n");
@@ -152,7 +117,7 @@ int main(int argc, const char *argv[]) {
         session.hooks.parser.onANTLRTreeGenerated = [](const std::string &treeText) {
             REPORT(Console::START_REPORT, Console::DEBUG_REPORT, "parse tree: \n", treeText, Console::END_REPORT);
         };
-    }
+    }*/
 
     // Check for requested termination
     if (Base::InitialConfigs::Technical::terminateAfterActions) {
@@ -161,7 +126,7 @@ int main(int argc, const char *argv[]) {
         return Console::ProcessReport::programStatus;
     }
 
-    session.hooks.parser.onContextStart = [&session, &sourceVisits](const Data::Store::SourceId srcId) {
+    /*session.hooks.parser.onContextStart = [&session, &sourceVisits](const Data::Store::SourceId srcId) {
         std::unique_ptr<Data::Store::Source> &source = (session.store)->getSourceById(srcId);
 
         REPORT(Console::START_REPORT, Console::NORMAL_REPORT, "\n#", ++sourceVisits, ": ", source->uri, Console::END_REPORT);
@@ -193,7 +158,7 @@ int main(int argc, const char *argv[]) {
             }
             REPORT(Console::START_REPORT, getReportType(diag.severity), diag.message, Console::END_REPORT);
         });
-    };
+    };*/
 
     // Begin the actual work here...
     Session::initiate(session);

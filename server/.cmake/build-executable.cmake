@@ -12,8 +12,8 @@ target_sources_search(JuggernyautServer ${JUG_SERVER_SOURCE_DIR}/capabilities/*.
 
 # Link libraries
 jug_common(JuggernyautServer)
-add_dependencies(JuggernyautServer JuggernyautSessionLibrary JuggernyautConfigsLibrary)
-target_link_libraries(JuggernyautServer PRIVATE JuggernyautSessionLibrary JuggernyautConfigsLibrary)
+add_dependencies(JuggernyautServer JuggernyautDriverLibrary)
+target_link_libraries(JuggernyautServer PRIVATE JuggernyautDriverLibrary)
 
 # Link external libraries
 # lsp-framework
