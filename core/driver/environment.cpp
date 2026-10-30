@@ -281,6 +281,13 @@ namespace Driver {
                 return;
             }
             const File*& file = env->file;
+            if (file == nullptr) {
+                return;
+            }
+            env->package = {};
+            env->build = {};
+            env->localDeps.clear();
+            env->onlineDeps.clear();
 
             // Process TOML data
             toml::parse_result result = toml::parse(file->content);
@@ -326,10 +333,10 @@ namespace Driver {
             env->version = env->file->version;
         }
         Environment fetchEnvironment(VFS *vfs, DriverHooks &driverHooks, const std::string &path) {
-            if (vfs == nullptr) {
-                return;
-            }
             Environment env;
+            if (vfs == nullptr) {
+                return env;
+            }
             env.file = vfs->readFile(path);
 
             // Populate the environment
