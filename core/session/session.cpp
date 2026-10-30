@@ -3,97 +3,17 @@
  * Front-End Session
 **/
 
-#include "session.hpp"
-
-// initiation
-#include "init/parser.hpp"
-
-// Store
-#include "../data/store/SourceStore.hpp"
-
-#ifdef NDEBUG
-    // External library
-    #include <mimalloc.h>
-#endif
+#include "Session.hpp"
 
 namespace Session {
-    Session getSessionDefaults() {
-        ParserConfigs parserConfigs; // Empty
-        Configs sessionConfigs = {
-            Stage::IaRC,
-            std::move(parserConfigs)
-        };
+    void Session::addEntryPoint(const File* file) {
+        CompilationUnitState unit = {file = file};
 
-        ParserHooks parserHooks;
-        Hooks sessionHooks = {
-            std::move(parserHooks)
-        };
+        // Update entry status
+        this->entryPoints.push_back(file->id);
+        unit.isEntryPoint = true;
 
-        States states;
-
-        return {
-            std::move(sessionConfigs),
-            std::move(sessionHooks),
-            states,
-            nullptr,
-            false
-        };
-    }
-
-    // Main pipeline trigger funciton
-    void initiate(Session &session) {
-        if (session.isRunning) {
-            throw std::runtime_error("Attempting to initiate a running session!");
-        } else {
-            session.isRunning = true;
-        }
-
-        const Configs &configs = session.configs;
-
-        // Check for musts
-        if (session.store == nullptr) {
-            throw std::runtime_error("Attempting to initiate a session without a store!");
-        }
-
-        // [STAGE] Lexer & Parser
-        Init::parser(session);
-        if (configs.terminateAfter == Stage::Lexer || configs.terminateAfter == Stage::Parser) {
-            return;
-        }
-
-        // [STAGE] Transformer (acts like a preprocessor)
-        if (configs.terminateAfter == Stage::Transformer) {
-            return;
-        }
-
-        // [STAGE] Semantic Analyser
-        // ...
-        if (configs.terminateAfter == Stage::Semantic) {
-            return;
-        }
-
-        // [STAGE] Integrity & Reachability Checker
-        // ...
-
-        // (Stage::IaRC)
-        session.isRunning = false;
-    }
-
-    void rejuvenate(const Session &session) {
-        // NEVER rejuvenate when a session is running!
-        if (session.isRunning){
-            return;
-        }
-
-        // Delete unused documents
-        Data::Store::SourceStore *store = session.store;
-        store->cleanup();
-
-        Init::rejuvenateParser();
-
-        // Free unused memory
-        #ifdef NDEBUG
-            mi_collect(true);
-        #endif
+        // Move unit
+        this->units[file->id] = std::move(unit);
     }
 }
