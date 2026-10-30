@@ -16,10 +16,11 @@ namespace Capabilities {
                 [&endpoint, &driver, &debouncer](auto&& params) {
                     for (const auto& change : params.changes) {
                         if (change.type == lsp::FileChangeType::Deleted) {
-                            driver.host.vfs->updateFile(change.uri.path(), "");
+                            std::string emptyStr = "";
+                            driver.host.vfs->updateFile((std::string) change.uri.path(), emptyStr);
                             debouncer->trigger();
                         } else if (change.type == lsp::FileChangeType::Changed) {
-                            driver.host.vfs->reloadFile(change.uri.path());
+                            driver.host.vfs->reloadFile((std::string) change.uri.path());
                             debouncer->trigger();
                         }
                     }

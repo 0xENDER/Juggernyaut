@@ -96,6 +96,7 @@ int main(int argc, const char *argv[]) {
     // Add import directories
     for (const auto &dir : Base::InitialConfigs::Input::importDirs) {
         // store.addImportDir(dir);
+        (void)dir;
     }
 
     // Add input files
@@ -161,7 +162,7 @@ int main(int argc, const char *argv[]) {
     };*/
 
     // Begin the actual work here...
-    Session::initiate(session);
+    driver.run();
     
     // End the program
     Console::finalize(sourceVisits);

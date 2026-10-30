@@ -61,7 +61,7 @@ namespace Driver {
 
                 // Lifetime Management (Internal)
                 void refreshSetups() ; // Checks jug.toml files for updates
-                // void refreshDependencyGraph() ; // Updates dependency graph for parallel processing
+                bool refreshDependencyGraph() ; // Updates dependency graph for parallel processing
             public:
                 // NOTE: When the driver is busy(), never change the state of the inputed variables or their children!
                 JugDriver(HostConfigs hostConfigs, DriverConfigs driverConfigs) : host(hostConfigs), configs(driverConfigs) {};

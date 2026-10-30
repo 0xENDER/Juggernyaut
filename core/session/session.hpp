@@ -18,6 +18,11 @@
 
 #include "Hooks.hpp"
 
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4251) // Suppress DLL interface warning for STL types
+#endif
+
 namespace Session {
     using File = Data::Host::File;
     using FileVersion = Data::Host::FileVersion;
@@ -134,3 +139,7 @@ namespace Session {
             // const SymbolTable* getExportedSymbols(SourceId id) const;
     };
 }
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif

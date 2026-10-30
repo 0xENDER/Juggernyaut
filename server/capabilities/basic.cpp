@@ -97,7 +97,7 @@ namespace Capabilities {
                             driver.addProject(configUri);
 
                             // Watch file for changes
-                            Docs::registerConfigsWatcher(endpoint, session, debouncer, configUri);
+                            Docs::registerConfigsWatcher(endpoint, driver, debouncer, configUri);
                         }
 
                         // Allow Session runs
@@ -138,7 +138,7 @@ namespace Capabilities {
                 driver.host.vfs->updateFile(rawUri, sourceCode);
 
                 // Create a project/sudo-project
-                driver.addStrayFile(rawUri, true);
+                driver.addStrayFile(rawUri);
 
                 // Refresh the session
                 debouncer->trigger();

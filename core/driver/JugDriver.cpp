@@ -31,9 +31,9 @@ namespace Driver {
                 }
             }
         }
-        /*void JugDriver::refreshDependencyGraph() {
-            // ...
-        }*/
+        bool JugDriver::refreshDependencyGraph() {
+            return false;
+        }
 
         // Lifetime Management (Always cause the driver to become busy!)
         // VFS is switched to "Safe Mode" when the function runs!
@@ -53,7 +53,9 @@ namespace Driver {
             this->refreshSetups();
 
             // (Re)construct the dependency graph
-            // this->refreshDependencyGraph();
+            if(!(this->refreshDependencyGraph())) {
+                return false;
+            }
 
             // Initiate parallel independent session runs!
             // ...

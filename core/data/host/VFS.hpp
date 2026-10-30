@@ -8,7 +8,10 @@
 #include "common/headers.hpp"
 #include "../dynamic.hpp" // JUG_DATA_API
 
-// TO-DO: Implement an in-memory file cache
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4251) // Suppress DLL interface warning for STL types
+#endif
 
 namespace Data {
     namespace Host {
@@ -91,3 +94,7 @@ namespace Data {
         };
     }
 }
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif

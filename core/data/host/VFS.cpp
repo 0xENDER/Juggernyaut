@@ -22,7 +22,7 @@ namespace Data {
             }
 
             // Save the file
-            FileId fileId = this->cache.size() + this->FILE_ID_OFFSET;
+            FileId fileId = static_cast<FileId>(this->cache.size() + this->FILE_ID_OFFSET);
             file->id = fileId;
             this->cache.push_back(std::move(file));
 
