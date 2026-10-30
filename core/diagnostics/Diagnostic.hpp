@@ -18,6 +18,9 @@
 #include "../data/store/types.hpp" // REMOVE LATER!
 
 namespace Diagnostics {
+    using File = Data::Host::File;
+    using FileId = Data::Host::FileId;
+
     // Line/column data
     struct Position {
         uint32_t line = 0;
@@ -25,12 +28,6 @@ namespace Diagnostics {
 
         bool operator==(const Position&) const = default;
     };
-    // The origin's type
-    enum Origin {
-	    Component = 1, // The system, external tools, etc.
-    	File = 2 // VFS files
-    };
-    using FileId = Data::Host::FileId;
     // The exact position within the final source
     struct Range {
         Position start;
@@ -58,13 +55,12 @@ namespace Diagnostics {
     };*/
     // A report
     struct Diagnostic {
+        // Source info
+        const File* file = nullptr;
+        Range range;
+
         // (Deprecated)
         Data::Store::SourceId sourceId = 0; // Keep as '0' for non-jug files
-
-        // Source info
-        Origin origin = Origin::Component;
-        FileId fileId = 0;
-        Range range;
 
         // Content
         std::string message = "";

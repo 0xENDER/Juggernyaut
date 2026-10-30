@@ -49,10 +49,19 @@ namespace Capabilities {
 
         lsp::ServerEndpoint *io = nullptr;
         void setupGlobalDiagnostics(lsp::ServerEndpoint &endpoint, Driver::JugDriver::JugDriver &driver) {
-            //Data::Host::VFS *vfs = driver.host.vfs;
+            // Data::Host::VFS *vfs = driver.host.vfs;
 
             // Update diagnostics I/O endpoint
-            // io = &endpoint;
+            io = &endpoint;
+
+            driver.configs.hooks.driver.onEntryDiagnostic = [&driver](const Diagnostics::Diagnostic &diag){
+                if (diag.file != nullptr) {
+                    io->textDocumentPublishDiagnostics({
+                        .uri = lsp::DocumentUri::fileUriFromPath(diag.file->canonical), // The URI of the file
+                        .diagnostics = {internal_diagToLSP(diag)}
+                    });
+                }
+            };
 
             /*session.hooks.parser.onContextEnd = [store](const Data::Store::SourceId srcId) {
                 std::unique_ptr<Data::Store::Source> &source = store->getSourceById(srcId);

@@ -75,18 +75,45 @@ int main(int argc, const char *argv[]) {
     }
 
     // Set up the driver
-    auto docs = std::unique_ptr<Store::Documents>();
+    auto docs = std::make_unique<Store::Documents>();
     Driver::JugDriver::HostConfigs host;
     host.vfs = docs.get();
     Driver::JugDriver::DriverConfigs configs;
     Driver::JugDriver::JugDriver driver(host, configs);
+
+    // Handle diagnostics
+    driver.configs.hooks.driver.onEntryDiagnostic = [&driver](const Diagnostics::Diagnostic &diag){
+        if (diag.file != nullptr) {
+            // Get the position
+            Console::IndividualReport::path = diag.file->canonical;
+            Console::IndividualReport::startLine = diag.range.start.line;
+            Console::IndividualReport::startColumn = diag.range.start.character;
+            Console::IndividualReport::endLine = diag.range.end.line;
+            Console::IndividualReport::endColumn = diag.range.end.character;
+        }
+
+        Console::IndividualReport::code = diag.code;
+
+        // Update stage data
+        int stageId = static_cast<int>(std::floor(diag.code / 100000));
+        if (stageId == 1) {
+            Console::IndividualReport::stage = "Lexer";
+        } else if (stageId == 2) {
+            Console::IndividualReport::stage = "Parser";
+        } else if (stageId == 7) {
+            Console::IndividualReport::stage = "Driver";
+        } else {
+            Console::IndividualReport::stage = "?Unknown Stage?";
+        }
+        REPORT(Console::START_REPORT, getReportType(diag.severity), diag.message, Console::END_REPORT);
+    };
 
     // Stats
     uint32_t sourceVisits = 0;
 
     // Add input files
     if (Base::InitialConfigs::Input::entryPaths.empty()) {
-        const std::string configUri = driver.lookupProject();
+        const std::string configUri = driver.lookupProject(driver.host.vfs->cwd());
         if (configUri == "") {
             REPORT(Console::START_REPORT, Console::CRITICAL_REPORT, "couldn't find a 'jug.toml' configuration file!", Console::END_REPORT);
 

@@ -19,6 +19,10 @@ namespace Driver {
                 this->processPaths(queued);
             }
         }
+        void JugDriver::resetDriverDiagnostics() {
+            this->driverDiagnostics.clear();
+            this->driverDiagnostics.shrink_to_fit();
+        }
 
         // Lifetime Management (Internal)
         void JugDriver::refreshSetups() {
@@ -41,6 +45,9 @@ namespace Driver {
             if (this->isBusy) {
                 return false;
             }
+
+            // Reset stale data
+            this->resetDriverDiagnostics();
 
             // Check for pending path jobs
             this->processPendingPaths();
@@ -95,13 +102,13 @@ namespace Driver {
                 outputUri = std::move(configUri);
                 return true;
             } else if (parentDir == uri) {
-                if (driverHooks.onEntryError != nullptr) {
+                if (driverHooks.onEntryDiagnostic != nullptr) {
                     Diagnostic err;
                     err.severity = Diagnostics::Severity::Error;
                     err.message = CODE_700002(sourceUri);
                     err.code = 700002;
 
-                    driverHooks.onEntryError(std::move(err));
+                    driverHooks.onEntryDiagnostic(std::move(err));
                 }
                 return false;
             } else {
@@ -122,13 +129,13 @@ namespace Driver {
 
             if (!(vfs->exists(path))) {
                 // Couldn't find the specified uri
-                if (driverHooks.onEntryError != nullptr) {
+                if (driverHooks.onEntryDiagnostic != nullptr) {
                     Diagnostic err;
                     err.severity = Diagnostics::Severity::Error;
                     err.message = CODE_700001(path);
                     err.code = 700001;
 
-                    driverHooks.onEntryError(std::move(err));
+                    driverHooks.onEntryDiagnostic(std::move(err));
                 }
             } else if (vfs->filename(path) == "jug.toml") {
                 // LOAD UP THE CONFIGS
@@ -145,13 +152,13 @@ namespace Driver {
                     Environment::Environment env;
                     (void)env;
                 }
-            } else if (driverHooks.onEntryError != nullptr) {
+            } else if (driverHooks.onEntryDiagnostic != nullptr) {
                 Diagnostic err;
                 err.severity = Diagnostics::Severity::Error;
                 err.message = CODE_700003(path);
                 err.code = 700003;
 
-                driverHooks.onEntryError(std::move(err));
+                driverHooks.onEntryDiagnostic(std::move(err));
             }
         }
         void JugDriver::addStrayFile(const std::string &path) {
@@ -168,24 +175,24 @@ namespace Driver {
 
             if (!(vfs->exists(path))) {
                 // Couldn't find the specified uri
-                if (driverHooks.onEntryError != nullptr) {
+                if (driverHooks.onEntryDiagnostic != nullptr) {
                     Diagnostic err;
                     err.severity = Diagnostics::Severity::Error;
                     err.message = CODE_700001(path);
                     err.code = 700001;
 
-                    driverHooks.onEntryError(std::move(err));
+                    driverHooks.onEntryDiagnostic(std::move(err));
                 }
             } else if (vfs->endsWith(path, ".jug")) {
                 // ADD THE FILE!
                 // MUST CHECK FOR CONFIGS FIRST!
-            } else if (driverHooks.onEntryError != nullptr) {
+            } else if (driverHooks.onEntryDiagnostic != nullptr) {
                 Diagnostic err;
                 err.severity = Diagnostics::Severity::Error;
                 err.message = CODE_700004(path);
                 err.code = 700004;
 
-                driverHooks.onEntryError(std::move(err));
+                driverHooks.onEntryDiagnostic(std::move(err));
             }
         }
 

@@ -39,7 +39,7 @@ int startServer(lsp::io::Stream& io) {
     lsp::ServerEndpoint endpoint = io;
 
     // Set up the driver
-    auto docs = std::unique_ptr<Store::Documents>();
+    auto docs = std::make_unique<Store::Documents>();
     Driver::JugDriver::HostConfigs host;
     host.vfs = docs.get();
     Driver::JugDriver::DriverConfigs configs;

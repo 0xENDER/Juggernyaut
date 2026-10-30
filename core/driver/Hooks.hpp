@@ -58,7 +58,7 @@ namespace Driver {
 
     // Driver-level hooks
     struct DriverHooks {
-        DriverEvent onEntryError = nullptr;
+        DriverEvent onEntryDiagnostic = nullptr;
     };
 
     struct Hooks {

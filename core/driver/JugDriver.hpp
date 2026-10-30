@@ -31,6 +31,7 @@ namespace Driver {
     namespace JugDriver {
         using SetupId = Environment::EnvironmentId;
         using Setup = Environment::Environment;
+        using Diagnostic = Diagnostics::Diagnostic;
 
         struct HostConfigs {
             Data::Host::VFS *vfs = nullptr; // Virtual File System
@@ -48,16 +49,17 @@ namespace Driver {
                 DriverConfigs configs;
             private:
                 // Internal variables
-                std::unordered_map<SetupId, std::unique_ptr<Setup>> setups; // TO-DO: Implement setups loadup logic!
+                std::unordered_map<SetupId, std::unique_ptr<Setup>> setups;
                 std::unordered_map<UnitId, std::unique_ptr<Unit>> sessions;
-                // TO-DO: Phase out SourceStore in favour of a global VFS
                 std::vector<UnitId> entryPoints;
+                std::vector<Diagnostic> driverDiagnostics; // Reset every run()!
 
                 bool isBusy = false;
                 std::vector<std::string> pendingPaths;
 
                 // Internal
                 void processPendingPaths() ;
+                void resetDriverDiagnostics() ;
 
                 // Lifetime Management (Internal)
                 void refreshSetups() ; // Checks jug.toml files for updates
@@ -89,6 +91,7 @@ namespace Driver {
 
                 // Queries
                 bool busy() const noexcept { return this->isBusy; }
+                std::vector<Diagnostic> getDriverDiagnostics() ;
         };
     }
 }
