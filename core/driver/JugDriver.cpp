@@ -39,16 +39,25 @@ namespace Driver {
             DriverHooks &driverHooks = this->configs.hooks.driver;
             Data::Host::VFS *vfs = (this->host).vfs;
 
-            // TO-DO: Add logic to check if the <Environment> has already been loaded!
-
-            // LOAD UP THE CONFIGS
-            Environment::Environment env = Environment::fetchEnvironment(vfs, this->diagnosticEmitter, path);
-            (void)env;
-
-            // Fire relevant events
-            if (driverHooks.onEnvironmentLoad != nullptr) {
-                driverHooks.onEnvironmentLoad(vfs->readFile(path));
+            // Get the environment's source file
+            const Data::Host::File *file = vfs->readFile(path);
+            if (file == nullptr) {
+                return;
             }
+
+            // Load new environments
+            auto it = this->setups.find(file->id);
+            if (it == this->setups.end()) {
+                // Load a new environment
+                this->setups[file->id] = std::make_unique<Setup>(Environment::fetchEnvironment(vfs, this->diagnosticEmitter, path));
+
+                // Fire relevant events
+                if (driverHooks.onEnvironmentLoad != nullptr) {
+                    driverHooks.onEnvironmentLoad(vfs->readFile(path));
+                }
+            }
+
+            // ...
         }
 
         // Lifetime Management (Internal)
@@ -157,8 +166,7 @@ namespace Driver {
                     this->loadProject(configUri);
                 } else {
                     // LOAD UP THE DEFAULT CONFIGS
-                    Environment::Environment env;
-                    (void)env;
+                    // OR MAYBE SPLIT OUT AN ERROR?
                 }
             } else {
                 SET_CODE(err, Error, 700003, path);
