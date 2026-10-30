@@ -32,9 +32,8 @@ namespace Data {
             return this->cache[fileId - this->FILE_ID_OFFSET].get();
         }
 
-        // External Management functions (Should not be called within the front-end!)
-        // Note: newContent will be reset!
-        void VFS::updateFile(const std::string& path, std::string &newContent) {
+        // Internal
+        void VFS::setFileContent(const std::string& path, std::string &newContent) {
             const std::string canonicalUri = this->_canonical(path);
 
             File* file;
@@ -55,13 +54,13 @@ namespace Data {
 
             // Update content
             file->content = std::move(newContent);
-            newContent = ""; // For safety!
+            newContent.clear(); // For safety!
             file->isValid = true;
 
             // Bump up the version
             file->version++;
         }
-        void VFS::reloadFile(const std::string& path) {
+        void VFS::fetchLocalFileContent(const std::string& path) {
             const std::string canonicalUri = this->_canonical(path);
 
             File* file;
@@ -85,6 +84,56 @@ namespace Data {
 
             // Bump up the version
             file->version++;
+        }
+
+        // External Management functions (Should not be called within the front-end!)
+        // Note: newContent will be reset!
+        void VFS::updateFile(const std::string& path, std::string &newContent) {
+           std::lock_guard<std::mutex> lock(this->pendingMtx);
+            if (this->safetyCount.load(std::memory_order_acquire) > 0) {
+                // Driver is running: stage/coalesce the edit without touching `cache` or `index`
+                this->pendingRequests[path] = FileChangeRequest{false, std::move(newContent)};
+                newContent.clear();
+                return;
+            }
+            this->setFileContent(path, newContent);
+            newContent.clear();
+        }
+        void VFS::reloadFile(const std::string& path) {
+            std::lock_guard<std::mutex> lock(this->pendingMtx);
+            if (this->safetyCount.load(std::memory_order_acquire) > 0) {
+                this->pendingRequests[path] = FileChangeRequest{true, ""};
+                return;
+            }
+            this->fetchLocalFileContent(path);
+        }
+
+        // Internal Management functions (Only called within the front-end!)
+        void VFS::setSafeMode(bool safe) {
+            std::lock_guard<std::mutex> lock(this->pendingMtx);
+            // Enabling safe mode
+            if (safe) {
+                this->safetyCount.fetch_add(1, std::memory_order_release);
+                return;
+            }
+            // Prevent extra calls
+            uint32_t prev = this->safetyCount.load(std::memory_order_relaxed);
+            if (prev == 0) return;
+
+            // When opting out of safe mode, flush all queued operations!
+            if (this->safetyCount.fetch_sub(1, std::memory_order_acq_rel) == 1) {
+                for (auto& [path, op] : this->pendingRequests) {
+                    if (op.isReload) {
+                        this->fetchLocalFileContent(path);
+                    } else {
+                        this->setFileContent(path, op.content);
+                    }
+                }
+                this->pendingRequests.clear();
+            }
+        }
+        bool VFS::isSafeMode() {
+            return this->safetyCount.load() > 0;
         }
 
         // Basic functionality

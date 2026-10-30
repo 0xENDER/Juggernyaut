@@ -27,14 +27,29 @@ namespace Data {
         };
         using FilePtr = std::unique_ptr<File>;
 
+        struct FileChangeRequest {
+            bool isReload = false; // true = reloadFile(), false = updateFile()
+            std::string content = ""; // Only used when isReload == false
+        };
+
         class JUG_DATA_API VFS {
             private:
                 std::unordered_map<std::string, FileId> index; // Canonical  URI-based tracking
                 std::vector<FilePtr> cache; // ID-based cache
                 const static uint8_t FILE_ID_OFFSET = 10; // A default file-id offset
 
+                // Multi-threaded safety
+                std::mutex pendingMtx;
+                std::atomic<uint32_t> safetyCount{0};
+                std::unordered_map<std::string, FileChangeRequest> pendingRequests;
+
                 // Configs
                 bool trackModificationTime = false;
+
+                // Internal
+                void setFileContent(const std::string& path, std::string &newContent) ;
+                void fetchLocalFileContent(const std::string& path) ;
+
             protected:
                 // Local system binds
                 virtual bool _readFile(const std::string& path, std::string& output) = 0;
@@ -55,6 +70,10 @@ namespace Data {
                 // Note: newContent will be reset!
                 void updateFile(const std::string& path, std::string &newContent) ;
                 void reloadFile(const std::string& path) ;
+
+                // Internal Management functions (Only called within the front-end!)
+                void setSafeMode(bool safe) ; // Forbids data changes (changes are queued for later)
+                bool isSafeMode() ;
 
                 // Basic functionality
                 const File* readFile(const FileId& id) ;
