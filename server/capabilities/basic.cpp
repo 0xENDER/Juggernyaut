@@ -136,7 +136,11 @@ namespace Capabilities {
                 driver.host.vfs->updateFile(rawUri, sourceCode);
 
                 // Create a project/sudo-project
-                driver.addStrayFile(rawUri);
+                if (driver.host.vfs->filename(rawUri) != "jug.toml") {
+                    driver.addStrayFile(rawUri);
+                } else {
+                    driver.addProject(rawUri);
+                }
 
                 // Refresh the session
                 debouncer->trigger();
