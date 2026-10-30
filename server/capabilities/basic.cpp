@@ -21,7 +21,8 @@ namespace Capabilities {
         std::cerr << "[DBG] EVENT: " << message << std::endl;
     }
 
-    std::string configUri = "";
+    std::string rootUri = "",
+        configUri = "";
     void configureProtocol(lsp::ServerEndpoint &endpoint, Driver::JugDriver::JugDriver &driver, int &exit_code) {
         bool received_shutdown = false;
         // Store::DocumentStore *store = static_cast<Store::DocumentStore*>(session.store);
@@ -37,10 +38,7 @@ namespace Capabilities {
 
                 // Get the workspace's 'jug.toml' file
                 if (!params.rootUri.isNull()) {
-                    const std::string rootUri = std::string(params.rootUri.value().path());
-
-                    // Look for 'jug.toml'
-                    configUri = driver.host.vfs->join(rootUri, "jug.toml");
+                    rootUri = std::string(params.rootUri.value().path());
                 }
 
                 // Declare basic server info and capabilities
@@ -92,11 +90,17 @@ namespace Capabilities {
 
                 std::thread([&driver, &endpoint]() {
                     try {
-                        if (configUri != "" && driver.host.vfs->exists(configUri)) {
+                        if (rootUri == "") {
+                            rootUri = driver.host.vfs->cwd();
+                        }
+
+                        configUri = driver.lookupProject(rootUri);
+
+                        if (configUri != "") {
                             // Load up the project
                             driver.addProject(configUri);
 
-                            // Watch file for changes
+                            // Watch the file for changes
                             Docs::registerConfigsWatcher(endpoint, driver, debouncer, configUri);
                         }
 

@@ -84,6 +84,9 @@ namespace Driver {
                 void addProject(const std::string &path) ;
                 void addStrayFile(const std::string &path) ;
 
+                // Tools
+                std::string lookupProject(const std::string &path, const std::string &previous = "") ; // Look up a parent project path
+
                 // Queries
                 bool busy() const noexcept { return this->isBusy; }
         };

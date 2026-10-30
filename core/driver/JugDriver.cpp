@@ -154,7 +154,6 @@ namespace Driver {
                 driverHooks.onEntryError(std::move(err));
             }
         }
-
         void JugDriver::addStrayFile(const std::string &path) {
             // Reference needed objects
             DriverHooks &driverHooks = this->configs.hooks.driver;
@@ -187,6 +186,32 @@ namespace Driver {
                 err.code = 700004;
 
                 driverHooks.onEntryError(std::move(err));
+            }
+        }
+
+        // Tools
+        std::string JugDriver::lookupProject(const std::string &path, const std::string &previous) {
+            if (path.empty() || path == previous) {
+                return ""; // Reached filesystem root
+            }
+            Data::Host::VFS *vfs = this->host.vfs;
+
+            if (vfs->filename(path) == "jug.toml") {
+                if (vfs->exists(path)) {
+                    return path;
+                }
+                const std::string dir = vfs->getParentDirectory(path);
+
+                return this->lookupProject(vfs->getParentDirectory(dir), dir);
+            } else if (vfs->isDirectory(path)) {
+                const std::string newPath = vfs->join(path, "jug.toml");
+                if (vfs->exists(newPath)) {
+                    return newPath;
+                }
+
+                return this->lookupProject(vfs->getParentDirectory(path), path);
+            } else {
+                return this->lookupProject(vfs->getParentDirectory(path), path);
             }
         }
     }

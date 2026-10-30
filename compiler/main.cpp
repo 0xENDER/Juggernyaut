@@ -65,8 +65,6 @@ int main(int argc, const char *argv[]) {
         // End the program
         Console::finalize();
         return Console::ProcessReport::programStatus;
-    } else if (Base::InitialConfigs::Input::config.empty()) {
-        Base::InitialConfigs::configsFallback();
     }
 
     // Check if other delayed actions are allowed to run
@@ -86,23 +84,19 @@ int main(int argc, const char *argv[]) {
     // Stats
     uint32_t sourceVisits = 0;
 
-    // Load external configs
-    if (!Base::InitialConfigs::Input::config.empty()) {
-        std::vector<Diagnostics::Diagnostic> diags;
-        driver.addProject(Base::InitialConfigs::Input::config);
-        sourceVisits++; // ...?
-    }
-
-    // Add import directories
-    for (const auto &dir : Base::InitialConfigs::Input::importDirs) {
-        // store.addImportDir(dir);
-        (void)dir;
-    }
-
     // Add input files
-    for (const auto &path : Base::InitialConfigs::Input::entryPaths) {
-        driver.addStrayFile(path);
+    if (Base::InitialConfigs::Input::entryPaths.empty()) {
+        const std::string configUri = driver.lookupProject();
+        if (configUri == "") {
+            REPORT(Console::START_REPORT, Console::CRITICAL_REPORT, "couldn't find a 'jug.toml' configuration file!", Console::END_REPORT);
+
+            return 1;
+        }
+        driver.addProject(configUri);
+    }else {
+        driver.processPaths(Base::InitialConfigs::Input::entryPaths);
     }
+    sourceVisits; // THIS IS OUT OF SYNC! 
 
     // Debug action
     /*if (Base::InitialConfigs::Debug::Parser::activateAntlrSyntaxTest) {
