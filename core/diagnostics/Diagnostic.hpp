@@ -8,14 +8,24 @@
 #include "common/headers.hpp"
 #include "dynamic.hpp" // JUG_DIAGNOSTICS_API
 
-#include "../data/store/types.hpp"
-
 // Generated codes (.diag files)
 #include "DiagCodes.hpp"
 
 // Relative origin types
 #include "../data/host/VFS.hpp"
-#include "../data/store/types.hpp" // REMOVE LATER!
+
+// Code shorthand
+#define SET_CODE(DIAG, SEVERITY, NUM, ...) \
+    Diagnostics::Diagnostic DIAG; \
+    (DIAG).severity = Diagnostics::Severity::SEVERITY; \
+    (DIAG).code = (NUM); \
+    (DIAG).message = CODE_##NUM __VA_OPT__((__VA_ARGS__))
+
+#define USE_CODE(DIAG, SEVERITY, NUM, ...) \
+    (DIAG).severity = Diagnostics::Severity::SEVERITY; \
+    (DIAG).code = (NUM); \
+    (DIAG).message = CODE_##NUM __VA_OPT__((__VA_ARGS__))
+
 
 namespace Diagnostics {
     using File = Data::Host::File;
@@ -59,9 +69,6 @@ namespace Diagnostics {
         const File* file = nullptr;
         Range range;
 
-        // (Deprecated)
-        Data::Store::SourceId sourceId = 0; // Keep as '0' for non-jug files
-
         // Content
         std::string message = "";
         int code = 1;
@@ -69,6 +76,7 @@ namespace Diagnostics {
         // std::vector<Trace> stack;
         // std::vector<RelatedInformation> related;
     };
+    using Event = std::function<void(const Diagnostic&)>;
 
     /*struct FileDiagnostics {
         std::string uri;
