@@ -19,19 +19,48 @@ namespace Driver {
                 this->processPaths(queued);
             }
         }
-        void JugDriver::resetDriverDiagnostics() {
-            this->driverDiagnostics.clear();
-            this->driverDiagnostics.shrink_to_fit();
+        bool JugDriver::dirConfigLookup(DriverHooks &driverHooks, Data::Host::VFS *vfs, const std::string &uri, const std::string &sourceUri, std::string &outputUri) {
+            const std::string configUri = vfs->join(uri, "jug.toml");
+            const std::string parentDir = vfs->getParentDirectory(uri);
+
+            if (vfs->exists(configUri)) {
+                outputUri = std::move(configUri);
+                return true;
+            } else if (parentDir == uri) {
+                SET_CODE(err, Error, 700002, sourceUri);
+                this->emitDiagnostic(err);
+                return false;
+            } else {
+                return dirConfigLookup(driverHooks, vfs, parentDir, sourceUri, outputUri);
+            }
+        }
+        void JugDriver::loadProject(const std::string &path) {
+            // Reference needed objects
+            DriverHooks &driverHooks = this->configs.hooks.driver;
+            Data::Host::VFS *vfs = (this->host).vfs;
+
+            // TO-DO: Add logic to check if the <Environment> has already been loaded!
+
+            // LOAD UP THE CONFIGS
+            Environment::Environment env = Environment::fetchEnvironment(vfs, this->diagnosticEmitter, path);
+            (void)env;
+
+            // Fire relevant events
+            if (driverHooks.onEnvironmentLoad != nullptr) {
+                driverHooks.onEnvironmentLoad(vfs->readFile(path));
+            }
         }
 
         // Lifetime Management (Internal)
         void JugDriver::refreshSetups() {
-            // Reference needed objects
-            DriverHooks &driverHooks = this->configs.hooks.driver;
-
             for (std::unique_ptr<Setup>& setup : std::views::values(this->setups)) {
                 if (setup->file != nullptr && setup->file->version > setup->version) {
-                    Environment::refreshEnvironment(setup.get(), driverHooks);
+                    Environment::refreshEnvironment(setup.get(), this->diagnosticEmitter);
+
+                    // Fire relevant events
+                    if (this->configs.hooks.driver.onEnvironmentChange != nullptr) {
+                        this->configs.hooks.driver.onEnvironmentChange(setup->file);
+                    }
                 }
             }
         }
@@ -46,15 +75,27 @@ namespace Driver {
                 return false;
             }
 
-            // Reset stale data
-            this->resetDriverDiagnostics();
-
             // Check for pending path jobs
             this->processPendingPaths();
 
             // Enter VFS Safe Mode
             this->isBusy = true;
             this->host.vfs->setSafeMode(true);
+
+            // Handle exit logic
+            struct RunCleanup {
+                JugDriver *self;
+                ~RunCleanup() {
+                    // Exit VFS Safe Mode
+                    self->isBusy = false;
+                    self->host.vfs->setSafeMode(false);
+
+                    // Trigger relevent events
+                    if (self->configs.hooks.driver.onRunFinished != nullptr) {
+                        self->configs.hooks.driver.onRunFinished();
+                    }
+                }
+            } cleanup{this};
 
             // Make sure jug.toml configs are up-to-date
             this->refreshSetups();
@@ -66,10 +107,6 @@ namespace Driver {
 
             // Initiate parallel independent session runs!
             // ...
-
-            // Exit VFS Safe Mode
-            this->isBusy = false;
-            this->host.vfs->setSafeMode(false);
 
             return true;
         }
@@ -94,27 +131,6 @@ namespace Driver {
                 }
             }
         }
-        bool dirConfigLookup(DriverHooks &driverHooks, Data::Host::VFS *vfs, const std::string &uri, const std::string &sourceUri, std::string &outputUri) {
-            const std::string configUri = vfs->join(uri, "jug.toml");
-            const std::string parentDir = vfs->getParentDirectory(uri);
-
-            if (vfs->exists(configUri)) {
-                outputUri = std::move(configUri);
-                return true;
-            } else if (parentDir == uri) {
-                if (driverHooks.onEntryDiagnostic != nullptr) {
-                    Diagnostic err;
-                    err.severity = Diagnostics::Severity::Error;
-                    err.message = CODE_700002(sourceUri);
-                    err.code = 700002;
-
-                    driverHooks.onEntryDiagnostic(std::move(err));
-                }
-                return false;
-            } else {
-                return dirConfigLookup(driverHooks, vfs, parentDir, sourceUri, outputUri);
-            }
-        }
         void JugDriver::addProject(const std::string &path) {
             // Reference needed objects
             DriverHooks &driverHooks = this->configs.hooks.driver;
@@ -129,41 +145,29 @@ namespace Driver {
 
             if (!(vfs->exists(path))) {
                 // Couldn't find the specified uri
-                if (driverHooks.onEntryDiagnostic != nullptr) {
-                    Diagnostic err;
-                    err.severity = Diagnostics::Severity::Error;
-                    err.message = CODE_700001(path);
-                    err.code = 700001;
-
-                    driverHooks.onEntryDiagnostic(std::move(err));
-                }
+                SET_CODE(err, Error, 700001, path);
+                this->emitDiagnostic(err);
             } else if (vfs->filename(path) == "jug.toml") {
-                // LOAD UP THE CONFIGS
-                Environment::Environment env = Environment::fetchEnvironment(vfs, driverHooks, path);
-                (void)env;
+                // Load the project
+                this->loadProject(path);
             } else if (vfs->isDirectory(path)) {
                 std::string configUri;
                 if(dirConfigLookup(driverHooks, vfs, path, path, configUri)) {
-                    // LOAD UP THE CONFIGS
-                    Environment::Environment env = Environment::fetchEnvironment(vfs, driverHooks, configUri);
-                    (void)env;
+                    // Load the project
+                    this->loadProject(configUri);
                 } else {
                     // LOAD UP THE DEFAULT CONFIGS
                     Environment::Environment env;
                     (void)env;
                 }
-            } else if (driverHooks.onEntryDiagnostic != nullptr) {
-                Diagnostic err;
-                err.severity = Diagnostics::Severity::Error;
-                err.message = CODE_700003(path);
-                err.code = 700003;
-
-                driverHooks.onEntryDiagnostic(std::move(err));
+            } else {
+                SET_CODE(err, Error, 700003, path);
+                this->emitDiagnostic(err);
             }
         }
         void JugDriver::addStrayFile(const std::string &path) {
             // Reference needed objects
-            DriverHooks &driverHooks = this->configs.hooks.driver;
+            // DriverHooks &driverHooks = this->configs.hooks.driver;
             Data::Host::VFS *vfs = (this->host).vfs;
 
             // Prevent changes during a run!
@@ -175,24 +179,14 @@ namespace Driver {
 
             if (!(vfs->exists(path))) {
                 // Couldn't find the specified uri
-                if (driverHooks.onEntryDiagnostic != nullptr) {
-                    Diagnostic err;
-                    err.severity = Diagnostics::Severity::Error;
-                    err.message = CODE_700001(path);
-                    err.code = 700001;
-
-                    driverHooks.onEntryDiagnostic(std::move(err));
-                }
+                SET_CODE(err, Error, 700001, path);
+                this->emitDiagnostic(err);
             } else if (vfs->endsWith(path, ".jug")) {
                 // ADD THE FILE!
                 // MUST CHECK FOR CONFIGS FIRST!
-            } else if (driverHooks.onEntryDiagnostic != nullptr) {
-                Diagnostic err;
-                err.severity = Diagnostics::Severity::Error;
-                err.message = CODE_700004(path);
-                err.code = 700004;
-
-                driverHooks.onEntryDiagnostic(std::move(err));
+            } else {
+                SET_CODE(err, Error, 700004, path);
+                this->emitDiagnostic(err);
             }
         }
 
@@ -219,6 +213,14 @@ namespace Driver {
                 return this->lookupProject(vfs->getParentDirectory(path), path);
             } else {
                 return this->lookupProject(vfs->getParentDirectory(path), path);
+            }
+        }
+
+        // Hooks
+        void JugDriver::emitDiagnostic(const Diagnostic &diag) {
+            if (this->configs.hooks.driver.onDiagnostic != nullptr) {
+                std::lock_guard<std::mutex> lock(this->hookMtx); // Serialise hook calls!
+                this->configs.hooks.driver.onDiagnostic(diag);
             }
         }
     }

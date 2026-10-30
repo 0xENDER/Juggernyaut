@@ -47,19 +47,21 @@ namespace Driver {
                 // Provided Configs
                 HostConfigs host;
                 DriverConfigs configs;
+                const Diagnostics::Event diagnosticEmitter = [this](const Diagnostic& d) { this->emitDiagnostic(d); };
             private:
                 // Internal variables
                 std::unordered_map<SetupId, std::unique_ptr<Setup>> setups;
                 std::unordered_map<UnitId, std::unique_ptr<Unit>> sessions;
                 std::vector<UnitId> entryPoints;
-                std::vector<Diagnostic> driverDiagnostics; // Reset every run()!
 
                 bool isBusy = false;
                 std::vector<std::string> pendingPaths;
+                std::mutex hookMtx;
 
                 // Internal
                 void processPendingPaths() ;
-                void resetDriverDiagnostics() ;
+                bool dirConfigLookup(DriverHooks &driverHooks, Data::Host::VFS *vfs, const std::string &uri, const std::string &sourceUri, std::string &outputUri) ;
+                void loadProject(const std::string &path) ; // Assumes the path has been validated!
 
                 // Lifetime Management (Internal)
                 void refreshSetups() ; // Checks jug.toml files for updates
@@ -88,6 +90,9 @@ namespace Driver {
 
                 // Tools
                 std::string lookupProject(const std::string &path, const std::string &previous = "") ; // Look up a parent project path
+
+                // Hooks
+                void emitDiagnostic(const Diagnostic &diag) ;
 
                 // Queries
                 bool busy() const noexcept { return this->isBusy; }
