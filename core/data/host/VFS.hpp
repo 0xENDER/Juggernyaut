@@ -70,6 +70,7 @@ namespace Data {
                 // Note: newContent will be reset!
                 void updateFile(const std::string& path, std::string &newContent) ;
                 void reloadFile(const std::string& path) ;
+                const std::string getURI(const FileId& id) ;
 
                 // Internal Management functions (Only called within the front-end!)
                 void setSafeMode(bool safe) ; // Forbids data changes (changes are queued for later)
@@ -80,7 +81,7 @@ namespace Data {
                 const File* readFile(const std::string& path) ;
                 bool exists(const std::string& path) ;
                 bool isDirectory(const std::string& path) ;
-                //  const std::string canonical(const std::string& path) ; // Returns the canonical full path of a file
+                const std::string canonical(const std::string& path) ; // Returns the canonical full path of a file
 
                 // Extended functionality
                 const std::string getParentDirectory(const std::string& path) ; // e.g. c:\path\to\file.txt -> c:\path\to, c:\path\to -> c:\path,

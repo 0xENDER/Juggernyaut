@@ -107,6 +107,14 @@ namespace Data {
             }
             this->fetchLocalFileContent(path);
         }
+        const std::string VFS::getURI(const FileId& id) {
+            const File* file = this->cache[id - this->FILE_ID_OFFSET].get();
+            if (file == nullptr) {
+                return "";
+            }
+
+            return file->canonical;
+        }
 
         // Internal Management functions (Only called within the front-end!)
         void VFS::setSafeMode(bool safe) {
@@ -173,6 +181,9 @@ namespace Data {
         }
         bool VFS::isDirectory(const std::string& path) {
             return this->_isDirectory(path);
+        }
+        const std::string VFS::canonical(const std::string& path) {
+            return this->_canonical(path);
         }
 
         // Extended functionality
