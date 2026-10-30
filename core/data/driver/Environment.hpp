@@ -8,6 +8,9 @@
 #include "common/headers.hpp"
 #include "../dynamic.hpp" // JUG_DATA_API
 
+// VFS
+#include "../host/VFS.hpp"
+
 namespace Data {
     namespace Driver {
         struct PackageConfigs {
@@ -37,8 +40,11 @@ namespace Data {
         };
         // 'Environment' is derived from the 'jug.toml' configuration files!
         using EnvironmentId = uint32_t;
+        using EnvironmentVersion = uint32_t;
+        using File = Data::Host::File;
         struct Environment {
-            const std::string source = ""; // jug.toml
+            const File* file= nullptr; // jug.toml
+            EnvironmentVersion version = 0; // Compared against file->version!
             PackageConfigs package;
             BuildConfigs build;
             std::vector<LocalDependency> localDeps;
