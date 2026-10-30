@@ -23,11 +23,11 @@
 #include "capabilities/basic.hpp"
 #include "capabilities/semantics/diagnostics.hpp"
 
-// Store
-#include "store/DocumentStore.hpp"
+// Filesystem
+#include "store/Documents.hpp"
 
-// Session
-#include "../core/session/session.hpp"
+// Front-End Driver
+#include "../core/driver/JugDriver.hpp"
 
 void logStdErr(std::string_view message) {
     std::cerr << message << std::endl;
@@ -38,14 +38,16 @@ int startServer(lsp::io::Stream& io) {
     int exit_code = false;
     lsp::ServerEndpoint endpoint = io;
 
-    // Setup session
-    Session::Session session = Session::getSessionDefaults();
-    Store::DocumentStore store = Store::DocumentStore();
-    session.store = &store;
+    // Set up the driver
+    auto docs = std::unique_ptr<Store::Documents>();
+    Driver::JugDriver::HostConfigs host;
+    host.vfs = docs.get();
+    Driver::JugDriver::DriverConfigs configs;
+    Driver::JugDriver::JugDriver driver(host, configs);
 
     // Configure protocol
-    Capabilities::configureProtocol(endpoint, session, exit_code);
-    Capabilities::Semantics::setupGlobalDiagnostics(endpoint, session);
+    Capabilities::configureProtocol(endpoint, driver, exit_code);
+    Capabilities::Semantics::setupGlobalDiagnostics(endpoint, driver);
 
     // Start the communication
     endpoint.runMessageLoop();

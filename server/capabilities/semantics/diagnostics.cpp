@@ -48,13 +48,13 @@ namespace Capabilities {
         }
 
         lsp::ServerEndpoint *io = nullptr;
-        void setupGlobalDiagnostics(lsp::ServerEndpoint &endpoint, Session::Session &session) {
-            Data::Store::SourceStore *store = session.store;
+        void setupGlobalDiagnostics(lsp::ServerEndpoint &endpoint, Driver::JugDriver::JugDriver &driver) {
+            //Data::Host::VFS *vfs = driver.host.vfs;
 
             // Update diagnostics I/O endpoint
-            io = &endpoint;
+            // io = &endpoint;
 
-            session.hooks.parser.onContextEnd = [store](const Data::Store::SourceId srcId) {
+            /*session.hooks.parser.onContextEnd = [store](const Data::Store::SourceId srcId) {
                 std::unique_ptr<Data::Store::Source> &source = store->getSourceById(srcId);
 
                 std::vector<lsp::Diagnostic> diagnostics;
@@ -68,7 +68,7 @@ namespace Capabilities {
                     .uri = lsp::DocumentUri::fileUriFromPath(source->uri), // The URI of the file
                     .diagnostics = std::move(diagnostics)
                 });
-            };
+            };*/
         }
 
         void resetSourceDiagnostics(const std::string &uri) {

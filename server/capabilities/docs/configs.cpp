@@ -9,58 +9,17 @@
 
 namespace Capabilities {
     namespace Docs {
-        Configs::BreakingChanges updateSessionConfigs(lsp::ServerEndpoint &endpoint, Session::Session &session, const std::string &configUri) {
-            const std::string uri = session.store->_getCanonical(configUri);
-
-            (void)endpoint.windowShowMessageRequest(
-                {
-                    .type = lsp::MessageType::Info,
-                    .message = "Juggernyaut configuration file is being processed...",
-                }
-            );
-
-            // Load external configs
-            std::vector<Diagnostics::Diagnostic> configsDiags;
-            Configs::BreakingChanges changes = Configs::BreakingChanges::None;
-            if (!Configs::modifySession(session, uri, configsDiags, true, &changes)) {
-
-                std::erase_if(configsDiags, [&endpoint](const Diagnostics::Diagnostic &diag) {
-                    // Take care of sources with no range!
-                    if (diag.range.start == diag.range.end) {
-                        std::string msg = "Juggernyaut configuration file is being processed...";
-                        msg.append(std::move(diag.message));
-
-                        (void)endpoint.windowShowMessageRequest(
-                            {
-                                .type    = lsp::MessageType::Error,
-                                .message = std::move(msg),
-                            }
-                        );
-
-                        return true;
-                    }
-                    return false;
-                });
-            }
-
-            // (Special Case) send diagnostics
-            Capabilities::Semantics::sendSourceDiagnosticsByURI(configsDiags, uri);
-
-            return changes;
-        }
-        void registerConfigsWatcher(lsp::ServerEndpoint &endpoint, Session::Session &session,
-            std::unique_ptr<Session::SessionDebouncer> &debouncer, const std::string &configUri) {
+        void registerConfigsWatcher(lsp::ServerEndpoint &endpoint, Driver::JugDriver::JugDriver &driver,
+            std::unique_ptr<Driver::DriverDebouncer> &debouncer, const std::string &configUri) {
             // Add update trigger
             endpoint.onWorkspaceDidChangeWatchedFiles(
-                [&endpoint, &session, &debouncer](auto&& params) {
+                [&endpoint, &driver, &debouncer](auto&& params) {
                     for (const auto& change : params.changes) {
                         if (change.type == lsp::FileChangeType::Deleted) {
-                            Configs::BreakingChanges changes = Configs::resetSessionConfigs(session);
-                            Configs::refreshSessionState(session, changes);
+                            driver.host.vfs->updateFile(change.uri.path(), "");
                             debouncer->trigger();
                         } else if (change.type == lsp::FileChangeType::Changed) {
-                            Configs::BreakingChanges changes = Docs::updateSessionConfigs(endpoint, session, (std::string) change.uri.path());
-                            Configs::refreshSessionState(session, changes);
+                            driver.host.vfs->reloadFile(change.uri.path());
                             debouncer->trigger();
                         }
                     }
