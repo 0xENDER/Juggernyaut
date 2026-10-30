@@ -52,9 +52,12 @@ namespace Driver {
                 // TO-DO: Phase out SourceStore in favour of a global VFS
                 std::vector<UnitId> entryPoints;
 
+                bool isBusy = false;
+
             public:
                 UnitId lastID = 10;
 
+                // NOTE: When the driver is busy(), never change the state of the inputed variables or their children!
                 JugDriver(HostConfigs hostConfigs, DriverConfigs driverConfigs) : host(hostConfigs), configs(driverConfigs) {};
                 virtual ~JugDriver() = default;
 
@@ -65,12 +68,18 @@ namespace Driver {
                 //JugDriver(JugDriver&&) noexcept = default;
                 //JugDriver& operator=(JugDriver&&) noexcept = default;
 
-                void run() ;
+                // Lifetime Management (Always cause the driver to become busy!)
+                void refreshSetups() ; // Checks jug.toml files for updates
+                // void refreshDependencyGraph() ; // Updates dependency graph for parallel processing
+                // void run() ; // Kick starts the dependency graph 
 
+                // Adding projects/stary files
                 void processPaths(std::vector<std::string> &paths) ;
-
                 void addProject(const std::string &path) ;
                 void addStrayFile(const std::string &path) ;
+
+                // Queries
+                bool busy() const noexcept { return this->isBusy; }
         };
     }
 }

@@ -10,16 +10,23 @@
 
 namespace Driver {
     namespace JugDriver {
-        // Generate a dependency tree for an entry!
-        void dependenciesLookup(Data::Host::VFS *vfs) {
-            // ...
-            (void)vfs;
+        // Lifetime Management
+        void JugDriver::refreshSetups() {
+            this->isBusy = true;
+
+            // Reference needed objects
+            DriverHooks &driverHooks = this->configs.hooks.driver;
+
+            for (std::unique_ptr<Setup>& setup : std::views::values(this->setups)) {
+                if (setup->file->version > setup->version) {
+                    Environment::refreshEnvironment(setup.get(), driverHooks);
+                }
+            }
+
+            this->isBusy = false;
         }
 
-        void JugDriver::run() {
-            // ...
-        }
-
+        // Adding projects/stary files
         void JugDriver::processPaths(std::vector<std::string> &paths) {
             // Reference needed objects
             Data::Host::VFS *vfs = (this->host).vfs;
@@ -32,7 +39,6 @@ namespace Driver {
                 }
             }
         }
-
         bool dirConfigLookup(DriverHooks &driverHooks, Data::Host::VFS *vfs, const std::string &uri, const std::string &sourceUri, std::string &outputUri) {
             const std::string configUri = vfs->join(uri, "jug.toml");
             const std::string parentDir = vfs->getParentDirectory(uri);
