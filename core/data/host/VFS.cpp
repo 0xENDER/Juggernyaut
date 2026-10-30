@@ -185,6 +185,9 @@ namespace Data {
         const std::string VFS::canonical(const std::string& path) {
             return this->_canonical(path);
         }
+        const std::string VFS::cwd() {
+            return this->_cwd();
+        }
 
         // Extended functionality
         const std::string VFS::getParentDirectory(const std::string& path) {

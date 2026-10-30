@@ -59,7 +59,7 @@ namespace Data {
                 virtual bool _exists(const std::string& path) = 0;
                 virtual bool _isDirectory(const std::string& path) = 0;
                 virtual const std::string _canonical(const std::string& path) = 0; // Returns the canonical full path of a file
-                // virtual const std::string _cwd() = 0;
+                virtual const std::string _cwd() = 0;
                 virtual const Timestamp _lastModified(const std::string& path) = 0;
 
                 // Technical
@@ -85,6 +85,7 @@ namespace Data {
                 bool exists(const std::string& path) ;
                 bool isDirectory(const std::string& path) ;
                 const std::string canonical(const std::string& path) ; // Returns the canonical full path of a file
+                const std::string cwd() ;
 
                 // Extended functionality
                 const std::string getParentDirectory(const std::string& path) ; // e.g. c:\path\to\file.txt -> c:\path\to, c:\path\to -> c:\path,

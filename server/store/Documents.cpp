@@ -29,4 +29,7 @@ namespace Store {
         (void)path;
         return 0;
     }
+    const std::string Documents::_cwd() {
+        return getWorkingDir();
+    }
 }
