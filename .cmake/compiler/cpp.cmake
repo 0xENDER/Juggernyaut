@@ -237,3 +237,8 @@ else()
         add_compile_options(-gsplit-dwarf)
     endif()
 endif()
+
+# Preprocessor flags
+if(MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:preprocessor")
+endif()
