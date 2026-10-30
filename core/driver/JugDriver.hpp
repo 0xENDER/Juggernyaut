@@ -53,6 +53,10 @@ namespace Driver {
                 std::vector<UnitId> entryPoints;
 
                 bool isBusy = false;
+                std::vector<std::string> pendingPaths;
+
+                // Internal
+                void processPendingPaths() ;
 
                 // Lifetime Management (Internal)
                 void refreshSetups() ; // Checks jug.toml files for updates
@@ -76,6 +80,7 @@ namespace Driver {
                 bool run() ; // Returns true if the driver got triggered!
 
                 // Adding projects/stary files
+                // NOTE: These actions will be queued when the driver is busy!
                 void processPaths(std::vector<std::string> &paths) ;
                 void addProject(const std::string &path) ;
                 void addStrayFile(const std::string &path) ;

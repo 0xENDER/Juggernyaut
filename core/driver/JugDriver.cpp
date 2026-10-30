@@ -10,6 +10,16 @@
 
 namespace Driver {
     namespace JugDriver {
+        // Internal
+        void JugDriver::processPendingPaths() {
+            // Drain any paths that were added whilst a previous run was busy
+            if (!this->pendingPaths.empty()) {
+                std::vector<std::string> queued = std::move(this->pendingPaths);
+                this->pendingPaths.clear();
+                this->processPaths(queued);
+            }
+        }
+
         // Lifetime Management (Internal)
         void JugDriver::refreshSetups() {
             // Reference needed objects
@@ -31,6 +41,10 @@ namespace Driver {
             if (this->isBusy) {
                 return false;
             }
+
+            // Check for pending path jobs
+            this->processPendingPaths();
+
             // Enter VFS Safe Mode
             this->isBusy = true;
             this->host.vfs->setSafeMode(true);
@@ -55,6 +69,13 @@ namespace Driver {
         void JugDriver::processPaths(std::vector<std::string> &paths) {
             // Reference needed objects
             Data::Host::VFS *vfs = (this->host).vfs;
+
+            // Prevent changes during a run!
+            if (this->isBusy) {
+                this->pendingPaths.insert(this->pendingPaths.end(), paths.begin(), paths.end());
+                return;
+            }
+            this->processPendingPaths();
 
             for (auto path: paths) {
                 if (vfs->isDirectory(path) || vfs->filename(path) == "jug.toml") {
@@ -89,6 +110,13 @@ namespace Driver {
             // Reference needed objects
             DriverHooks &driverHooks = this->configs.hooks.driver;
             Data::Host::VFS *vfs = (this->host).vfs;
+
+            // Prevent changes during a run!
+            if (this->isBusy) {
+                this->pendingPaths.push_back(path);
+                return;
+            }
+            this->processPendingPaths();
 
             if (!(vfs->exists(path))) {
                 // Couldn't find the specified uri
@@ -129,6 +157,13 @@ namespace Driver {
             // Reference needed objects
             DriverHooks &driverHooks = this->configs.hooks.driver;
             Data::Host::VFS *vfs = (this->host).vfs;
+
+            // Prevent changes during a run!
+            if (this->isBusy) {
+                this->pendingPaths.push_back(path);
+                return;
+            }
+            this->processPendingPaths();
 
             if (!(vfs->exists(path))) {
                 // Couldn't find the specified uri
