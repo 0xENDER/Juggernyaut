@@ -11,7 +11,7 @@
 
 // Parser
 #include "../../../core/parser/parser.hpp"
-#include "../../../core/parser/listeners/DiagnosticListener.hpp"
+//#include "../../../core/parser/listeners/DiagnosticListener.hpp"
 
 // Front-End Driver
 #include "./../../../core/driver/JugDriver.hpp"
@@ -22,8 +22,5 @@
 namespace Capabilities {
     namespace Semantics {
         extern void setupGlobalDiagnostics(lsp::ServerEndpoint &endpoint, Driver::JugDriver::JugDriver &driver) ;
-
-        extern void resetSourceDiagnostics(const std::string &uri) ;
-        extern void sendSourceDiagnosticsByURI(const std::vector<Diagnostics::Diagnostic> &diags, const std::string &uri) ;
     }
 }

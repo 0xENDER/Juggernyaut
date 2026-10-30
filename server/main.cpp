@@ -46,8 +46,8 @@ int startServer(lsp::io::Stream& io) {
     Driver::JugDriver::JugDriver driver(host, configs);
 
     // Configure protocol
-    Capabilities::configureProtocol(endpoint, driver, exit_code);
     Capabilities::Semantics::setupGlobalDiagnostics(endpoint, driver);
+    Capabilities::configureProtocol(endpoint, driver, exit_code);
 
     // Start the communication
     endpoint.runMessageLoop();
