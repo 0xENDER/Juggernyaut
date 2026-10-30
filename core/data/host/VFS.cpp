@@ -177,10 +177,10 @@ namespace Data {
             }
         }
         bool VFS::exists(const std::string& path) {
-            return this->_exists(path);
+            return this->_exists(this->_canonical(path));
         }
         bool VFS::isDirectory(const std::string& path) {
-            return this->_isDirectory(path);
+            return this->_isDirectory(this->_canonical(path));
         }
         const std::string VFS::canonical(const std::string& path) {
             return this->_canonical(path);
