@@ -54,8 +54,7 @@ namespace Capabilities {
                         .definitionProvider = false,
                         .executeCommandProvider = lsp::ExecuteCommandOptions{
                             .commands = {
-                                "juggernyaut.server.session.trigger",
-                                "juggernyaut.server.session.rejuvenate"
+                                "juggernyaut.server.driver.trigger"
                             }
                         }
                     },
@@ -69,14 +68,9 @@ namespace Capabilities {
             [](auto&& params) -> lsp::WorkspaceExecuteCommandResult {
 
                 // Route the specific command
-                if (params.command == "juggernyaut.server.session.trigger") {
+                if (params.command == "juggernyaut.server.driver.trigger") {
 
                     debouncer->trigger();
-
-                    return nullptr;
-                } else if (params.command == "juggernyaut.server.session.rejuvenate") {
-
-                    // Session::rejuvenate(session);
 
                     return nullptr;
                 }
