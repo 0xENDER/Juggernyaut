@@ -12,11 +12,7 @@
 #include "../diagnostics/Diagnostic.hpp"
 
 namespace Parser {
-    typedef std::function<void(const uint8_t&, const std::string&)> TokenReport;
-    typedef std::function<void(const std::string&)> TreeReport;
-    typedef std::function<void(const Data::Store::SourceId)> StageCall;
-
-    typedef std::function<void(const Diagnostics::Diagnostic&)> ParserDiagEvent;
+    typedef std::function<void()> StageCall;
 
     // typedef std::function<Data::Store::Source(const std::string)> SourceRequest;
 
@@ -26,20 +22,10 @@ namespace Parser {
         StageCall onContextStart = nullptr; // Fresh check started
         StageCall onLexerContextEnd = nullptr; // Lexer checks ended
         StageCall onContextEnd = nullptr; // Check ended
-        // [TokenReport]
-        // Args: <stage> (const uint8_t&), <token_text> (const std::string&)
-        // Note: stage - 1: triggered before tokens are processed, 2: token is processed, 3: all tokens have been processed
-        TokenReport onANTLRTokenDetected = nullptr;
-        // [TreeReport]
-        // Args: <AST_text> (const std::string&)
-        TreeReport onANTLRTreeGenerated = nullptr;
 
-        // [ParserDiagEvent]
+        // [Diagnostic Events]
         // Args: <diagnostics_obj> (Diagnostics::Diagnostic)
-        ParserDiagEvent onSyntaxError = nullptr;
-        ParserDiagEvent onAmbiguity = nullptr;
-        ParserDiagEvent onAttemptingFullContext = nullptr;
-        ParserDiagEvent onContextSensitivity = nullptr;
+        Diagnostics::Event onDiagnostic = nullptr;
 
         //// [SourceRequest]
         //// Args: <file_uri> (const std::string)
