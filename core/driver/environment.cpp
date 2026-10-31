@@ -283,6 +283,9 @@ namespace Driver {
             env->localDeps.clear();
             env->onlineDeps.clear();
 
+            // Update environment version
+            env->version = env->file->version;
+
             // Process TOML data
             toml::parse_result result = toml::parse(file->content);
             if (!result) {
@@ -322,9 +325,6 @@ namespace Driver {
                     emitDiagnostic(emit, file, val.source(), Diagnostics::Severity::Warning, CODE_700008(std::string(sectionName)), 700008);
                 }
             }
-
-            // Update environment version
-            env->version = env->file->version;
         }
         Environment fetchEnvironment(VFS *vfs, const Diagnostics::Event &emit, const std::string &path) {
             Environment env;
