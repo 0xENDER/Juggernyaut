@@ -8,8 +8,8 @@
 namespace Session {
     // (Inner) Management
     void Session::emitDiagnostic(const Diagnostic &diag) {
-        if (this->bindings.session.onDiagnostic != nullptr){
-            this->bindings.session.onDiagnostic(diag);
+        if (this->hooks.onDiagnostic != nullptr){
+            this->hooks.onDiagnostic(diag);
         }
     }
 

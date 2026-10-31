@@ -17,6 +17,7 @@
 //#include "../parser/Configs.hpp"
 
 #include "Hooks.hpp"
+#include "Configs.hpp"
 
 #ifdef _MSC_VER
 #pragma warning(push)
@@ -36,41 +37,17 @@ namespace Session {
     using ASTNode = bool;
     using SymbolTable = bool;
 
-    enum class Stage : uint8_t {
-        Unprocessed = 0,
-        Lexer       = 1,
-        Parser      = 2,
-        Transformer = 3,
-        Semantic    = 4,
-        IaRC        = 5
-    };
-
-    struct Configs {
-        Stage terminateAfter = Stage::IaRC;
-        // Parser::SharedConfigs parser;
-    };
-
-    struct Bindings {
-        // Session hooks
-        Hooks session;
-
-        // Compilation unit hooks
-        // Parser::Hooks parser;
-        // Transformer::Hooks transformer;
-        // Semantic::Hooks semantic;
-    };
-
     // Tracks breaking config changes that force full stage invalidation
-    struct RevisionStates {
+    /*struct RevisionStates {
         uint32_t parser      = 0;
         uint32_t transformer = 0;
         uint32_t semantic    = 0;
-    };
+    };*/
 
     // Lightweight per-file state within THIS session (replaces heavy Source class)
     struct CompilationUnitState {
         const File* file = nullptr;
-        Stage completedStage = Stage::Unprocessed;
+        Stage completedStage = Stage::Unprocessed; // TO-DO: Maybe replace this with a 'lastSuccessfulStage'?
         FileVersion contentRevision = 0; // Synced against VFS file revision
 
         // Keep only summary counts after flushing raw Diagnostic vectors
@@ -99,8 +76,8 @@ namespace Session {
 
             // --- 3. Execution State ---
             Configs configs;
-            Bindings bindings;
-            RevisionStates revisions;
+            Hooks hooks;
+            // RevisionStates revisions;
             bool isRunning = false;
             bool hasErrors = false;
 
@@ -111,8 +88,8 @@ namespace Session {
             // bool runIaRCStage();
 
         public:
-            Session(VFS *hostVFS, const Environment *unitEnv, Configs sessionConfigs = {}, Bindings sessionBindings = {})
-                : vfs(hostVFS), env(unitEnv), configs(std::move(sessionConfigs)), bindings(std::move(sessionBindings)) {}
+            Session(VFS *hostVFS, const Environment *unitEnv, Configs sessionConfigs = {}, Hooks sessionHooks = {})
+                : vfs(hostVFS), env(unitEnv), configs(std::move(sessionConfigs)), hooks(std::move(sessionHooks)) {}
             ~Session() = default;
 
             // Non-copyable, movable
