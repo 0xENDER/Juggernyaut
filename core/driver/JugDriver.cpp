@@ -34,6 +34,11 @@ namespace Driver {
                 return dirConfigLookup(driverHooks, vfs, parentDir, sourceUri, outputUri);
             }
         }
+        UnitId JugDriver::createUnit(const Setup *setup, UnitConfigs unitConfigs, UnitHooks unitHooks) {
+            UnitId id = static_cast<UnitId>(this->units.size());
+            this->units.push_back(std::make_unique<Unit>(this->host.vfs, setup, unitConfigs, unitHooks));
+            return id;
+        }
         void JugDriver::loadProject(const std::string &path) {
             // Reference needed objects
             DriverHooks &driverHooks = this->configs.hooks.driver;
@@ -57,7 +62,9 @@ namespace Driver {
                 }
             }
 
-            // ...
+            // Create a unit!
+            Setup *setup = this->setups[file->id].get();
+            createUnit(setup, {},  {});
         }
 
         // Lifetime Management (Internal)
@@ -74,7 +81,17 @@ namespace Driver {
             }
         }
         bool JugDriver::refreshDependencyGraph() {
-            return false;
+            // PLANNED: Topological Wave (Level) Scheduling (Kahn's algorithm)
+            // NOTE: Project dependencies haven't been implemented yet!
+            // As such, this is a dummy call for the time being that adds one
+            // execution layer!
+
+            // Reset waves
+            executionWaves.clear();
+
+            // ...?
+
+            return true;
         }
 
         // Lifetime Management (Always cause the driver to become busy!)
