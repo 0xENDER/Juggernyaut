@@ -165,8 +165,8 @@ namespace Driver {
                     // Load the project
                     this->loadProject(configUri);
                 } else {
-                    // LOAD UP THE DEFAULT CONFIGS
-                    // OR MAYBE SPLIT OUT AN ERROR?
+                    SET_CODE(err, Error, 700002, path);
+                    this->emitDiagnostic(err);
                 }
             } else {
                 SET_CODE(err, Error, 700003, path);
