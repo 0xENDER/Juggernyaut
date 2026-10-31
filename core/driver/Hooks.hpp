@@ -18,7 +18,7 @@ namespace Driver {
 
     using GenericEvent = std::function<void()>;
     using FileEvent = std::function<void(const Data::Host::File*)>;
-    using UnitSourceEvent = std::function<void(const Unit&, const UnitSourceId&)>;
+    using UnitSourceEvent = std::function<void(const JugDriver::Unit*, const UnitSourceId&)>;
     // using UnitSourceStringEvent = std::function<void(const Unit&, const std::string&)>;
     // using UnitSourceU8tStringEvent = std::function<void(const Unit&, const uint8_t&, const std::string&)>;
 

@@ -1,6 +1,6 @@
 /**
  * @brief 
- * Front-End Driver Session Units
+ * Front-End Driver Units (Sessions)
 **/
 
 #pragma once
@@ -9,14 +9,12 @@
 #include "dynamic.hpp" // JUG_DRIVER_API
 
 // Sessions
-#include "../session/session.hpp"
-
+#include "../session/Session.hpp"
 namespace Driver {
-    using UnitId = uint32_t;
-    using UnitSessionPtr = std::unique_ptr<Session::Session>;
-
-    struct Unit {
-        const std::string rootDir = "";
-        UnitSessionPtr session = nullptr;
-    };
+    namespace JugDriver {
+        using Unit = Session::Session;
+        using UnitId = uint32_t;
+        using UnitConfigs = Session::Configs;
+        using UnitHooks = Session::Hooks;
+    }
 }

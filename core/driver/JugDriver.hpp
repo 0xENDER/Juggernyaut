@@ -15,10 +15,10 @@
 #include "environment.hpp"
 
 // Sessions
-#include "../session/session.hpp"
+#include "../session/Session.hpp"
 
-#include "Unit.hpp"
 #include "Hooks.hpp"
+#include "Unit.hpp"
 
 #ifdef _MSC_VER
 #pragma warning(push)
@@ -31,6 +31,7 @@ namespace Driver {
     namespace JugDriver {
         using SetupId = Environment::EnvironmentId;
         using Setup = Environment::Environment;
+
         using Diagnostic = Diagnostics::Diagnostic;
 
         struct HostConfigs {
@@ -51,7 +52,7 @@ namespace Driver {
             private:
                 // Internal variables
                 std::unordered_map<SetupId, std::unique_ptr<Setup>> setups;
-                std::unordered_map<UnitId, std::unique_ptr<Unit>> sessions;
+                std::vector<std::unique_ptr<Unit>> units;
                 std::vector<UnitId> entryPoints;
 
                 bool isBusy = false;
