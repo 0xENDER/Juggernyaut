@@ -5,7 +5,43 @@
 
 #include "include/console/console.hpp"
 
+// C++ headers
+#include <algorithm>
+
 namespace Console {
+    static std::mutex reportMtx;
+
+    std::unique_lock<std::mutex> acquireReportLock() {
+        return std::unique_lock<std::mutex>(reportMtx);
+    }
+
+    namespace Progress {
+        static std::atomic<int> currentPercent{-1};
+
+        void reset(int initialPercent) noexcept {
+            currentPercent.store(std::clamp(initialPercent, 0, 100), std::memory_order_release);
+        }
+
+        void advancePercent(int percent) noexcept {
+            const int clamped = std::clamp(percent, 0, 100);
+            int prev = currentPercent.load(std::memory_order_relaxed);
+            while (prev >= 0 && clamped > prev) {
+                if (currentPercent.compare_exchange_weak(
+                        prev, clamped, std::memory_order_release, std::memory_order_relaxed)) {
+                    break;
+                }
+            }
+        }
+
+        void disable() noexcept {
+            currentPercent.store(-1, std::memory_order_release);
+        }
+
+        int getPercent() noexcept {
+            return currentPercent.load(std::memory_order_acquire);
+        }
+    }
+
     // Handle error throw statement
     static void throwError(std::string msg) {
 
@@ -26,20 +62,16 @@ namespace Console {
 
     // General compiler status
     namespace ProcessReport {
-        // It may become necessary to introduce static tracking variables to keep up with more complex error reports
-        // to support LSP!
         int programStatus = 0; // Default: 0 (success)
-        // Keep track of the reporting status
         bool didSendReport = false;
     }
 
     // Report-specific status
     namespace IndividualReport {
-        // Current reporting status!
-        bool isNew = true; // Check if this is a new report!
+        bool isNew = true;
         ReportType type = UNKNOWN_REPORT;
         std::string stage = "";
-        std::stringstream messageStream; // report message data!
+        std::stringstream messageStream;
 
         bool isContinuation = false;
 
@@ -52,18 +84,15 @@ namespace Console {
 
         int code = 1;
 
-        // Reset report data!
         static void reset() {
-            // Report basic data
             isNew = true;
             type = UNKNOWN_REPORT;
             stage = "";
-            messageStream.str(""); // Clear the internal buffer
-            messageStream.clear(); // Clear the state flags (eofbit, failbit, badbit)
+            messageStream.str("");
+            messageStream.clear();
 
             isContinuation = false;
 
-            // Code-related data
             path = "";
             startLine = 0;
             startColumn = 0;
@@ -73,7 +102,6 @@ namespace Console {
             code = 1;
         }
 
-        // Send report data!
         static void send() {
             if (IndividualReport::isNew) {
                 throwError("Attempting to send an untouched/incorrectly initialised Comms::IndividualReport!");
@@ -81,9 +109,7 @@ namespace Console {
             if(!ProcessReport::didSendReport){
                 ProcessReport::didSendReport = true;
             }
-            // Print report details
             Internal::Reports::print();
-            // Reset report data
             reset();
         }
     }
@@ -98,11 +124,8 @@ namespace Console {
         int debugReports = 0;
     }
 
-    // Internal library members!
     namespace ReportInternals {
-        // Handle control input processing
         static void processReportControl(const ReportInput& arg) {
-            // Arguments that are used to send instructions!
             if (std::holds_alternative<ReportAction>(arg)) {
                 ReportAction value = std::get<ReportAction>(arg);
                 if (value == START_REPORT){
@@ -111,7 +134,6 @@ namespace Console {
                     }
                     IndividualReport::isNew = false;
                 } else if (value == END_REPORT) {
-                    // Send report data
                     IndividualReport::send();
                 } else {
                     throwError("Unknown Comms::ReportAction value!"); 
@@ -119,7 +141,6 @@ namespace Console {
             } else if (std::holds_alternative<ReportType>(arg)) {
                 ReportType value = std::get<ReportType>(arg);
 
-                // Track report type
                 if (!IndividualReport::isContinuation) {
                     switch (value) {
                     case NORMAL_REPORT:
@@ -130,12 +151,10 @@ namespace Console {
                         break;
                     case CRITICAL_REPORT:
                         Statistics::criticalReports++;
-                        // Update program status
                         ProcessReport::programStatus = 1;
                         break;
                     case FATAL_REPORT:
                         Statistics::fatalReports++;
-                        // Update program status
                         ProcessReport::programStatus = 2;
                         break;
                     case ACTION_REPORT:
@@ -150,52 +169,39 @@ namespace Console {
                     }
                 }
 
-                // Value is valid!
                 IndividualReport::type = value;
             } else {
                 throwError("Unknown Comms::report control argument type!");
             }
         }
 
-        // Handle user input processing
         static void processReportInput(const ReportInput& arg) {
-            // Check if the report is valid
             if (IndividualReport::isNew) {
                 throwError("Attempting to inject a value to an uninitialised Comms::report!");
             }
-            // Check if it's data that should saved, or printed!
             bool isMessageBody = true;
             std::stringstream text;
-            // Check arg type
             if (std::holds_alternative<std::string>(arg)) {
                 std::string value = std::get<std::string>(arg);
-                // TMP
                 text << value;
             } else if (std::holds_alternative<size_t>(arg)) {
                 size_t value = std::get<size_t>(arg);
-                // TMP
                 text << value;
-                // Check for line and column numbers!
-                // ...
-                // isMessageBody = false
             } else {
                 throwError("Unknown Comms::report input argument type!"); 
             }
 
-            // Save message body data
             if (isMessageBody) {
                 IndividualReport::messageStream << text.str();
             }
         }
     }
 
-    // Type group checks
     template <typename... Types, typename Variant>
     static bool holdsAlternatives(const Variant& variant) {
-        return (std::holds_alternative<Types>(variant) || ...); // Fold expression
+        return (std::holds_alternative<Types>(variant) || ...);
     }
 
-    // Reporting
     void report(const ReportInputs& args) {
         for (const auto& arg : args) {
             if (holdsAlternatives<REPORT_BASIC_TYPES>(arg)) {
@@ -212,31 +218,24 @@ namespace Console {
         Internal::startClock();
     };
 
-    // Initalise protocol
     void initalize(const InitializationData &data) {
-        // Initialise Internal mode
         Internal::initialize(data); //TMP
     }
 
-    // Keep track of finalisation
     static bool isFinalized = false;
-    // For actions that require minimal finalisation!
     bool minimalProtocolFinalization = false;
 
-    // Finalise protocol
     void finalize(uint32_t activeSrcs) {
+        Progress::disable();
         Console::Optimization::safetyCheck();
 
-        // Check for unwanted called
         if (isFinalized) {
             throwError("Detecting multiple protocol finalisation attempts!");
         }
         isFinalized = true;
 
-        // Finalize Internal mode
         Internal::finalize(activeSrcs); //TMP
 
-        // Check for unfinished reports
         if(ProcessReport::didSendReport && !IndividualReport::isNew){
             throwError("Detected an unfinished report!");
         }

@@ -31,6 +31,14 @@ namespace Console {
         extern JUG_CAT_CONSOLE_API bool didSendReport;
     }
 
+    // Progress badge status (`[  0%]` .. `[100%]`, or `-1` when hidden)
+    namespace Progress {
+        extern JUG_CAT_CONSOLE_API void reset(int initialPercent = 0) noexcept;
+        extern JUG_CAT_CONSOLE_API void advancePercent(int percent) noexcept;
+        extern JUG_CAT_CONSOLE_API void disable() noexcept;
+        [[nodiscard]] extern JUG_CAT_CONSOLE_API int getPercent() noexcept;
+    }
+
     // Report actions
     enum ReportAction {
         START_REPORT = 0xFFF00101, // Used as a measure to prevent the misuse of the report function
@@ -82,6 +90,9 @@ namespace Console {
         extern JUG_CAT_CONSOLE_API int actionReports;
         extern JUG_CAT_CONSOLE_API int debugReports;
     }
+
+    // Serializes `IndividualReport` population + `REPORT(...)` across threads
+    [[nodiscard]] extern JUG_CAT_CONSOLE_API std::unique_lock<std::mutex> acquireReportLock() ;
 
     // Reporting
     extern JUG_CAT_CONSOLE_API void report(const ReportInputs& args) ;

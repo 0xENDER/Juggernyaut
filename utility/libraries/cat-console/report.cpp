@@ -5,6 +5,10 @@
 
 #include "include/console/report.hpp"
 
+// Basic C++ & {fmt}
+#include <algorithm>
+#include "fmt.hpp"
+
 // Comms headers
 #include "include/console/console.hpp"
 #include "include/console/basic.hpp"
@@ -124,6 +128,17 @@ namespace Console {
                 // Print a new line for new reports
                 if (!isFirstPrint) {
                     INTERNAL_C_OUT('\n', channel);
+                }
+
+                // Prepend `[XXX%] ` progress badge when active
+                const int progressPct = Console::Progress::getPercent();
+                if (progressPct >= 0 && !IndividualReport::isContinuation) {
+                    const std::string badge = fmt::format("[{:3d}%] ", std::clamp(progressPct, 0, 100));
+                    if (lastChannel != channel) {
+                        INTERNAL_C_OUT(std::flush, lastChannel);
+                        lastChannel = channel;
+                    }
+                    INTERNAL_C_OUT(Console::Internal::color(badge, Color::gray), channel);
                 }
                 
                 // Print report type info

@@ -4,39 +4,101 @@
 **/
 
 // Basic C++ headers
+#include <cstdlib>
 #include <fstream>
 
 // Common headers
 #include "common/headers.hpp"
 #include "common/crashBreadcrumb.hpp"
+#include "common/progressTracker.hpp"
 
 #include "console/console.hpp"
-
-// Diagnostics
-#include "../core/data/diagnostics/DiagnosticsManager.hpp"
 
 // Compiler Store
 #include "store/Documents.hpp"
 
-// Front-End Driver
+// Diagnostics & Front-End Driver
+#include "../core/data/diagnostics/DiagnosticsManager.hpp"
 #include "../core/driver/JugDriver.hpp"
 
 // Base
 #include "base/config.hpp"
 #include "base/info.hpp"
 
-Console::ReportType getReportType(Data::Diagnostics::Severity severity) {
-    switch (severity) {
-    case Data::Diagnostics::Severity::Error:
-        return Console::CRITICAL_REPORT;
-    case Data::Diagnostics::Severity::Warning:
-        return Console::WARNING_REPORT;
-    case Data::Diagnostics::Severity::Info:
-        return Console::NORMAL_REPORT;
-    case Data::Diagnostics::Severity::Hint:
-        return Console::NORMAL_REPORT;
-    default:
-        return Console::UNKNOWN_REPORT;
+using Diagnostic = Data::Diagnostics::Diagnostic;
+using DiagnosticsManager = Data::Diagnostics::DiagnosticsManager<Diagnostic>;
+using Phase = Common::Progress::PipelinePhase;
+
+namespace Helper {
+    Console::ReportType getReportType(Data::Diagnostics::Severity severity) {
+        switch (severity) {
+        case Data::Diagnostics::Severity::Error:
+            return Console::CRITICAL_REPORT;
+        case Data::Diagnostics::Severity::Warning:
+            return Console::WARNING_REPORT;
+        case Data::Diagnostics::Severity::Info:
+            return Console::NORMAL_REPORT;
+        case Data::Diagnostics::Severity::Hint:
+            return Console::NORMAL_REPORT;
+        default:
+            return Console::UNKNOWN_REPORT;
+        }
+    }
+
+    const char* getStageName(int diagCode) noexcept {
+        switch (std::abs(diagCode) / 100'000) {
+        case 1:  return "Lexer";
+        case 2:  return "Parser";
+        case 3:  return "Transformer";
+        case 4:  return "Semantic";
+        case 5:  return "IaRC";
+        case 6:  return "Session";
+        case 7:  return "Driver";
+        default: return "?Unknown Stage?";
+        }
+    }
+
+    void printDiagnosticToConsole(const std::string &uri, const Diagnostic &diag) {
+        auto reportGuard = Console::acquireReportLock();
+
+        if (!uri.empty()) {
+            Console::IndividualReport::path = uri;
+            Console::IndividualReport::startLine = diag.range.start.line;
+            Console::IndividualReport::startColumn = diag.range.start.character;
+            Console::IndividualReport::endLine = diag.range.end.line;
+            Console::IndividualReport::endColumn = diag.range.end.character;
+        }
+
+        Console::IndividualReport::code = diag.code;
+        Console::IndividualReport::stage = getStageName(diag.code);
+
+        REPORT(Console::START_REPORT, getReportType(diag.severity), diag.message, Console::END_REPORT);
+    }
+
+    void bindFrontEndProgress(Driver::Hooks &hooks, Common::Progress::ProgressTracker &tracker) {
+        hooks.driver.onEnvironmentLoad << [&tracker](const Data::Host::File *file) {
+            if (file != nullptr) {
+                tracker.completeDynamicWork(Phase::Setup, 1u);
+            }
+        };
+        hooks.unitSources.onContextStart << [&tracker](const Data::Host::File *file) {
+            if (file != nullptr) {
+                tracker.addDynamicWork(Phase::Parse, 1u);
+            }
+        };
+        hooks.unitSources.onParserContextEnd << [&tracker](const Data::Host::File *file) {
+            if (file != nullptr) {
+                tracker.completeWork(Phase::Parse, 1u);
+            }
+        };
+        hooks.unitSources.onContextSkip << [&tracker](const Data::Host::File *file) {
+            if (file != nullptr) {
+                tracker.completeDynamicWork(Phase::Parse, 1u);
+            }
+        };
+        hooks.driver.onRunFinished << [&tracker]() {
+            tracker.finishFrontEnd();
+        };
     }
 }
 
@@ -44,8 +106,8 @@ int main(int argc, const char *argv[]) {
     Common::Debug::installCrashBreadcrumbHandler();
     Console::runtimeTracking();
 
-    // Initalise communications protocol
-    // (Basiclly allowing the default protocol to take effect)
+    // Initialise communications protocol
+    // (Basically allowing the default protocol to take effect)
     if (!Base::InitialConfigs::Technical::shouldSkipDefaultInitialization(argc, argv)) {
         // This is done to allow flags like --version to function normally
         Console::initalize({
@@ -59,9 +121,10 @@ int main(int argc, const char *argv[]) {
     }
 
     // Update initial configurations
-    if(!Base::InitialConfigs::updateUsingArgs(argc, argv)){
+    if (!Base::InitialConfigs::updateUsingArgs(argc, argv)) {
         // This process failed!
         if (Console::Statistics::fatalReports != 0) {
+            auto reportGuard = Console::acquireReportLock();
             REPORT(Console::START_REPORT, Console::FATAL_REPORT, "terminating program due to a Base::InitialConfigs error!",
                 BAD_CODE_OR_MEMORY_LEAKS,
                 Console::END_REPORT);
@@ -86,51 +149,46 @@ int main(int argc, const char *argv[]) {
     Driver::JugDriver::DriverConfigs configs;
     Driver::JugDriver::JugDriver driver(host, configs);
 
-    // Handle diagnostics
-    const auto flushDiagnostics =  [](const Data::Diagnostics::Diagnostic &diag){
-        if (diag.file != nullptr) {
-            // Get the position
-            Console::IndividualReport::path = diag.file->canonical;
-            Console::IndividualReport::startLine = diag.range.start.line;
-            Console::IndividualReport::startColumn = diag.range.start.character;
-            Console::IndividualReport::endLine = diag.range.end.line;
-            Console::IndividualReport::endColumn = diag.range.end.character;
-        }
+    // Subscribe ProgressTracker FIRST so `[XXX%]` advances before stage diagnostics flush
+    Common::Progress::ProgressTracker progressTracker([](int pct) {
+        Console::Progress::advancePercent(pct);
+    });
+    progressTracker.configureDefaultPipeline(true); // (Include future back-end values)
+    Helper::bindFrontEndProgress(driver.configs.hooks, progressTracker);
 
-        Console::IndividualReport::code = diag.code;
-
-        // Update stage data
-        int stageId = static_cast<int>(std::floor(diag.code / 100000));
-        if (stageId == 1) {
-            Console::IndividualReport::stage = "Lexer";
-        } else if (stageId == 2) {
-            Console::IndividualReport::stage = "Parser";
-        } else if (stageId == 7) {
-            Console::IndividualReport::stage = "Driver";
-        } else {
-            Console::IndividualReport::stage = "?Unknown Stage?";
-        }
-        REPORT(Console::START_REPORT, getReportType(diag.severity), diag.message, Console::END_REPORT);
-    };
-    Data::Diagnostics::DiagnosticsManager<> diagManager(
+    // Subscribe DiagnosticsManager (`Funnelled` when hotDiagnostics is set, `Default` otherwise)
+    const auto diagMode = Base::InitialConfigs::Technical::hotDiagnostics
+        ? Data::Diagnostics::ManagerMode::Funnelled
+        : Data::Diagnostics::ManagerMode::Default;
+    DiagnosticsManager diagManager(
         driver.configs.hooks,
-        Data::Diagnostics::DiagnosticsManager<Data::Diagnostics::Diagnostic>::ManagerCallbacks{
-            .onFileFlush = [&flushDiagnostics](const std::string &uri, const std::vector<Data::Diagnostics::Diagnostic> &diagnostics) {
-                for (Data::Diagnostics::Diagnostic diag : diagnostics) {
-                    flushDiagnostics(diag);
+        DiagnosticsManager::ManagerCallbacks{
+            .onFileFlush = [](const std::string &uri, const std::vector<Diagnostic> &diags) {
+                for (const Diagnostic &d : diags) {
+                    Helper::printDiagnosticToConsole(uri, d);
                 }
             },
-            .onComponentFlush = flushDiagnostics
+            .onComponentFlush = [](const Diagnostic &d) {
+                Helper::printDiagnosticToConsole("", d);
+            }
         },
-        (Base::InitialConfigs::Technical::hotDiagnostics) ? Data::Diagnostics::ManagerMode::Funnelled : Data::Diagnostics::ManagerMode::Default
+        diagMode
     );
+
+    // Activate `[  0%]` progress tracking for pipeline execution
+    Console::Progress::reset(0);
+    progressTracker.begin();
 
     // Add input files
     if (Base::InitialConfigs::Input::entryPaths.empty()) {
         const std::string configUri = driver.lookupProject(driver.host.vfs->cwd());
-        if (configUri == "") {
-            REPORT(Console::START_REPORT, Console::CRITICAL_REPORT, "couldn't find a 'jug.toml' configuration file!", Console::END_REPORT);
-
+        if (configUri.empty()) {
+            {
+                auto reportGuard = Console::acquireReportLock();
+                REPORT(Console::START_REPORT, Console::CRITICAL_REPORT, "couldn't find a 'jug.toml' configuration file!", Console::END_REPORT);
+            }
+            progressTracker.end(false);
+            Console::finalize();
             return 1;
         }
         driver.addProject(configUri);
@@ -140,21 +198,36 @@ int main(int argc, const char *argv[]) {
 
     // Check for requested termination
     if (Base::InitialConfigs::Technical::terminateAfterActions) {
-        // End the program
-        Console::finalize();
+        diagManager.manualFlushAll(true);
+        progressTracker.end(false);
+        Console::finalize(diagManager.getStats().filesVisited());
         return Console::ProcessReport::programStatus;
     }
 
     // Run the front-end
     driver.run();
 
+    // Abort before back-end if front-end encountered errors
+    const DiagnosticsManager::Stats frontEndStats = diagManager.getStats();
+    if (frontEndStats.hasErrors()) {
+        progressTracker.end(false);
+        Console::finalize(frontEndStats.filesVisited());
+        return Console::ProcessReport::programStatus;
+    }
+
     // Handle back-end logic
     // ...
 
-    // Get diagnostic stats
-    const auto stats = diagManager.getStats();
+    // Dummy progress
+    // (As back-end passes are implemented, `setPhaseTotal(...)` + `completeWork(...)` calls
+    // must be implemented in a new Helper::bindBackEndProgress function!)
+    progressTracker.finishPhase(Phase::IRLower);
+    progressTracker.finishPhase(Phase::Optimize);
+    progressTracker.finishPhase(Phase::Codegen);
+    progressTracker.finishPhase(Phase::Link);
+    progressTracker.end(true);
 
     // End the program
-    Console::finalize(stats.filesVisited());
+    Console::finalize(frontEndStats.filesVisited());
     return Console::ProcessReport::programStatus;
 }
