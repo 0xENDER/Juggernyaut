@@ -4,6 +4,7 @@ set(BUILD_SHARED_LIBS ON)
 
 # Create a library from /common
 add_library(JuggernyautCommonLibrary SHARED)
+custom_malloc(JuggernyautCommonLibrary)
 target_sources_search(JuggernyautCommonLibrary ${JUG_UTILITY_LIBRARIES_DIR}/common/*.cpp FALSE)
 # Expose library exports
 target_compile_definitions(JuggernyautCommonLibrary PRIVATE JUG_COMMON_LIBRARY_EXPORTS)
@@ -17,6 +18,7 @@ target_include_directories(JuggernyautCommonLibrary PUBLIC ${JUG_COMMON_INCLUDE_
 
 # Create a library from /cat-console
 add_library(JuggernyautCatConsoleLibrary SHARED)
+custom_malloc(JuggernyautCatConsoleLibrary)
 target_sources_search(JuggernyautCatConsoleLibrary ${JUG_UTILITY_LIBRARIES_DIR}/cat-console/*.cpp FALSE)
 # Dependencies
 add_dependencies(JuggernyautCatConsoleLibrary JuggernyautCommonLibrary fmt::fmt)
