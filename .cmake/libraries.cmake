@@ -10,7 +10,7 @@ if(NOT TARGET JuggernyautCommonLibrary)
 endif()
 
 macro(jug_common TARGET)
+    custom_malloc(${TARGET})
     add_dependencies(${TARGET} JuggernyautCommonLibrary)
     target_link_libraries(${TARGET} PRIVATE JuggernyautCommonLibrary)
-    custom_malloc(${TARGET})
 endmacro()
