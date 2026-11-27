@@ -122,6 +122,10 @@ namespace Base {
                     // Print the license text
                     REPORT(Console::START_REPORT, Console::NORMAL_REPORT, content, Console::END_REPORT);
 
+                    // Prevent other outputs
+                    InitialConfigs::Technical::terminateAfterArgs = true;
+                    Console::minimalProtocolFinalization = true;
+
                     ACTION_PROGRESS;
                 }
             ),
@@ -138,6 +142,10 @@ namespace Base {
                 REPORT("\n");
             }
             REPORT(Console::END_REPORT);
+
+            // Prevent other outputs
+            InitialConfigs::Technical::terminateAfterArgs = true;
+            Console::minimalProtocolFinalization = true;
         }
 
         // Get an action function using one flag
