@@ -40,10 +40,15 @@ namespace Driver {
 
     // Driver-level hooks
     struct DriverHooks {
+        // General
         DriverEvent onDiagnostic = nullptr; // ALL Diagnostics go through this function!
         GenericEvent onRunFinished = nullptr;
+        // Setup
         FileEvent onEnvironmentLoad = nullptr;
         FileEvent onEnvironmentChange = nullptr;
+        GenericEvent onSetupStart = nullptr;
+        GenericEvent onSetupFinished = nullptr;
+        // ...
     };
 
     struct Hooks {

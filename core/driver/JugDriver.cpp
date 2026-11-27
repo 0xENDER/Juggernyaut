@@ -285,11 +285,21 @@ namespace Driver::JugDriver {
             // Exit VFS Safe Mode BEFORE releasing `runMtx` and BEFORE `onRunFinished`
             Helper::SafeModeScope safeScope(vfs, true);
 
+            if (this->configs.hooks.driver.onSetupStart != nullptr) {
+                this->configs.hooks.driver.onSetupStart();
+            }
+
             this->drainPendingPaths(true);
             this->refreshSetups();
             if (!this->refreshDependencyGraph()) {
                 return false;
             }
+
+            // Trigger relevent events
+            if (this->configs.hooks.driver.onSetupFinished != nullptr) {
+                this->configs.hooks.driver.onSetupFinished();
+            }
+
             this->runUnits();
         }
 

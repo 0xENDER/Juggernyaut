@@ -76,6 +76,12 @@ namespace Helper {
     }
 
     void bindFrontEndProgress(Driver::Hooks &hooks, Common::Progress::ProgressTracker &tracker) {
+        // [Setup: 0% -> 5%]
+        hooks.driver.onSetupStart << [&tracker]() {
+            if (tracker.getPercent() < 0) {
+                tracker.begin();
+            }
+        };
         hooks.driver.onEnvironmentLoad << [&tracker](const Data::Host::File *file) {
             if (file != nullptr) {
                 tracker.completeDynamicWork(Phase::Setup, 1u);
@@ -96,6 +102,8 @@ namespace Helper {
                 tracker.completeDynamicWork(Phase::Parse, 1u);
             }
         };
+
+        // [Front-End Done: snaps remaining front-end stages to 50%]
         hooks.driver.onRunFinished << [&tracker]() {
             tracker.finishFrontEnd();
         };
