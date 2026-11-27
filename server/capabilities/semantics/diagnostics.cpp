@@ -123,7 +123,8 @@ namespace Capabilities {
                             });
                         }
                     }
-                }
+                },
+                Data::Diagnostics::ManagerMode::Eager
             );
         }
         void shutdownGlobalDiagnostics() {
