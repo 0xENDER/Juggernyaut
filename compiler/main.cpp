@@ -8,6 +8,7 @@
 
 // Common headers
 #include "common/headers.hpp"
+#include "common/crashBreadcrumb.hpp"
 
 #include "console/console.hpp"
 
@@ -37,6 +38,7 @@ Console::ReportType getReportType(Data::Diagnostics::Severity severity) {
 }
 
 int main(int argc, const char *argv[]) {
+    Common::Debug::installCrashBreadcrumbHandler();
     Console::runtimeTracking();
 
     // Initalise communications protocol

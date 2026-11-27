@@ -15,6 +15,7 @@
 
 // Common headers
 #include "common/headers.hpp"
+#include "common/crashBreadcrumb.hpp"
 
 // lsp-framework
 #include "lspFramework.hpp"
@@ -118,6 +119,7 @@ std::optional<unsigned short> parsePortArg(int argc, char** argv) {
 }
 
 int main(int argc, char** argv) {
+    Common::Debug::installCrashBreadcrumbHandler();
     #ifndef _WIN32
         std::signal(SIGPIPE, SIG_IGN);
     #endif

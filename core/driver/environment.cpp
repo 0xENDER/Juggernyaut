@@ -5,6 +5,9 @@
 
 #include "environment.hpp"
 
+// Common headers
+#include "common/crashBreadcrumb.hpp"
+
 // toml++
 #include "tomlpp.hpp"
 
@@ -304,6 +307,7 @@ namespace Driver {
             }
             const File *file = env->file;
             env->fileVersion = file->version;
+            Common::Debug::TaskScope taskScope("Driver::Config", file->canonical.c_str());
 
             // Parse TOML BEFORE mutating `env` so transient mid-typing syntax errors
             // don't wipe `env->build` and detach/re-parse the workspace!

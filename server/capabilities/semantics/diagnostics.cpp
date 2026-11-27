@@ -6,6 +6,9 @@
 
 #include "diagnostics.hpp"
 
+// Common headers
+#include "common/crashBreadcrumb.hpp"
+
 // Diagnostics
 #include "../../../core/data/diagnostics/Diagnostic.hpp"
 #include "../../../core/data/diagnostics/DiagnosticsManager.hpp"
@@ -91,6 +94,7 @@ namespace Capabilities {
                         if (io ==  nullptr) {
                             return;
                         }
+                        Common::Debug::TaskScope taskScope("LSP::PublishDiagnostics", uri.c_str());
 
                         io->textDocumentPublishDiagnostics({
                             .uri = lsp::DocumentUri::fileUriFromPath(uri),

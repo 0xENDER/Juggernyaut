@@ -5,6 +5,9 @@
 
 #include "Parser.hpp"
 
+// Common headers
+#include "common/crashBreadcrumb.hpp"
+
 // C++ headers
 #include <stdexcept>
 
@@ -152,6 +155,7 @@ namespace Parser {
         if (file == nullptr || this->env == nullptr) {
             return result;
         }
+        Common::Debug::TaskScope taskScope("Parser::CST", file->canonical.c_str());
 
         // Notify context start
         if (this->hooks.onContextStart != nullptr) {
@@ -179,6 +183,7 @@ namespace Parser {
                 file,
                 &this->hooks.onDiagnostic
             );
+            taskScope.update("Parser::CSTToAST", file->canonical.c_str());
             visitor.visit(*tree, builder);
 
             result.hasSyntaxErrors = visitor.hasSyntaxErrors();

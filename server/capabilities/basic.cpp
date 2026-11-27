@@ -3,8 +3,10 @@
  * Handle basic capabilities
 **/
 
-// Common headers
 #include "basic.hpp"
+
+// Common headers
+#include "common/crashBreadcrumb.hpp"
 
 #include "../base/info.hpp"
 
@@ -92,6 +94,7 @@ namespace Capabilities {
             }
         ).onInitialized(
             [&driver, &endpoint](auto&&) {
+                Common::Debug::TaskScope taskScope("LSP::Initialized", rootUri.c_str());
                 logStdErr("Initialising the workspace configs...");
 
                 try {
@@ -140,6 +143,7 @@ namespace Capabilities {
         ).onTextDocumentDidOpen(
             [&driver](auto&& params) {
                 const std::string rawUri = std::string(params.textDocument.uri.path());
+                Common::Debug::TaskScope taskScope("LSP::DidOpen", rawUri.c_str());
                 std::string sourceCode = std::move(params.textDocument.text);
 
                 // Load data
@@ -160,9 +164,10 @@ namespace Capabilities {
                 if (params.contentChanges.empty()) {
                     return;
                 }
+                const std::string rawUri = std::string(params.textDocument.uri.path());
+                Common::Debug::TaskScope taskScope("LSP::DidChange", rawUri.c_str());
 
                 // Prepare for edits conversion
-                const std::string rawUri = std::string(params.textDocument.uri.path());
                 const Data::Host::File* file = driver.host.vfs->readFile(rawUri);
                 std::vector<Data::Host::ByteEdit> edits;
                 edits.reserve(params.contentChanges.size());
@@ -228,6 +233,7 @@ namespace Capabilities {
         ).onTextDocumentDidClose(
             [&driver](auto&& params) {
                 const std::string rawUri = std::string(params.textDocument.uri.path());
+                Common::Debug::TaskScope taskScope("LSP::DidClose", rawUri.c_str());
 
                 // Reset content
                 driver.host.vfs->reloadFile(rawUri);
@@ -240,6 +246,8 @@ namespace Capabilities {
             }
         ).onWorkspaceDidChangeWatchedFiles(
             [&driver](auto&& params) {
+                Common::Debug::TaskScope taskScope("LSP::DidChangeWatchedFiles");
+
                 for (const auto& change : params.changes) {
                     if (change.type == lsp::FileChangeType::Deleted) {
                         std::string emptyStr = "";

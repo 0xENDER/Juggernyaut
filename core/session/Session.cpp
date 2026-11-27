@@ -4,7 +4,10 @@
 **/
 
 #include "Session.hpp"
+
+// Common headers
 #include "common/utility.hpp"
+#include "common/crashBreadcrumb.hpp"
 
 namespace Session {
     // (Internal) flat-vector lookup helpers
@@ -69,6 +72,11 @@ namespace Session {
     }
     void Session::resolveUnitImports(const File *sourceFile, CompilationUnitState &unitState,
         const std::vector<Parser::ImportRequest> &imports, std::vector<SourceId> &worklist) {
+        if (sourceFile == nullptr) {
+            return;
+        }
+        Common::Debug::TaskScope taskScope("Session::Imports", sourceFile->canonical.c_str());
+
         // Clear old outgoing dependency edges
         for (SourceId oldDepId : unitState.dependencies) {
             if (CompilationUnitState *depUnit = findUnit(this->units, oldDepId)) {
