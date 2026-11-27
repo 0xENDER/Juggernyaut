@@ -87,7 +87,17 @@ namespace Helper {
                 tracker.completeDynamicWork(Phase::Setup, 1u);
             }
         };
-        hooks.unitSources.onContextStart << [&tracker](const Data::Host::File *file) {
+        hooks.driver.onEnvironmentChange << [&tracker](const Data::Host::File *file) {
+            if (file != nullptr) {
+                tracker.completeDynamicWork(Phase::Setup, 1u);
+            }
+        };
+        hooks.driver.onSetupFinished << [&tracker]() {
+            tracker.finishPhase(Phase::Setup);
+        };
+
+        // [Parse & Import Discovery: 5% -> 20%]
+        hooks.units.onContextQueued << [&tracker](const Data::Host::File *file) {
             if (file != nullptr) {
                 tracker.addDynamicWork(Phase::Parse, 1u);
             }
