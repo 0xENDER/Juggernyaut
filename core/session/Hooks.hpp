@@ -12,6 +12,7 @@
 #include "../data/diagnostics/Diagnostic.hpp"
 
 namespace Session {
+    using GenericEvent = Data::Diagnostics::GenericEvent;
     using FileEvent = Data::Diagnostics::FileEvent;
     using Event = Data::Diagnostics::Event;
     class JUG_SESSION_API Session;
@@ -19,6 +20,7 @@ namespace Session {
 
     struct Hooks {
         // [Session Lifecycle]
+        FileEvent onContextQueued = nullptr;
         //StageCall onRunFinished = nullptr; // The Session is done running! (not needed?)
 
         // [Source Stage Lifecycle]

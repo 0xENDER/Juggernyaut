@@ -35,7 +35,7 @@ namespace Driver {
 
     // Unit-level hooks
     struct UnitHooks {
-        // ...
+        FileEvent onContextQueued = nullptr;
     };
 
     // Driver-level hooks

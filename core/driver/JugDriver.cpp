@@ -135,6 +135,11 @@ namespace Driver::JugDriver {
     UnitId JugDriver::createUnit(const Setup *setup) {
         const UnitId id = static_cast<UnitId>(this->units.size());
         this->units.emplace_back(this->host.vfs, setup, UnitConfigs{}, UnitHooks{
+            .onContextQueued = [this](const Data::Host::File *file) {
+                if (this->configs.hooks.units.onContextQueued != nullptr) {
+                    this->configs.hooks.units.onContextQueued(file);
+                }
+            },
             .onContextSkip = [this](const Data::Host::File *file) {
                 if (this->configs.hooks.unitSources.onContextSkip != nullptr) {
                     this->configs.hooks.unitSources.onContextSkip(file);

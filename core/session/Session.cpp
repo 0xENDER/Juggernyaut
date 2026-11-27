@@ -152,6 +152,11 @@ namespace Session {
             }
 
             worklist.push_back(depFile->id);
+
+            // Trigger relevant events
+            if (this->hooks.onContextQueued != nullptr) {
+                this->hooks.onContextQueued(depUnit.file);
+            }
         }
     }
     bool Session::runParserStage() {
@@ -162,6 +167,13 @@ namespace Session {
         Parser::Parser parser = this->createConfiguredParser();
 
         std::vector<SourceId> worklist = this->entryPoints; // Copy entry points!
+        if (this->hooks.onContextQueued != nullptr) {
+            for (SourceId entryId : worklist) {
+                if (const File *entryFile = this->vfs->readFile(entryId)) {
+                    this->hooks.onContextQueued(entryFile);
+                }
+            }
+        }
 
         while (!worklist.empty()) {
             const SourceId currentId = worklist.back();
@@ -195,6 +207,13 @@ namespace Session {
                 // Add dependencies to the work list!
                 for (SourceId depId : unit.dependencies) {
                     worklist.push_back(depId);
+
+                    if (this->hooks.onContextQueued != nullptr) {
+                        if (const CompilationUnitState *depUnit = findUnit(this->units, depId);
+                            depUnit != nullptr && !depUnit->isVisited && depUnit->file != nullptr) {
+                            this->hooks.onContextQueued(depUnit->file);
+                        }
+                    }
                 }
 
                 continue;
