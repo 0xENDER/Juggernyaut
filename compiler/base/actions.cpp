@@ -46,6 +46,19 @@ namespace Base {
                 }
             ),
             DEFINE_ACTION(
+                "hd", "hot-diagnostics",
+                "Flushes diagnostics into the console as soon as they are generated.",
+                {},
+                {
+                    REPORT(Console::START_REPORT, Console::ACTION_REPORT, "enabled 'hot diagnostics' mode!", Console::END_REPORT);
+
+                    // Change to strict flags mode
+                    InitialConfigs::Technical::hotDiagnostics = true;
+
+                    ACTION_PROGRESS;
+                }
+            ),
+            DEFINE_ACTION(
                 "v", "version",
                 "Get the plain version string. (No extra console output will be made as long as no errors occur)",
                 {},

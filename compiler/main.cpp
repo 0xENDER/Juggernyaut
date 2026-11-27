@@ -12,6 +12,9 @@
 
 #include "console/console.hpp"
 
+// Diagnostics
+#include "../core/data/diagnostics/DiagnosticsManager.hpp"
+
 // Compiler Store
 #include "store/Documents.hpp"
 
@@ -84,7 +87,7 @@ int main(int argc, const char *argv[]) {
     Driver::JugDriver::JugDriver driver(host, configs);
 
     // Handle diagnostics
-    driver.configs.hooks.driver.onDiagnostic = [](const Data::Diagnostics::Diagnostic &diag){
+    const auto flushDiagnostics =  [](const Data::Diagnostics::Diagnostic &diag){
         if (diag.file != nullptr) {
             // Get the position
             Console::IndividualReport::path = diag.file->canonical;
@@ -109,9 +112,18 @@ int main(int argc, const char *argv[]) {
         }
         REPORT(Console::START_REPORT, getReportType(diag.severity), diag.message, Console::END_REPORT);
     };
-
-    // Stats
-    uint32_t sourceVisits = 0;
+    Data::Diagnostics::DiagnosticsManager<> diagManager(
+        driver.configs.hooks,
+        Data::Diagnostics::DiagnosticsManager<Data::Diagnostics::Diagnostic>::ManagerCallbacks{
+            .onFileFlush = [&flushDiagnostics](const std::string &uri, const std::vector<Data::Diagnostics::Diagnostic> &diagnostics) {
+                for (Data::Diagnostics::Diagnostic diag : diagnostics) {
+                    flushDiagnostics(diag);
+                }
+            },
+            .onComponentFlush = flushDiagnostics
+        },
+        (Base::InitialConfigs::Technical::hotDiagnostics) ? Data::Diagnostics::ManagerMode::Funnelled : Data::Diagnostics::ManagerMode::Default
+    );
 
     // Add input files
     if (Base::InitialConfigs::Input::entryPaths.empty()) {
@@ -125,7 +137,6 @@ int main(int argc, const char *argv[]) {
     } else {
         driver.processPaths(Base::InitialConfigs::Input::entryPaths);
     }
-    // sourceVisits; // THIS IS OUT OF SYNC! 
 
     // Check for requested termination
     if (Base::InitialConfigs::Technical::terminateAfterActions) {
@@ -134,44 +145,16 @@ int main(int argc, const char *argv[]) {
         return Console::ProcessReport::programStatus;
     }
 
-    /*session.hooks.parser.onContextStart = [&session, &sourceVisits](const Data::Store::SourceId srcId) {
-        std::unique_ptr<Data::Store::Source> &source = (session.store)->getSourceById(srcId);
-
-        REPORT(Console::START_REPORT, Console::NORMAL_REPORT, "\n#", ++sourceVisits, ": ", source->uri, Console::END_REPORT);
-    };
-
-    // Parser Diagnostics
-    session.hooks.parser.onContextEnd = [&session](const Data::Store::SourceId srcId) {
-        std::unique_ptr<Data::Store::Source> &source = (session.store)->getSourceById(srcId);
-        const std::string &srcPath = source->uri;
-
-        source->visitParserDiagnostics([&srcPath](const Data::Diagnostics::Diagnostic &diag) {
-            // Get the position
-            Console::IndividualReport::path = srcPath;
-            Console::IndividualReport::startLine = diag.range.start.line;
-            Console::IndividualReport::startColumn = diag.range.start.character;
-            Console::IndividualReport::endLine = diag.range.end.line;
-            Console::IndividualReport::endColumn = diag.range.end.character;
-
-            Console::IndividualReport::code = diag.code;
-
-            // Update stage data
-            int stageId = static_cast<int>(std::floor(diag.code / 100000));
-            if (stageId == 1) {
-                Console::IndividualReport::stage = "Lexer";
-            } else if (stageId == 2) {
-                Console::IndividualReport::stage = "Parser";
-            } else {
-                Console::IndividualReport::stage = "?Unknown Stage?";
-            }
-            REPORT(Console::START_REPORT, getReportType(diag.severity), diag.message, Console::END_REPORT);
-        });
-    };*/
-
-    // Begin the actual work here...
+    // Run the front-end
     driver.run();
-    
+
+    // Handle back-end logic
+    // ...
+
+    // Get diagnostic stats
+    const auto stats = diagManager.getStats();
+
     // End the program
-    Console::finalize(sourceVisits);
+    Console::finalize(stats.filesVisited());
     return Console::ProcessReport::programStatus;
 }

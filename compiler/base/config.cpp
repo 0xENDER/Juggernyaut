@@ -40,6 +40,8 @@ namespace Base {
             bool terminateAfterActions = false;
             // Fail process when unknown flags are detected!
             bool strictFlagDetection = false;
+            // Feed diagnostics into the console stream as soon as they are received!
+            bool hotDiagnostics = false;
 
             // Look for flags that require the default initialisation to stop!
             // [true - skip, false - don't skip]
