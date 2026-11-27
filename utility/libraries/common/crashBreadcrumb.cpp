@@ -151,7 +151,7 @@ namespace Common::Debug {
             struct sigaction sa{};
             sa.sa_handler = &posixSignalHandler;
             sigemptyset(&sa.sa_mask);
-            sa.sa_flags = SA_RESETHAND | SA_NODEFER;
+            sa.sa_flags = static_cast<decltype(sa.sa_flags)>(SA_RESETHAND | SA_NODEFER);
             (void)::sigaction(sig, &sa, nullptr);
         }
     #endif
