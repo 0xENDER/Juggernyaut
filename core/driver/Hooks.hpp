@@ -6,6 +6,7 @@
 #pragma once
 
 #include "common/headers.hpp"
+#include "common/multicast.hpp"
 #include "dynamic.hpp" // JUG_DRIVER_API
 
 #include "../data/diagnostics/Diagnostic.hpp"
@@ -14,9 +15,11 @@ namespace Driver {
     using Diagnostic = Data::Diagnostics::Diagnostic;
     using UnitSourceId = Data::Host::FileId;
 
-    using GenericEvent = Data::Diagnostics::GenericEvent;
+    // WARING: For the sake of efficiency, 'Common::Multicast' operations are
+    // limits to generic & file events!
+    using GenericEvent = Common::Multicast<Data::Diagnostics::GenericEvent>;
     using DriverEvent = Data::Diagnostics::Event;
-    using FileEvent = Data::Diagnostics::FileEvent;
+    using FileEvent = Common::Multicast<Data::Diagnostics::FileEvent>;
     // using UnitSourceStringEvent = std::function<void(const Unit&, const std::string&)>;
     // using UnitSourceU8tStringEvent = std::function<void(const Unit&, const uint8_t&, const std::string&)>;
 
@@ -37,7 +40,7 @@ namespace Driver {
 
     // Driver-level hooks
     struct DriverHooks {
-        Data::Diagnostics::Event onDiagnostic = nullptr; // ALL Diagnostics go through this function!
+        DriverEvent onDiagnostic = nullptr; // ALL Diagnostics go through this function!
         GenericEvent onRunFinished = nullptr;
         FileEvent onEnvironmentLoad = nullptr;
         FileEvent onEnvironmentChange = nullptr;

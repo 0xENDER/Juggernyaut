@@ -180,28 +180,21 @@ namespace Data::Diagnostics {
 
                 // Funnelled mode: immediate flush in `push()`, stats tracking only, no retention
                 if (this->mode == Mode::Funnelled) {
-                    frontEnd.driver.onEnvironmentLoad = nullptr;
-                    frontEnd.driver.onEnvironmentChange = nullptr;
-                    frontEnd.driver.onRunFinished = nullptr;
-
-                    frontEnd.unitSources.onParserContextEnd = nullptr;
-                    frontEnd.unitSources.onContextEnd = nullptr;
-
-                    frontEnd.unitSources.onContextStart = [this](const File *file) {
+                    frontEnd.unitSources.onContextStart << [this](const File *file) {
                         if (file == nullptr) {
                             return;
                         }
                         std::lock_guard<std::mutex> lock(this->hookMtx);
                         ++(this->stats.filesCompiled);
                     };
-                    frontEnd.unitSources.onContextSkip = [this](const File *file) {
+                    frontEnd.unitSources.onContextSkip << [this](const File *file) {
                         if (file == nullptr) {
                             return;
                         }
                         std::lock_guard<std::mutex> lock(this->hookMtx);
                         ++(this->stats.filesSkipped);
                     };
-                    frontEnd.unitSources.onContextDetached = [this](const File *file) {
+                    frontEnd.unitSources.onContextDetached << [this](const File *file) {
                         if (file == nullptr) {
                             return;
                         }
@@ -220,11 +213,11 @@ namespace Data::Diagnostics {
                     };
 
                     // [jug.toml]
-                    frontEnd.driver.onEnvironmentLoad = flushStageAndClear;
-                    frontEnd.driver.onEnvironmentChange = flushStageAndClear;
+                    frontEnd.driver.onEnvironmentLoad << flushStageAndClear;
+                    frontEnd.driver.onEnvironmentChange << flushStageAndClear;
 
                     // [*.jug]
-                    frontEnd.unitSources.onContextStart = [this](const File *file) {
+                    frontEnd.unitSources.onContextStart << [this](const File *file) {
                         if (file == nullptr) {
                             return;
                         }
@@ -232,16 +225,16 @@ namespace Data::Diagnostics {
                         this->fileDiagnostics.erase(file->canonical);
                         ++(this->stats.filesCompiled);
                     };
-                    frontEnd.unitSources.onParserContextEnd = flushStageAndClear;
-                    frontEnd.unitSources.onContextEnd = flushStageAndClear;
-                    frontEnd.unitSources.onContextSkip = [this](const File *file) {
+                    frontEnd.unitSources.onParserContextEnd << flushStageAndClear;
+                    frontEnd.unitSources.onContextEnd << flushStageAndClear;
+                    frontEnd.unitSources.onContextSkip << [this](const File *file) {
                         if (file == nullptr) {
                             return;
                         }
                         std::lock_guard<std::mutex> lock(this->hookMtx);
                         ++(this->stats.filesSkipped);
                     };
-                    frontEnd.unitSources.onContextDetached = [this](const File *file) {
+                    frontEnd.unitSources.onContextDetached << [this](const File *file) {
                         if (file == nullptr) {
                             return;
                         }
@@ -249,7 +242,7 @@ namespace Data::Diagnostics {
                         this->fileDiagnostics.erase(file->canonical);
                         ++(this->stats.filesDetached);
                     };
-                    frontEnd.driver.onRunFinished = [this]() {
+                    frontEnd.driver.onRunFinished << [this]() {
                         this->manualFlushAll(true);
                     };
                     return;
@@ -270,11 +263,11 @@ namespace Data::Diagnostics {
                 // Handle Diagnostics Retention logic
 
                 // [jug.toml]
-                frontEnd.driver.onEnvironmentLoad = flushAndDiscard;
-                frontEnd.driver.onEnvironmentChange = flushAndDiscard;
+                frontEnd.driver.onEnvironmentLoad << flushAndDiscard;
+                frontEnd.driver.onEnvironmentChange << flushAndDiscard;
 
                 // [*.jug]
-                frontEnd.unitSources.onContextStart = [this](const File *file) {
+                frontEnd.unitSources.onContextStart << [this](const File *file) {
                     if (file == nullptr) {
                         return;
                     }
@@ -289,9 +282,9 @@ namespace Data::Diagnostics {
                     // Tracking
                     ++(this->stats.filesCompiled);
                 };
-                frontEnd.unitSources.onParserContextEnd = flushAndKeep;
-                frontEnd.unitSources.onContextEnd = flushAndDiscard;
-                frontEnd.unitSources.onContextSkip = [this](const File *file) {
+                frontEnd.unitSources.onParserContextEnd << flushAndKeep;
+                frontEnd.unitSources.onContextEnd << flushAndDiscard;
+                frontEnd.unitSources.onContextSkip << [this](const File *file) {
                     if (file == nullptr) {
                         return;
                     }
@@ -312,7 +305,7 @@ namespace Data::Diagnostics {
                         this->flushFile(file->canonical, false, true);
                     }
                 };
-                frontEnd.unitSources.onContextDetached = [this](const File *file) {
+                frontEnd.unitSources.onContextDetached << [this](const File *file) {
                     if (file == nullptr) {
                         return;
                     }
@@ -324,7 +317,7 @@ namespace Data::Diagnostics {
                     }
                     this->emptyFlush(file->canonical);
                 };
-                frontEnd.driver.onRunFinished = [this]() {
+                frontEnd.driver.onRunFinished << [this]() {
                     this->flushComponentDiagnostics(true);
                 };
             }
