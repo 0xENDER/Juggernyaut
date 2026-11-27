@@ -97,7 +97,7 @@ namespace Common {
 
             // `event = nullptr;` clears (empties) all registered listeners
             Multicast& operator=(std::nullptr_t) noexcept {
-                this->empty();
+                this->clear();
                 return *this;
             }
 
