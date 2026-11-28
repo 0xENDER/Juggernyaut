@@ -348,13 +348,34 @@ namespace Session {
             return;
         }
 
+        // NOTICE: Starting from here, analysis will be target dependent!
+        // GOAL: To offer helpful diagnostics about unused code in the language server
+        // ISSUE: Exploring each logical branch is too costly
+        // #1: Limiting these special checks to main entry jug.toml projects
+        // #2: Marking non-branching logical AST components beforehand
+        // #3: Never throw away symbols/data from inactive code!
+        //     Instead, all data strucutres must include a dead/ghost flag.
+        // #4: Implement an speculative mode for all stages for inactive code
+        //     (which uses normal & dead/ghost data)
+        // #5: Tag semnatic checks that aren't affected by ambiguity and allow them
+        //     to run in speculative mode.
+
+        // Planned semnatic speculative mode special checks:
+        // - unambiguous type matching
+        // - alive & ghost symbol-probing (for functions, variables, and types)
+
         // [STAGE 4] Semantic
         if (this->configs.terminateAfter == Stage::Semantic) {
             return;
         }
 
+        // Planned IaRC speculative mode special checks:
+        // - Checking expected type-stripped variable/function signatures
+
         // [STAGE 5] IaRC
-        // Description: Flagging unreachable code, checking for expected functions, etc.
+        // Description: Flagging unreachable code, checking for expected functions in a certain target, etc.
+        // (Basiclly pruning the AST for final code generation,
+        // and doing simple checks that the back-end is expecting from the projects)
         // ...
     }
 
